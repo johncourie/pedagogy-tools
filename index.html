@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pedagogy Tools — Clinical Herbalism Education</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f1eb;
+    --bg-card: #fefcf9;
+    --bg-elevated: #ede8df;
+    --bg-dark: #1e1a14;
+    --border: #cfc5b4;
+    --border-light: #e2dbd0;
+    --text-primary: #211c14;
+    --text-secondary: #6b5e48;
+    --text-muted: #9b8f7c;
+    --accent-green: #2c5f47;
+    --accent-green-light: #e8f3ee;
+    --accent-amber: #b86c10;
+    --accent-amber-light: #fdf0e0;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-primary);
+    background: var(--bg);
+    min-height: 100vh;
+  }
+
+  .site-header {
+    background: var(--bg-dark);
+    padding: 2.5rem 2rem;
+    text-align: center;
+  }
+
+  .site-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 600;
+    color: #f5f1eb;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.4rem;
+  }
+
+  .site-header p {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 300;
+    letter-spacing: 0.03em;
+  }
+
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 4rem;
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+  }
+
+  .tool-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    padding: 1.5rem 1.75rem;
+    margin-bottom: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .tool-card:hover {
+    border-color: var(--border);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+
+  .tool-card a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+
+  .tool-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--accent-green);
+    margin-bottom: 0.35rem;
+    line-height: 1.35;
+  }
+
+  .tool-description {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.65;
+  }
+
+  .tool-link {
+    display: inline-block;
+    margin-top: 0.75rem;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--accent-amber);
+    letter-spacing: 0.02em;
+  }
+
+  .tool-link::after {
+    content: ' \2192';
+  }
+
+  footer {
+    text-align: center;
+    padding: 2rem;
+    font-size: 12px;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border-light);
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <h1>Pedagogy Tools</h1>
+  <p>Open educational tools for clinical herbalism</p>
+</header>
+
+<main class="container">
+  <div class="section-label">Available Tools</div>
+
+  <div class="tool-card">
+    <a href="./herb-safety-tool/">
+      <div class="tool-title">When an Herb Gets Labeled Dangerous</div>
+      <div class="tool-description">An interactive framework for interrogating herb safety claims — causality methods, bias taxonomy, and parallel case studies in green tea and kratom.</div>
+      <span class="tool-link">Open tool</span>
+    </a>
+  </div>
+</main>
+
+<footer>
+  Built with Claude &middot; No external dependencies beyond Google Fonts
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,1928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interrogating Herb Safety Claims</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f1eb;
+    --bg-card: #fefcf9;
+    --bg-elevated: #ede8df;
+    --bg-dark: #1e1a14;
+    --border: #cfc5b4;
+    --border-light: #e2dbd0;
+    --text-primary: #211c14;
+    --text-secondary: #6b5e48;
+    --text-muted: #9b8f7c;
+    --accent-green: #2c5f47;
+    --accent-green-light: #e8f3ee;
+    --accent-amber: #b86c10;
+    --accent-amber-light: #fdf0e0;
+    --accent-red: #a83228;
+    --accent-red-light: #fdecea;
+    --accent-blue: #1e4d8c;
+    --accent-blue-light: #e8eef8;
+    --accent-teal: #1e6b62;
+    --accent-teal-light: #e5f3f1;
+    --accent-purple: #5a3e7a;
+    --accent-purple-light: #f0eaf8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-primary);
+    background: var(--bg);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .site-header {
+    background: var(--bg-dark);
+    padding: 2rem 2rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+  }
+
+  .header-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .header-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: #f5f1eb;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+    max-width: 520px;
+  }
+
+  .header-title span {
+    color: #a8d5b5;
+    font-style: italic;
+  }
+
+  .header-subtitle {
+    font-size: 11px;
+    font-weight: 500;
+    color: #8a7f6e;
+    font-family: 'IBM Plex Mono', monospace;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 0.25rem;
+  }
+
+  /* TABS */
+  .tab-nav {
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tab-nav::-webkit-scrollbar { display: none; }
+
+  .tab-btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    background: transparent;
+    color: #8a7f6e;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+    position: relative;
+  }
+
+  .tab-btn:hover { color: #d4c9b8; }
+
+  .tab-btn.active {
+    color: #f5f1eb;
+    border-bottom-color: #a8d5b5;
+  }
+
+  .tab-dot {
+    display: inline-block;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    margin-right: 6px;
+    background: currentColor;
+    opacity: 0.6;
+    vertical-align: middle;
+    position: relative;
+    top: -1px;
+  }
+
+  /* MAIN CONTENT */
+  .main { max-width: 920px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+
+  .panel { display: none; }
+  .panel.active { display: block; animation: fadeIn 0.3s ease; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* SECTION HEADERS */
+  .section-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.4rem;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+  }
+
+  .section-intro {
+    font-size: 15px;
+    color: var(--text-secondary);
+    max-width: 680px;
+    margin-bottom: 2rem;
+    line-height: 1.8;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2.5rem 0;
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+  }
+
+  /* GRID */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+
+  @media (max-width: 680px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  }
+
+  /* ACCORDION */
+  .accordion-item {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 0.6rem;
+    overflow: hidden;
+    background: var(--bg-card);
+    transition: box-shadow 0.2s;
+  }
+
+  .accordion-item:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
+
+  .accordion-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    cursor: pointer;
+    user-select: none;
+    gap: 1rem;
+  }
+
+  .accordion-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+  }
+
+  .accordion-icon {
+    width: 32px; height: 32px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .accordion-title {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text-primary);
+    line-height: 1.3;
+  }
+
+  .accordion-subtitle {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 1px;
+  }
+
+  .accordion-arrow {
+    font-size: 18px;
+    color: var(--text-muted);
+    transition: transform 0.25s;
+    flex-shrink: 0;
+  }
+
+  .accordion-item.open .accordion-arrow { transform: rotate(90deg); }
+
+  .accordion-body {
+    display: none;
+    padding: 0 1.25rem 1.25rem;
+    border-top: 1px solid var(--border-light);
+  }
+
+  .accordion-item.open .accordion-body { display: block; }
+
+  /* METHOD CARDS */
+  .method-card {
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    background: var(--bg-card);
+    cursor: pointer;
+    transition: all 0.2s;
+    overflow: hidden;
+  }
+
+  .method-card:hover { border-color: var(--accent-green); box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+  .method-card.active { border-color: var(--accent-green); }
+
+  .method-header {
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .method-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 28px;
+    font-weight: 400;
+    color: var(--accent-green);
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .method-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+
+  .method-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: 500;
+  }
+
+  .method-detail {
+    display: none;
+    padding: 0 1.25rem 1.25rem;
+    border-top: 1px solid var(--border-light);
+  }
+
+  .method-card.active .method-detail { display: block; }
+
+  .pro-con-row {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+  }
+
+  .pro, .con {
+    flex: 1;
+    padding: 0.75rem;
+    border-radius: 6px;
+    font-size: 13px;
+  }
+
+  .pro { background: var(--accent-green-light); color: #1d4332; }
+  .con { background: var(--accent-amber-light); color: #7a4510; }
+
+  .pro strong, .con strong {
+    display: block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+    opacity: 0.7;
+  }
+
+  /* BIAS CARDS */
+  .bias-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+  }
+
+  .bias-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    border-left: 4px solid;
+  }
+
+  .bias-card .bias-name {
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 0.35rem;
+  }
+
+  .bias-card .bias-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+  .bias-card .bias-example {
+    margin-top: 0.5rem;
+    font-size: 12px;
+    font-style: italic;
+    color: var(--text-muted);
+    background: var(--bg-elevated);
+    padding: 0.5rem 0.6rem;
+    border-radius: 4px;
+  }
+
+  /* SIGNAL TABLE */
+  .signal-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    margin-top: 0.75rem;
+  }
+
+  .signal-table th {
+    padding: 0.6rem 1rem;
+    text-align: left;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: var(--bg-elevated);
+    color: var(--text-muted);
+    border-bottom: 2px solid var(--border);
+  }
+
+  .signal-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-light);
+    vertical-align: top;
+    line-height: 1.55;
+  }
+
+  .signal-table tr:last-child td { border-bottom: none; }
+
+  .signal-table .can { color: var(--accent-green); font-weight: 600; }
+  .signal-table .cannot { color: var(--accent-red); font-weight: 600; }
+
+  .signal-table .check { color: var(--accent-green); font-size: 14px; }
+  .signal-table .x { color: var(--accent-red); font-size: 14px; }
+
+  /* DATA HIERARCHY */
+  .hierarchy-container {
+    position: relative;
+    padding-left: 2rem;
+  }
+
+  .hierarchy-container::before {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--accent-green), var(--accent-amber), var(--text-muted));
+  }
+
+  .hierarchy-level {
+    position: relative;
+    margin-bottom: 1.25rem;
+  }
+
+  .hierarchy-level::before {
+    content: '';
+    position: absolute;
+    left: -1.55rem;
+    top: 0.6rem;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    border: 2px solid;
+  }
+
+  .hierarchy-level.primary::before { border-color: var(--accent-green); background: var(--accent-green); }
+  .hierarchy-level.secondary::before { border-color: var(--accent-amber); background: var(--accent-amber); }
+  .hierarchy-level.tertiary::before { border-color: var(--text-muted); background: var(--bg); }
+
+  .hierarchy-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+  }
+
+  .hierarchy-level.primary .hierarchy-badge { color: var(--accent-green); }
+  .hierarchy-level.secondary .hierarchy-badge { color: var(--accent-amber); }
+  .hierarchy-level.tertiary .hierarchy-badge { color: var(--text-muted); }
+
+  .hierarchy-heading {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 0.4rem;
+  }
+
+  .tag-list { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .tag {
+    font-size: 11.5px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: var(--bg-elevated);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  /* CASE STUDY LAYERS - the attribution error reveal */
+  .layer-reveal {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--bg-card);
+  }
+
+  .layer-reveal-header {
+    padding: 1.25rem;
+    background: var(--bg-elevated);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .layer-steps {
+    display: flex;
+    overflow-x: auto;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    scrollbar-width: none;
+  }
+
+  .layer-step-btn {
+    padding: 0.6rem 1rem;
+    border: none;
+    background: transparent;
+    font-size: 12px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--text-muted);
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+
+  .layer-step-btn:hover { color: var(--text-secondary); }
+  .layer-step-btn.active {
+    color: var(--accent-green);
+    border-bottom-color: var(--accent-green);
+  }
+
+  .layer-content { padding: 1.5rem; }
+  .layer-panel { display: none; }
+  .layer-panel.active { display: block; animation: fadeIn 0.25s; }
+
+  .layer-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .callout {
+    padding: 1rem 1.25rem;
+    border-radius: 6px;
+    margin: 0.75rem 0;
+    font-size: 14px;
+    line-height: 1.65;
+    border-left: 4px solid;
+  }
+
+  .callout-red { background: var(--accent-red-light); border-color: var(--accent-red); }
+  .callout-green { background: var(--accent-green-light); border-color: var(--accent-green); }
+  .callout-amber { background: var(--accent-amber-light); border-color: var(--accent-amber); }
+  .callout-blue { background: var(--accent-blue-light); border-color: var(--accent-blue); }
+  .callout-teal { background: var(--accent-teal-light); border-color: var(--accent-teal); }
+
+  .callout strong { color: inherit; }
+
+  /* IPPSC */
+  .ippsc-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.5rem;
+    margin: 1rem 0;
+  }
+
+  @media (max-width: 600px) { .ippsc-grid { grid-template-columns: repeat(3, 1fr); } }
+
+  .ippsc-item {
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem 0.5rem;
+    text-align: center;
+    background: var(--bg-card);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .ippsc-item:hover { border-color: var(--accent-teal); }
+  .ippsc-item.checked {
+    border-color: var(--accent-green);
+    background: var(--accent-green-light);
+  }
+
+  .ippsc-letter {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--accent-teal);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .ippsc-item.checked .ippsc-letter { color: var(--accent-green); }
+
+  .ippsc-word {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+  }
+
+  .ippsc-tooltip {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 0.25rem;
+  }
+
+  .ippsc-detail { display: none; }
+  .ippsc-item.checked .ippsc-detail { display: block; }
+
+  /* DOSE COMPARISON */
+  .dose-compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.75rem;
+    margin: 1rem 0;
+  }
+
+  @media (max-width: 600px) { .dose-compare { grid-template-columns: 1fr; } }
+
+  .dose-col {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--bg-card);
+  }
+
+  .dose-header {
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    font-size: 13px;
+    text-align: center;
+  }
+
+  .dose-body { padding: 1rem; font-size: 13px; line-height: 1.6; color: var(--text-secondary); }
+
+  .dose-risk {
+    padding: 0.4rem 0.75rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    text-align: center;
+    font-weight: 500;
+  }
+
+  /* CLIENT COMMS DECISION */
+  .client-tool {
+    background: var(--bg-elevated);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-top: 1rem;
+  }
+
+  .client-tool-title {
+    font-weight: 600;
+    font-size: 13px;
+    font-family: 'IBM Plex Mono', monospace;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+  }
+
+  .form-label {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+    color: var(--text-primary);
+    display: block;
+  }
+
+  select {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg-card);
+    font-size: 14px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b5e48' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+  }
+
+  .advice-output {
+    padding: 1.25rem;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1.7;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    min-height: 80px;
+  }
+
+  .advice-output .advice-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+
+  /* QUICK REF CHECKLIST */
+  .checklist {
+    list-style: none;
+    counter-reset: cl;
+  }
+
+  .checklist li {
+    counter-increment: cl;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--border-light);
+    background: var(--bg-card);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .checklist li:first-child { border-radius: 8px 8px 0 0; }
+  .checklist li:last-child { border-bottom: none; border-radius: 0 0 8px 8px; }
+  .checklist li:hover { background: var(--bg-elevated); }
+
+  .checklist li.checked { background: var(--accent-green-light); }
+
+  .cl-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--accent-green);
+    flex-shrink: 0;
+    margin-top: 2px;
+    width: 22px;
+  }
+
+  .cl-check {
+    flex-shrink: 0;
+    width: 20px; height: 20px;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    color: transparent;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .checklist li.checked .cl-check {
+    background: var(--accent-green);
+    border-color: var(--accent-green);
+    color: white;
+  }
+
+  .cl-text { font-size: 14px; line-height: 1.6; }
+  .cl-text strong { font-weight: 600; }
+  .cl-sub { font-size: 12.5px; color: var(--text-secondary); margin-top: 2px; }
+
+  /* PARALLEL COMPARISON */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 1rem 0;
+  }
+
+  @media (max-width: 640px) { .compare-grid { grid-template-columns: 1fr; } }
+
+  .compare-col {
+    padding: 1.25rem;
+    border-right: 1px solid var(--border);
+  }
+
+  .compare-col:last-child { border-right: none; }
+
+  .compare-col-header {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .compare-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .compare-row:last-child { border-bottom: none; }
+
+  .compare-cell {
+    padding: 0.85rem 1rem;
+    font-size: 13.5px;
+    line-height: 1.6;
+    border-right: 1px solid var(--border-light);
+    vertical-align: top;
+  }
+
+  .compare-cell:last-child { border-right: none; }
+
+  .compare-row-header {
+    background: var(--bg-elevated);
+    border-bottom: 1px solid var(--border);
+    padding: 0.5rem 1rem;
+  }
+
+  .compare-row-header .crh-inner {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .compare-table {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 1rem 0;
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .compare-table th {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: var(--bg-dark);
+    color: #c5bfb0;
+  }
+
+  .compare-table th:first-child {
+    background: var(--bg-elevated);
+    color: var(--text-muted);
+  }
+
+  .compare-table td {
+    padding: 0.8rem 1rem;
+    border-top: 1px solid var(--border-light);
+    font-size: 13.5px;
+    line-height: 1.6;
+    vertical-align: top;
+  }
+
+  .compare-table tr td:first-child {
+    font-weight: 600;
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    background: var(--bg-elevated);
+    border-right: 1px solid var(--border);
+  }
+
+  /* PROGRESS */
+  .progress-bar {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 0.75rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent-green);
+    border-radius: 3px;
+    transition: width 0.3s;
+    width: 0%;
+  }
+
+  .progress-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  /* INLINE TAG */
+  .pill {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 500;
+    vertical-align: middle;
+    margin: 0 2px;
+  }
+
+  .pill-green { background: var(--accent-green-light); color: var(--accent-green); }
+  .pill-red { background: var(--accent-red-light); color: var(--accent-red); }
+  .pill-amber { background: var(--accent-amber-light); color: var(--accent-amber); }
+  .pill-blue { background: var(--accent-blue-light); color: var(--accent-blue); }
+  .pill-teal { background: var(--accent-teal-light); color: var(--accent-teal); }
+  .pill-gray { background: var(--bg-elevated); color: var(--text-secondary); border: 1px solid var(--border); }
+
+  /* RESET BTN */
+  .btn-outline {
+    display: inline-block;
+    padding: 0.4rem 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    background: transparent;
+    font-size: 12px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: all 0.15s;
+  }
+
+  .btn-outline:hover { border-color: var(--accent-green); color: var(--accent-green); }
+
+  .footnote {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-style: italic;
+    margin-top: 1rem;
+    line-height: 1.6;
+  }
+
+  .mt-1 { margin-top: 0.5rem; }
+  .mt-2 { margin-top: 1rem; }
+  .mt-3 { margin-top: 1.5rem; }
+
+  p { margin-bottom: 0.75rem; }
+  p:last-child { margin-bottom: 0; }
+
+  ul.body-list { padding-left: 1.25rem; margin: 0.5rem 0; }
+  ul.body-list li { margin-bottom: 0.35rem; font-size: 14px; line-height: 1.6; color: var(--text-secondary); }
+
+  .bold-lead { font-weight: 600; color: var(--text-primary); }
+
+  .kv-list { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem; }
+  .kv-row { display: flex; gap: 0.75rem; align-items: baseline; font-size: 13.5px; }
+  .kv-key { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; min-width: 100px; }
+  .kv-val { color: var(--text-secondary); line-height: 1.6; }
+
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-top">
+    <div>
+      <div class="header-subtitle">Herbal Pharmacovigilance · Analytical Framework</div>
+      <div class="header-title">When an Herb Gets Labeled <span>Dangerous</span></div>
+    </div>
+  </div>
+  <nav class="tab-nav" role="tablist">
+    <button class="tab-btn active" onclick="switchTab('framework', this)" role="tab">
+      <span class="tab-dot" style="background:#a8d5b5"></span>Framework
+    </button>
+    <button class="tab-btn" onclick="switchTab('greentea', this)" role="tab">
+      <span class="tab-dot" style="background:#6cb28e"></span>Green Tea
+    </button>
+    <button class="tab-btn" onclick="switchTab('kratom', this)" role="tab">
+      <span class="tab-dot" style="background:#d4a056"></span>Kratom
+    </button>
+    <button class="tab-btn" onclick="switchTab('quickref', this)" role="tab">
+      <span class="tab-dot" style="background:#8eaad4"></span>Quick Reference
+    </button>
+  </nav>
+</header>
+
+<main class="main">
+
+<!-- ===================== FRAMEWORK ===================== -->
+<div id="panel-framework" class="panel active">
+  <div class="section-label">Section 1</div>
+  <h1 class="section-title">The Anatomy of a Safety Claim</h1>
+  <p class="section-intro">
+    "X herb is dangerous" is not a safety determination — it is an assertion about evidence. Before evaluating the claim, you need to identify what kind of evidence it rests on, whether causality was assessed, and which biases may have inflated the apparent signal. These questions are not skepticism for its own sake; they are the minimum clinical epistemic standard.
+  </p>
+
+  <h3 style="font-family:'Playfair Display',serif; font-size:16px; margin-bottom:0.75rem;">What type of evidence is the claim citing?</h3>
+
+  <div class="accordion-item" id="ev-cr">
+    <div class="accordion-header" onclick="toggleAccordion('ev-cr')">
+      <div class="accordion-left">
+        <div class="accordion-icon" style="background:#fdecea; color:var(--accent-red)">⚠</div>
+        <div>
+          <div class="accordion-title">Case Report or Cluster</div>
+          <div class="accordion-subtitle">Most common basis for herb safety headlines</div>
+        </div>
+      </div>
+      <div class="accordion-arrow">›</div>
+    </div>
+    <div class="accordion-body">
+      <p>A case report documents an adverse event in one patient. A cluster is several reports pointing toward a pattern. Case reports are signals, not proofs. They establish temporal association at best — the patient used the herb and then something happened. They cannot establish:</p>
+      <ul class="body-list">
+        <li>Causation (the herb caused the event)</li>
+        <li>Incidence (how often this happens per user)</li>
+        <li>Risk compared to baseline (did exposure actually increase rate?)</li>
+      </ul>
+      <div class="callout callout-amber mt-2">
+        <strong>Critical question:</strong> Was the product authenticated? Was causality formally assessed? Is the denominator known (how many people use this herb without incident)?
+      </div>
+    </div>
+  </div>
+
+  <div class="accordion-item" id="ev-db">
+    <div class="accordion-header" onclick="toggleAccordion('ev-db')">
+      <div class="accordion-left">
+        <div class="accordion-icon" style="background:#fdf0e0; color:var(--accent-amber)">📊</div>
+        <div>
+          <div class="accordion-title">Adverse Event Database Count (FAERS / CFSAN)</div>
+          <div class="accordion-subtitle">Raw report counts without denominator</div>
+        </div>
+      </div>
+      <div class="accordion-arrow">›</div>
+    </div>
+    <div class="accordion-body">
+      <p>Adverse event databases aggregate voluntary reports. A high count means the product has high use and/or high media attention around it — both inflate reporting independent of actual risk. There is no denominator (total users), no causality assessment, and systematic underreporting of routine events.</p>
+      <div class="callout callout-amber mt-2">
+        <strong>Critical question:</strong> Has reporting rate been adjusted for market exposure? Were any reports formally assessed for causality before inclusion?
+      </div>
+    </div>
+  </div>
+
+  <div class="accordion-item" id="ev-animal">
+    <div class="accordion-header" onclick="toggleAccordion('ev-animal')">
+      <div class="accordion-left">
+        <div class="accordion-icon" style="background:#e8eef8; color:var(--accent-blue)">🐭</div>
+        <div>
+          <div class="accordion-title">Animal Study</div>
+          <div class="accordion-subtitle">Preclinical signal, not clinical evidence</div>
+        </div>
+      </div>
+      <div class="accordion-arrow">›</div>
+    </div>
+    <div class="accordion-body">
+      <p>Animal hepatotoxicity studies use gavage (bolus delivery to a fasted animal) at doses that produce suprapharmacological human equivalents by body weight. The route, dose rate, fed/fasted state, and species-specific hepatic metabolism all interact. The preclinical failure rate for pharmaceutical candidates exceeds 90% — "no toxicity in rats" does not equal "safe in humans," and the inverse fails too.</p>
+      <p>Animal data is not useless. It generates coarse-grained signals worth investigating, and mechanistic data can be illuminating even when direct translation fails. The error is treating it as dispositive rather than preliminary.</p>
+      <div class="callout callout-blue mt-2">
+        <strong>Critical question:</strong> What was the route and dose? Does the dosing protocol bear any resemblance to human exposure patterns? Is the mechanism data interpretable across species?
+      </div>
+    </div>
+  </div>
+
+  <div class="accordion-item" id="ev-obs">
+    <div class="accordion-header" onclick="toggleAccordion('ev-obs')">
+      <div class="accordion-left">
+        <div class="accordion-icon" style="background:#e8f3ee; color:var(--accent-green)">👥</div>
+        <div>
+          <div class="accordion-title">Observational Cohort / Epidemiological Study</div>
+          <div class="accordion-subtitle">Stronger signal, confounding remains a problem</div>
+        </div>
+      </div>
+      <div class="accordion-arrow">›</div>
+    </div>
+    <div class="accordion-body">
+      <p>Cohort studies track exposed vs. unexposed populations over time. They can establish incidence and relative risk, but confounding is still a major challenge in herbal research — users of botanical products often differ from non-users in health behaviors, polypharmacy, and baseline health status. Population selection can inflate the apparent signal for a subgroup whose risk actually belongs to their underlying condition or concomitant medications.</p>
+      <div class="callout callout-green mt-2">
+        <strong>Critical question:</strong> Is the exposed population comparable to the unexposed? Were confounders (polypharmacy, baseline condition, preparation form) controlled?
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- CAUSALITY METHODS -->
+  <div class="section-label">Section 2</div>
+  <h2 class="section-title" style="font-size:20px;">Causality Assessment Methods</h2>
+  <p class="section-intro" style="margin-bottom:1.25rem;">
+    Causality assessment asks: given this adverse event, how likely is it that <em>this substance</em> was responsible? Three method classes exist — each with different data requirements and tradeoffs. Note: the Naranjo scale is not a "method" — it is one <strong>algorithmic implementation</strong>, designed for pharmaceuticals and generally inapplicable to botanicals without modification. The class matters more than any specific instrument.
+  </p>
+
+  <div class="grid-3">
+    <div class="method-card" id="mc-exp" onclick="toggleMethod('exp')">
+      <div class="method-header">
+        <div class="method-num">01</div>
+        <div>
+          <div class="method-name">Expert Judgment</div>
+          <span class="method-tag pill-gray">Subjective</span>
+        </div>
+      </div>
+      <div class="method-detail">
+        <p style="font-size:13px; color:var(--text-secondary); line-height:1.65;">A trained clinician or panel evaluates all available evidence and reaches a narrative probability judgment. No formal scoring system.</p>
+        <div class="pro-con-row">
+          <div class="pro"><strong>Works when</strong>Case is complex, data are sparse, or no validated tool fits the botanical context.</div>
+          <div class="con"><strong>Problem</strong>High inter-observer variability. The same case assigned to two experts may produce different conclusions.</div>
+        </div>
+      </div>
+    </div>
+    <div class="method-card" id="mc-prob" onclick="toggleMethod('prob')">
+      <div class="method-header">
+        <div class="method-num">02</div>
+        <div>
+          <div class="method-name">Probabilistic</div>
+          <span class="method-tag pill-blue">Bayesian</span>
+        </div>
+      </div>
+      <div class="method-detail">
+        <p style="font-size:13px; color:var(--text-secondary); line-height:1.65;">Uses prior probability data and case details to compute a likelihood score. Produces a number with an inherent measure of uncertainty.</p>
+        <div class="pro-con-row">
+          <div class="pro"><strong>Works when</strong>Sufficient population-level data exist for prior probability estimates.</div>
+          <div class="con"><strong>Problem</strong>Requires reliable data volume — precisely what is missing in most botanical adverse event cases. Rarely usable in practice.</div>
+        </div>
+      </div>
+    </div>
+    <div class="method-card" id="mc-alg" onclick="toggleMethod('alg')">
+      <div class="method-header">
+        <div class="method-num">03</div>
+        <div>
+          <div class="method-name">Algorithmic</div>
+          <span class="method-tag pill-amber">Structured</span>
+        </div>
+      </div>
+      <div class="method-detail">
+        <p style="font-size:13px; color:var(--text-secondary); line-height:1.65;">Structured decision tree with weighted yes/no criteria: temporal relationship, dechallenge, rechallenge, alternative explanation, overdose, prior reports.</p>
+        <div class="pro-con-row">
+          <div class="pro"><strong>Works when</strong>Standardization is needed; reduces inter-observer variability; can run on paper.</div>
+          <div class="con"><strong>Problem</strong>Criterion weighting is often arbitrary. No validated tool exists specifically for complex botanical preparations. Method matters more than implementation.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout callout-green mt-2">
+    <strong>The hybrid argument:</strong> The most defensible approach for botanical cases is often algorithmic triage (structured screening) followed by expert review for ambiguous results. The key: you must define the score threshold at which algorithmic output hands off to clinical expert assessment.
+  </div>
+
+  <hr class="divider">
+
+  <!-- DATA HIERARCHY -->
+  <div class="section-label">Section 3</div>
+  <h2 class="section-title" style="font-size:20px;">Data Hierarchy for Causality Assessment</h2>
+  <p style="color:var(--text-secondary); font-size:14px; margin-bottom:1.25rem;">Not all data elements carry equal weight. Before choosing a method, classify what you have.</p>
+
+  <div class="hierarchy-container">
+    <div class="hierarchy-level primary">
+      <div class="hierarchy-badge">Tier 1 — Immediate</div>
+      <div class="hierarchy-heading">Highest weight; essential for any causality judgment</div>
+      <div class="tag-list">
+        <span class="tag">Dechallenge (event resolves on discontinuation)</span>
+        <span class="tag">Rechallenge (event recurs on re-exposure)</span>
+        <span class="tag">Temporal relationship</span>
+        <span class="tag">Authenticated product (IPPSC)</span>
+        <span class="tag">Route and dose</span>
+        <span class="tag">Fed vs. fasted state</span>
+      </div>
+      <div class="callout callout-green mt-1" style="font-size:13px;">Dechallenge + positive rechallenge is the strongest possible causal signal in a single case. Rechallenge may be unethical depending on event severity — this judgment call is part of the assessment.</div>
+    </div>
+    <div class="hierarchy-level secondary">
+      <div class="hierarchy-badge">Tier 2 — Secondary</div>
+      <div class="hierarchy-heading">Necessary to exclude competing explanations</div>
+      <div class="tag-list">
+        <span class="tag">Alternative diagnoses excluded</span>
+        <span class="tag">Concomitant medications</span>
+        <span class="tag">Comorbidities</span>
+        <span class="tag">Prior use without reaction</span>
+        <span class="tag">Polypharmacy</span>
+        <span class="tag">Allergic vs. toxic vs. idiosyncratic distinction</span>
+      </div>
+    </div>
+    <div class="hierarchy-level tertiary">
+      <div class="hierarchy-badge">Tier 3 — Tertiary</div>
+      <div class="hierarchy-heading">Supportive but not sufficient alone</div>
+      <div class="tag-list">
+        <span class="tag">Mechanism plausibility</span>
+        <span class="tag">Prior published case reports</span>
+        <span class="tag">Animal study data</span>
+        <span class="tag">In vitro data</span>
+        <span class="tag">Regulatory assessments</span>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- BIAS TAXONOMY -->
+  <div class="section-label">Section 4</div>
+  <h2 class="section-title" style="font-size:20px;">Bias Sources in Herbal Pharmacovigilance</h2>
+
+  <div class="bias-grid">
+    <div class="bias-card" style="border-color:var(--accent-red)">
+      <div class="bias-name">Attribution Error</div>
+      <div class="bias-desc">A risk signal originating in a specific preparation form gets attributed to the parent herb. The category absorbs the signal.</div>
+      <div class="bias-example">GTE hepatotoxicity attributed to "green tea." Kratom overdose attributed to "kratom" rather than to adulterated product or polypharmacy.</div>
+    </div>
+    <div class="bias-card" style="border-color:var(--accent-amber)">
+      <div class="bias-name">Denominator Blindness</div>
+      <div class="bias-desc">Reporting counts are not adjusted for market exposure. A highly used herb accumulates more reports than a rarely used one regardless of actual risk per user.</div>
+      <div class="bias-example">Decades of daily green tea consumption across billions of drinkers vs. adverse event counts from supplements sold to a much smaller population.</div>
+    </div>
+    <div class="bias-card" style="border-color:var(--accent-blue)">
+      <div class="bias-name">Population Selection Bias</div>
+      <div class="bias-desc">The population using a product differs systematically from the population not using it. The baseline risk difference explains events attributed to the product.</div>
+      <div class="bias-example">Kratom users self-medicating opioid withdrawal have higher baseline risk for opioid-related adverse events regardless of kratom's pharmacology.</div>
+    </div>
+    <div class="bias-card" style="border-color:var(--accent-teal)">
+      <div class="bias-name">Authentication Failure as Confound</div>
+      <div class="bias-desc">If the implicated product was adulterated, misidentified, or contaminated, the adverse event belongs to the adulterant, not the labeled herb.</div>
+      <div class="bias-example">Germander substitution in skullcap; fentanyl-adulterated kratom products; solvent residuals in concentrates.</div>
+    </div>
+    <div class="bias-card" style="border-color:var(--accent-purple)">
+      <div class="bias-name">Reporter Bias</div>
+      <div class="bias-desc">Adverse events following media coverage are reported at higher rates. Reports cluster after publication of other reports, inflating apparent incidence.</div>
+      <div class="bias-example">Ephedra and kava adverse event clustering in the periods immediately following negative FDA bulletins and news coverage.</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- WHAT CASE REPORTS CAN/CANNOT DO -->
+  <div class="section-label">Section 5</div>
+  <h2 class="section-title" style="font-size:20px;">What a Case Report Can and Cannot Establish</h2>
+
+  <table class="signal-table">
+    <thead>
+      <tr>
+        <th>Action</th>
+        <th>Case Reports <span class="can">CAN</span></th>
+        <th>Case Reports <span class="cannot">CANNOT</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Causation</strong></td>
+        <td><span class="check">✓</span> Generate a causal hypothesis worth investigating</td>
+        <td><span class="x">✗</span> Prove that the herb caused the event</td>
+      </tr>
+      <tr>
+        <td><strong>Incidence</strong></td>
+        <td><span class="check">✓</span> Suggest a pattern worth monitoring</td>
+        <td><span class="x">✗</span> Establish how often this occurs per 1000 users</td>
+      </tr>
+      <tr>
+        <td><strong>Mechanism</strong></td>
+        <td><span class="check">✓</span> Generate mechanistic hypotheses (esp. with dechallenge data)</td>
+        <td><span class="x">✗</span> Confirm pharmacological mechanism</td>
+      </tr>
+      <tr>
+        <td><strong>Pharmacovigilance</strong></td>
+        <td><span class="check">✓</span> Trigger regulatory review and product surveillance</td>
+        <td><span class="x">✗</span> Characterize the full risk profile of an herb</td>
+      </tr>
+      <tr>
+        <td><strong>Market safety</strong></td>
+        <td><span class="check">✓</span> Signal authentication failures and adulteration patterns in the market</td>
+        <td><span class="x">✗</span> Distinguish herb risk from product quality failure</td>
+      </tr>
+      <tr>
+        <td><strong>Clinical guidance</strong></td>
+        <td><span class="check">✓</span> Identify specific preparation forms or contexts requiring caution</td>
+        <td><span class="x">✗</span> Support a blanket contraindication for an herb category</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ===================== GREEN TEA ===================== -->
+<div id="panel-greentea" class="panel">
+  <div class="section-label">Case Study · Green Tea</div>
+  <h1 class="section-title">Green Tea Is Hepatotoxic</h1>
+  <p class="section-intro">
+    This is the claim. Work through the analytical layers below to understand how it is simultaneously grounded in real data and systematically misleading — and what a clinically useful answer actually looks like.
+  </p>
+
+  <div class="layer-reveal">
+    <div class="layer-reveal-header">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-muted);">Step through the evidence layers</div>
+    </div>
+    <div class="layer-steps" id="gt-steps">
+      <button class="layer-step-btn active" onclick="switchLayer('gt', 0, this)">1 · The Claim</button>
+      <button class="layer-step-btn" onclick="switchLayer('gt', 1, this)">2 · Attribution Error</button>
+      <button class="layer-step-btn" onclick="switchLayer('gt', 2, this)">3 · Dose &amp; Rate</button>
+      <button class="layer-step-btn" onclick="switchLayer('gt', 3, this)">4 · Animal Data</button>
+      <button class="layer-step-btn" onclick="switchLayer('gt', 4, this)">5 · Authentication</button>
+      <button class="layer-step-btn" onclick="switchLayer('gt', 5, this)">6 · For Your Client</button>
+    </div>
+    <div class="layer-content">
+      <div class="layer-panel active" id="gt-layer-0">
+        <div class="layer-title">The Claim</div>
+        <p>Case reports of hepatotoxicity have accumulated in the literature associated with green tea products. FDA, EMA, and several national agencies have issued safety communications. The phrase "green tea hepatotoxicity" appears across the regulatory record and in clinical reference databases. A student searching for herb-drug interactions will find this signal quickly.</p>
+        <div class="callout callout-red">
+          <strong>The question is not whether reports exist.</strong> They do. The question is: hepatotoxicity from <em>what preparation</em>, at <em>what dose</em>, in <em>what context</em>, with <em>what product quality</em>?
+        </div>
+        <p>Before you accept or reject this claim, you need to interrogate the evidence base for those four variables. A claim that skips this interrogation is not a safety determination — it is pattern recognition dressed as analysis.</p>
+      </div>
+
+      <div class="layer-panel" id="gt-layer-1">
+        <div class="layer-title">The Attribution Error</div>
+        <p>The adverse event case reports that anchor "green tea hepatotoxicity" cluster in users of high-dose, concentrated <strong>EGCG extract supplements</strong> — not in drinkers of aqueous green tea infusion. The category label "green tea" absorbs a risk signal that belongs specifically to one preparation form.</p>
+        <div class="callout callout-amber">
+          <strong>The mechanism:</strong> Cases enter the literature and regulatory record tagged as "green tea." Media and secondary summaries pick up the label. The risk profile of concentrated supplements gets attributed to the herb category as a whole — including the aqueous infusion that most consumers are actually using.
+        </div>
+        <p>This matters because it changes the risk assessment entirely:</p>
+        <div class="dose-compare" style="grid-template-columns:1fr 1fr; margin:0.75rem 0 0;">
+          <div class="dose-col">
+            <div class="dose-header" style="background:var(--accent-green-light); color:var(--accent-green)">Aqueous Infusion (Tea)</div>
+            <div class="dose-body">Centuries of daily use across billions of people. No credible hepatotoxicity signal at normal consumption levels.</div>
+            <div class="dose-risk" style="background:var(--accent-green-light); color:var(--accent-green)">LOW SIGNAL</div>
+          </div>
+          <div class="dose-col">
+            <div class="dose-header" style="background:var(--accent-red-light); color:var(--accent-red)">Concentrated EGCG Extract</div>
+            <div class="dose-body">High-dose supplement taken fasted. Real but rare hepatotoxicity signal. Preparation-specific and dose-dependent.</div>
+            <div class="dose-risk" style="background:var(--accent-red-light); color:var(--accent-red)">REAL SIGNAL — CONTEXT-DEPENDENT</div>
+          </div>
+        </div>
+        <div class="callout callout-blue mt-2">
+          If you cannot name this mechanism, you can identify that the evidence is mixed — but you cannot explain <em>why it looks more alarming than it is</em>. That explanation is what clients need.
+        </div>
+      </div>
+
+      <div class="layer-panel" id="gt-layer-2">
+        <div class="layer-title">Dose and Rate</div>
+        <p>Two variables interact to determine hepatic exposure: total dose and rate of delivery.</p>
+        <div class="dose-compare">
+          <div class="dose-col">
+            <div class="dose-header" style="background:var(--accent-green-light); color:var(--accent-green)">Sipping tea</div>
+            <div class="dose-body">Distributed over 20–30 minutes. Low EGCG total. Fed state. Slow absorption rate. Peak plasma EGCG concentration: low.</div>
+          </div>
+          <div class="dose-col">
+            <div class="dose-header" style="background:var(--accent-amber-light); color:var(--accent-amber)">Extract capsule with food</div>
+            <div class="dose-body">Bolus delivery. Higher EGCG total. Fed state slows absorption. Peak plasma concentration: moderate, dose-dependent.</div>
+          </div>
+          <div class="dose-col">
+            <div class="dose-header" style="background:var(--accent-red-light); color:var(--accent-red)">Extract capsule, fasted</div>
+            <div class="dose-body">Bolus delivery. High EGCG. Fasted state substantially increases EGCG bioavailability — peak plasma concentration may breach hepatotoxic threshold.</div>
+          </div>
+        </div>
+        <p class="mt-2" style="font-size:14px;">The fasting variable is critical. Most weight-loss supplements using GTE are marketed for use on an empty stomach. This is not coincidental — fasted-state use is a major confound in the hepatotoxicity case clusters. Rate of absorption affects whether you exceed a hepatotoxic threshold at all.</p>
+        <div class="callout callout-amber">
+          <strong>The practical implication:</strong> The actionable variable for your client is not whether they use green tea — it is the form, dose, and fed/fasted context. A client taking a GTE-based weight loss supplement before breakfast is in a categorically different risk context than a client drinking green tea with meals.
+        </div>
+      </div>
+
+      <div class="layer-panel" id="gt-layer-3">
+        <div class="layer-title">Animal Data — Signal vs. Conclusion</div>
+        <p>Animal hepatotoxicity data for green tea extract exists. The NTP gavage protocol is the most cited. Here is what it actually tells you:</p>
+        <div class="kv-list mt-1">
+          <div class="kv-row"><span class="kv-key">Route</span><span class="kv-val">Gavage — bolus delivery directly to stomach of a fasted animal</span></div>
+          <div class="kv-row"><span class="kv-key">Dose</span><span class="kv-val">Up to 1,000 mg/kg — allometric scaling produces absurd human equivalents</span></div>
+          <div class="kv-row"><span class="kv-key">Fed state</span><span class="kv-val">Animals typically fasted pre-dosing — maximizes bioavailability</span></div>
+          <div class="kv-row"><span class="kv-key">Translation</span><span class="kv-val">Species-specific hepatic metabolism, route differences, dose rate differences all compound</span></div>
+        </div>
+        <div class="callout callout-blue mt-2">
+          <strong>The correct use of this data:</strong> Animal gavage studies are not useless — they confirm the bolus-dose, fasted-state risk hypothesis and identify dose thresholds worth investigating. They cannot establish human incidence. Applying them to a client who drinks tea is a translation error. Applying them to a client taking high-dose GTE fasted is mechanistically more relevant, though still indirect.
+        </div>
+        <p class="mt-1" style="font-size:13.5px; color:var(--text-secondary);">Apply the same interrogation to animal data that you apply to human case reports: What was the dose? What was the route? What was the preparation form? Does this exposure scenario map onto any realistic human use pattern?</p>
+      </div>
+
+      <div class="layer-panel" id="gt-layer-4">
+        <div class="layer-title">Authentication: The IPPSC Requirement</div>
+        <p>Authentication is not a regulatory checkbox. It is a logical precondition for interpreting any adverse event signal: if you do not know what was in the product, the event is unattributable.</p>
+        <p style="font-size:13px; color:var(--text-secondary); margin-bottom:0.75rem;">Click each element to see what it requires:</p>
+        <div class="ippsc-grid" id="gt-ippsc">
+          <div class="ippsc-item" onclick="toggleIPPSC(this)">
+            <div class="ippsc-letter">I</div>
+            <div class="ippsc-word">Identity</div>
+            <div class="ippsc-tooltip">Correct plant, preparation form, cultivar?</div>
+            <div class="ippsc-detail" style="font-size:12px; color:var(--accent-green); margin-top:4px;">Is this <em>Camellia sinensis</em> extract, confirmed by voucher specimen and/or chemical fingerprinting? Is the preparation form aqueous, or a concentrated lipid-soluble extract? Form determines what testing is even valid.</div>
+          </div>
+          <div class="ippsc-item" onclick="toggleIPPSC(this)">
+            <div class="ippsc-letter">P</div>
+            <div class="ippsc-word">Purity</div>
+            <div class="ippsc-tooltip">Free from adulteration?</div>
+            <div class="ippsc-detail" style="font-size:12px; color:var(--accent-green); margin-top:4px;">No substitutions, contaminants, or residual solvents from the extraction process. Germander has been found in products labeled as skullcap; similar substitutions cannot be assumed absent in GTE products.</div>
+          </div>
+          <div class="ippsc-item" onclick="toggleIPPSC(this)">
+            <div class="ippsc-letter">P</div>
+            <div class="ippsc-word">Potency</div>
+            <div class="ippsc-tooltip">Dose clinically meaningful?</div>
+            <div class="ippsc-detail" style="font-size:12px; color:var(--accent-green); margin-top:4px;">Is the amount of active constituent in this product sufficient to produce the reported effect? Label claims for standardization must be verified against actual analytical data.</div>
+          </div>
+          <div class="ippsc-item" onclick="toggleIPPSC(this)">
+            <div class="ippsc-letter">S</div>
+            <div class="ippsc-word">Strength</div>
+            <div class="ippsc-tooltip">Concentration standardized?</div>
+            <div class="ippsc-detail" style="font-size:12px; color:var(--accent-green); margin-top:4px;">What percentage EGCG? A "green tea extract" standardized to 90% EGCG is not the same product as one at 45%. Batch-to-batch variability is common without 21 CFR Part 111 cGMP enforcement.</div>
+          </div>
+          <div class="ippsc-item" onclick="toggleIPPSC(this)">
+            <div class="ippsc-letter">C</div>
+            <div class="ippsc-word">Composition</div>
+            <div class="ippsc-tooltip">Full constituent profile known?</div>
+            <div class="ippsc-detail" style="font-size:12px; color:var(--accent-green); margin-top:4px;">Total catechin profile, not just EGCG. Other tea polyphenols, extraction solvents, and carrier ingredients all affect the hepatic exposure profile. A paper reporting only EGCG content has composition data but is missing the other four IPPSC elements.</div>
+          </div>
+        </div>
+        <div class="callout callout-teal mt-2">
+          <strong>Key distinction:</strong> Purity and Identity are not the same thing. Purity means free from adulteration. Identity means it is actually what it claims to be — correct plant, correct preparation form. Both must be established before any toxicity signal is interpretable. A paper reporting DNA testing as identity confirmation, then noting the plant DNA was absent, is not an authentication failure — extraction methods denature DNA. Absence is expected and uninformative. Form determines what testing is even valid.
+        </div>
+      </div>
+
+      <div class="layer-panel" id="gt-layer-5">
+        <div class="layer-title">For Your Client</div>
+        <p>Academic writing represents the literature accurately; clinical communication calibrates a client's decision under uncertainty. These are different tasks. "The evidence is complex and further research is needed" is accurate as a peer-review statement. It is a failure mode in a clinical encounter.</p>
+        <div class="client-tool">
+          <div class="client-tool-title">Clinical Translation Tool — Green Tea</div>
+          <label class="form-label" for="gt-form-select">What is your client actually using?</label>
+          <select id="gt-form-select" onchange="updateGTAdvice()">
+            <option value="">— select the preparation form —</option>
+            <option value="tea">Brewed green tea (aqueous infusion), 2–5 cups/day</option>
+            <option value="extract-food">Concentrated GTE supplement, taken with food</option>
+            <option value="extract-fasted">Concentrated GTE supplement, taken on empty stomach</option>
+            <option value="weightloss">Weight-loss supplement containing GTE, label suggests fasted use</option>
+            <option value="unknown">Product is unlabeled / authentication unknown</option>
+          </select>
+          <div class="advice-output" id="gt-advice">
+            <div class="advice-label" style="color:var(--text-muted);">Select a preparation form above</div>
+            <div id="gt-advice-text" style="color:var(--text-muted); font-style:italic;">Your clinical translation will appear here.</div>
+          </div>
+        </div>
+        <div class="callout callout-green mt-2">
+          <strong>The three-part portable answer:</strong><br>
+          Aqueous green tea infusion at normal consumption: no credible hepatotoxicity signal.<br>
+          Concentrated EGCG supplements, high dose, fasted state: real but rare signal, preparation and dose dependent.<br>
+          <strong>Form of preparation is the actionable variable.</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== KRATOM ===================== -->
+<div id="panel-kratom" class="panel">
+  <div class="section-label">Case Study · Kratom</div>
+  <h1 class="section-title">Kratom Overdose Deaths</h1>
+  <p class="section-intro">
+    Case reports of kratom-associated fatalities and overdose events have accumulated in the adverse event database and clinical literature. The same analytical framework that dismantled "green tea is hepatotoxic" applies here — with some important structural differences that make this case more complex.
+  </p>
+
+  <div class="layer-reveal">
+    <div class="layer-reveal-header">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-muted);">Step through the evidence layers</div>
+    </div>
+    <div class="layer-steps" id="kr-steps">
+      <button class="layer-step-btn active" onclick="switchLayer('kr', 0, this)">1 · The Claim</button>
+      <button class="layer-step-btn" onclick="switchLayer('kr', 1, this)">2 · Polypharmacy</button>
+      <button class="layer-step-btn" onclick="switchLayer('kr', 2, this)">3 · Authentication</button>
+      <button class="layer-step-btn" onclick="switchLayer('kr', 3, this)">4 · Population</button>
+      <button class="layer-step-btn" onclick="switchLayer('kr', 4, this)">5 · Dose &amp; Form</button>
+      <button class="layer-step-btn" onclick="switchLayer('kr', 5, this)">6 · For Your Client</button>
+    </div>
+    <div class="layer-content">
+      <div class="layer-panel active" id="kr-layer-0">
+        <div class="layer-title">The Claim</div>
+        <p>FDA issued a public health advisory. The CDC database contains hundreds of kratom-associated reports. Several high-profile media cycles have presented kratom overdose deaths as evidence that kratom itself is acutely lethal. The phrase "kratom overdose" appears as if it is a pharmacological category equivalent to "opioid overdose."</p>
+        <div class="callout callout-red">
+          <strong>The claim requires the same interrogation:</strong> Deaths associated with kratom use in what context? With what concomitant substances? From what authenticated product? In what population?
+        </div>
+        <p>A systematic review of the kratom overdose literature (Stanciu et al., 2023) found that the overwhelming majority of fatal cases attributed to kratom involved concomitant substances — predominantly opioids, benzodiazepines, or both. The question of what kratom itself does pharmacologically is distinct from the question of what happens when it is used alongside these agents in a vulnerable population.</p>
+      </div>
+
+      <div class="layer-panel" id="kr-layer-1">
+        <div class="layer-title">Polypharmacy: The Dominant Confound</div>
+        <p>This is structurally different from the green tea case. For green tea, the primary attribution error was preparation form. For kratom, the primary confound in the fatal case cluster is polypharmacy.</p>
+        <div class="callout callout-red">
+          <strong>From Stanciu et al. (2023):</strong> The systematic review of kratom overdose risk found that kratom-only fatalities — cases in which kratom was the sole substance implicated — are rare. The majority of reported deaths involve multiple substances, with opioids and benzodiazepines appearing most frequently as co-ingestants.
+        </div>
+        <p>When applying the causality framework:</p>
+        <ul class="body-list">
+          <li>Dechallenge and rechallenge are generally unavailable in fatal cases</li>
+          <li>Alternative explanations (the co-ingestants) are frequently present and uncontrolled</li>
+          <li>The temporal relationship is often ambiguous when multiple substances are co-ingested</li>
+          <li>Toxicological confirmation of other substances was not always conducted or reported</li>
+        </ul>
+        <div class="callout callout-amber">
+          <strong>This is not exoneration.</strong> Kratom's partial opioid agonist activity at MOR is real pharmacology, and its interaction profile with opioids and benzodiazepines is a legitimate clinical concern. The point is not that kratom is safe — it is that "kratom killed this person" requires the same evidentiary standard as any other causality claim, and polypharmacy is a massive uncontrolled confound in the case cluster that has driven regulatory and media attention.
+        </div>
+      </div>
+
+      <div class="layer-panel" id="kr-layer-2">
+        <div class="layer-title">Authentication and Adulteration</div>
+        <p>The authentication problem for kratom is structurally identical to green tea — but with a higher-stakes adulterant profile.</p>
+        <div class="ippsc-grid" id="kr-ippsc">
+          <div class="ippsc-item" onclick="toggleIPPSC(this)">
+            <div class="ippsc-letter">I</div>
+            <div class="ippsc-word">Identity</div>
+            <div class="ippsc-tooltip">Mitragyna speciosa, not substitute?</div>
+            <div class="ippsc-detail" style="font-size:12px; color:var(--accent-green); margin-top:4px;"><em>Mitragyna speciosa</em> from Southeast Asia — but strain nomenclature ("Maeng Da," "Red Bali") is largely marketing language with no standardized botanical definition. The IPPSC standard requires chemical fingerprinting of alkaloid profile, not just species confirmation.</div>
+          </div>
+          <div class="ippsc-item" onclick="toggleIPPSC(this)">
+            <div class="ippsc-letter">P</div>
+            <div class="ippsc-word">Purity</div>
+            <div class="ippsc-tooltip">Free from synthetic opioids?</div>
+            <div class="ippsc-detail" style="font-size:12px; color:var(--accent-red); margin-top:4px;"><strong>Critical:</strong> Kratom products have been found adulterated with synthetic opioids including fentanyl and hydrocodone. A "kratom overdose" death in a product adulterated with fentanyl is a fentanyl death. This is not a hypothetical — it has been documented analytically.</div>
+          </div>
+          <div class="ippsc-item" onclick="toggleIPPSC(this)">
+            <div class="ippsc-letter">P</div>
+            <div class="ippsc-word">Potency</div>
+            <div class="ippsc-tooltip">Mitragynine content verified?</div>
+            <div class="ippsc-detail" style="font-size:12px; color:var(--accent-green); margin-top:4px;">Mitragynine and 7-hydroxymitragynine are the primary pharmacologically active alkaloids. Products vary enormously in alkaloid content depending on harvest conditions, processing, and storage. Label claims are not validated under current dietary supplement regulation.</div>
+          </div>
+          <div class="ippsc-item" onclick="toggleIPPSC(this)">
+            <div class="ippsc-letter">S</div>
+            <div class="ippsc-word">Strength</div>
+            <div class="ippsc-tooltip">Concentration consistent across products?</div>
+            <div class="ippsc-detail" style="font-size:12px; color:var(--accent-green); margin-top:4px;">"Kratom extract 15x" or "45x" describes extraction concentration, not alkaloid content. A consumer transitioning from plain leaf to extract may multiply their dose by 10–50x without intending to. This is a dose escalation problem, not a toxicology problem per se.</div>
+          </div>
+          <div class="ippsc-item" onclick="toggleIPPSC(this)">
+            <div class="ippsc-letter">C</div>
+            <div class="ippsc-word">Composition</div>
+            <div class="ippsc-tooltip">Full alkaloid profile characterized?</div>
+            <div class="ippsc-detail" style="font-size:12px; color:var(--accent-green); margin-top:4px;">Over 40 alkaloids have been identified in <em>M. speciosa</em>. Reporting mitragynine only is like reporting EGCG only for green tea — it captures one constituent of a complex preparation. The pharmacological interaction profile of the full alkaloid suite is not well characterized.</div>
+          </div>
+        </div>
+        <div class="callout callout-red mt-2">
+          When a case report of kratom overdose involves a product that was never authenticated, the signal belongs to whatever was actually in the product — not to kratom pharmacology. A toxicological finding of "kratom alkaloids present" does not rule out co-adulteration with pharmacologically active synthetic agents.
+        </div>
+      </div>
+
+      <div class="layer-panel" id="kr-layer-3">
+        <div class="layer-title">Population Selection Bias</div>
+        <p>The population using kratom in the United States is not representative of the general population, and this matters enormously for interpreting adverse event data.</p>
+        <div class="callout callout-amber">
+          A substantial proportion of kratom users are self-managing opioid withdrawal or seeking to reduce opioid consumption. This population has a higher baseline risk for opioid-related adverse events, co-ingestion of opioids and benzodiazepines, and death — regardless of kratom's pharmacology.
+        </div>
+        <p>This is the same structure as the green tea case — but with a higher-stakes version of the confound. If a person using kratom to manage heroin withdrawal dies with kratom alkaloids in their system, the causal question requires knowing:</p>
+        <ul class="body-list">
+          <li>Were other opioids or CNS depressants also present?</li>
+          <li>Was there relapse during the period of kratom use?</li>
+          <li>Was the kratom product authenticated?</li>
+          <li>Was the death mechanism consistent with kratom's pharmacology or with an opioid/benzodiazepine toxidrome?</li>
+        </ul>
+        <div class="callout callout-blue">
+          <strong>Reporter bias applies here too:</strong> Users who die are more likely to be in crisis and have complex substance histories. Users who successfully use kratom for harm reduction and do not die are systematically absent from the adverse event record. The denominator — total kratom users — is poorly characterized, which makes incidence estimates unreliable.
+        </div>
+      </div>
+
+      <div class="layer-panel" id="kr-layer-4">
+        <div class="layer-title">Dose and Preparation Form</div>
+        <p>Traditional kratom use in Southeast Asia involves brewing the fresh or dried leaf as a tea, consumed at culturally defined doses within a social and ritual context. This is pharmacologically different from the dominant US use patterns:</p>
+        <div class="dose-compare">
+          <div class="dose-col">
+            <div class="dose-header" style="background:var(--accent-green-light); color:var(--accent-green)">Traditional Leaf Tea</div>
+            <div class="dose-body">Aqueous extraction. Cultural dose constraints. Slow alkaloid absorption. Analogous to green tea infusion — low preparation risk profile relative to extract products.</div>
+            <div class="dose-risk" style="background:var(--accent-green-light); color:var(--accent-green)">LOW PREPARATION RISK</div>
+          </div>
+          <div class="dose-col">
+            <div class="dose-header" style="background:var(--accent-amber-light); color:var(--accent-amber)">Powder (Toss-and-Wash)</div>
+            <div class="dose-body">Variable dose. No social constraint. Higher bioavailability than tea. User-determined dosing with no standardization. Dose escalation common with tolerance.</div>
+            <div class="dose-risk" style="background:var(--accent-amber-light); color:var(--accent-amber)">MODERATE — DOSE-DEPENDENT</div>
+          </div>
+          <div class="dose-col">
+            <div class="dose-header" style="background:var(--accent-red-light); color:var(--accent-red)">Concentrated Extract Product</div>
+            <div class="dose-body">High alkaloid concentration. "X-factor" labeling is not standardized. A user transitioning from leaf to extract may increase actual alkaloid dose by orders of magnitude.</div>
+            <div class="dose-risk" style="background:var(--accent-red-light); color:var(--accent-red)">HIGH SIGNAL — EXTRACT CONTEXT</div>
+          </div>
+        </div>
+        <div class="callout callout-amber mt-2">
+          The parallel to green tea is direct: the adverse event cluster concentrates in extract and high-dose powder users, not in users of traditional leaf preparations. "Kratom is dangerous" attributes a preparation-specific and context-specific signal to the herb category as a whole.
+        </div>
+      </div>
+
+      <div class="layer-panel" id="kr-layer-5">
+        <div class="layer-title">For Your Client</div>
+        <p>Kratom exists in a complicated regulatory and clinical space. It is not a scheduled substance federally (as of 2025), but several states have restricted it. The adverse event signal is real — it is simply not distributed where the media coverage implies it is.</p>
+        <div class="client-tool">
+          <div class="client-tool-title">Clinical Translation Tool — Kratom</div>
+          <label class="form-label" for="kr-form-select">What is your client's use context?</label>
+          <select id="kr-form-select" onchange="updateKRAdvice()">
+            <option value="">— select the context —</option>
+            <option value="curious">Occasional curiosity use, no opioid history, plain leaf powder</option>
+            <option value="withdrawal">Using to manage opioid withdrawal symptoms</option>
+            <option value="extract">Using kratom extract products or concentrated shots</option>
+            <option value="poly">Using alongside prescription opioids, benzodiazepines, or alcohol</option>
+            <option value="unknown">Unknown product source, unauthenticated</option>
+          </select>
+          <div class="advice-output" id="kr-advice">
+            <div class="advice-label" style="color:var(--text-muted);">Select a use context above</div>
+            <div id="kr-advice-text" style="color:var(--text-muted); font-style:italic;">Your clinical translation will appear here.</div>
+          </div>
+        </div>
+        <div class="callout callout-amber mt-2">
+          <strong>Parallel to green tea — different stakes:</strong><br>
+          Traditional/low-dose leaf preparation, no CNS depressant co-use: limited credible acute fatality signal from kratom pharmacology alone.<br>
+          Extract products or polypharmacy context: real and serious risk, preparation/context dependent.<br>
+          Adulterated product: the risk is the adulterant — authentication is non-negotiable before any risk estimate.<br>
+          <strong>Form, context, and product quality are the actionable variables.</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- SIDE BY SIDE COMPARISON -->
+  <div class="section-label">Parallel Analysis</div>
+  <h2 class="section-title" style="font-size:20px;">Green Tea vs. Kratom: Structural Parallels</h2>
+  <p style="color:var(--text-secondary); font-size:14px; margin-bottom:1rem;">The same analytical architecture applies to both cases. The variables differ; the framework is identical.</p>
+
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th style="width:160px;">Variable</th>
+        <th style="color:#a8d5b5">Green Tea</th>
+        <th style="color:#d4a056">Kratom</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Primary attribution error</td>
+        <td>Preparation form: EGCG extract risk attributed to "green tea" category</td>
+        <td>Polypharmacy: co-ingestant risk attributed to "kratom" category</td>
+      </tr>
+      <tr>
+        <td>Authentication confound</td>
+        <td>Adulteration, solvent residuals, IPPSC failure in case-report products</td>
+        <td>Synthetic opioid adulteration (including fentanyl) in kratom products</td>
+      </tr>
+      <tr>
+        <td>Dose-form gradient</td>
+        <td>Tea → extract with food → extract fasted (increasing risk)</td>
+        <td>Leaf tea → powder → extract (increasing concentration and dose uncertainty)</td>
+      </tr>
+      <tr>
+        <td>Population confound</td>
+        <td>Weight-loss supplement users have different health profiles from tea drinkers</td>
+        <td>Opioid withdrawal self-medication context; baseline risk is elevated independent of kratom</td>
+      </tr>
+      <tr>
+        <td>Animal data issue</td>
+        <td>Gavage, fasted, suprapharmacological doses; poor translation to human infusion</td>
+        <td>Rodent alkaloid studies; route and dose problems; MOR binding confirmed but overdose mechanism in humans involves polypharmacy context</td>
+      </tr>
+      <tr>
+        <td>Denominator problem</td>
+        <td>Billions of daily tea drinkers; supplement users much smaller but poorly characterized</td>
+        <td>Total US kratom users poorly characterized; fatal cases not adjusted for exposure prevalence</td>
+      </tr>
+      <tr>
+        <td>Signal assessment</td>
+        <td>Real signal in EGCG extract + fasted context; near-zero signal for aqueous infusion</td>
+        <td>Real signal in extract + polypharmacy context; signal in traditional use context is limited and poorly separated from confounders</td>
+      </tr>
+      <tr>
+        <td>Clinical bottom line</td>
+        <td>Preparation form is the actionable variable</td>
+        <td>Preparation form + co-ingestion context are both actionable variables</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ===================== QUICK REF ===================== -->
+<div id="panel-quickref" class="panel">
+  <div class="section-label">Quick Reference</div>
+  <h1 class="section-title">Portable Checklist</h1>
+  <p class="section-intro">Apply these eight questions to any claim that an herb is dangerous. They are not a shortcut — they are the minimum analytical standard. Click each item as you work through it.</p>
+
+  <div style="border:1px solid var(--border); border-radius:10px; overflow:hidden;">
+    <ul class="checklist" id="main-checklist">
+      <li onclick="toggleCheck(this)">
+        <span class="cl-check">✓</span>
+        <div class="cl-text">
+          <strong>1. What type of evidence is the claim citing?</strong>
+          <div class="cl-sub">Case report? AE database count? Animal study? Observational cohort? Media coverage of another study? Each has a different evidentiary weight and a different set of validity threats.</div>
+        </div>
+      </li>
+      <li onclick="toggleCheck(this)">
+        <span class="cl-check">✓</span>
+        <div class="cl-text">
+          <strong>2. Was causality formally assessed?</strong>
+          <div class="cl-sub">Which method class? What data were available? Was dechallenge documented? Was rechallenge attempted (or was this clinically unacceptable)? Was the product authenticated?</div>
+        </div>
+      </li>
+      <li onclick="toggleCheck(this)">
+        <span class="cl-check">✓</span>
+        <div class="cl-text">
+          <strong>3. What preparation form does the evidence implicate?</strong>
+          <div class="cl-sub">Aqueous infusion vs. concentrated extract vs. standardized isolate are not interchangeable. A risk signal in one preparation cannot be assumed to transfer to another. Preparation form is frequently the hidden variable.</div>
+        </div>
+      </li>
+      <li onclick="toggleCheck(this)">
+        <span class="cl-check">✓</span>
+        <div class="cl-text">
+          <strong>4. Was the product authenticated to IPPSC standard?</strong>
+          <div class="cl-sub">Identity, Purity, Potency, Strength, Composition — all five elements. A paper that demonstrates only one is not authentication. Without authentication, the adverse event may belong to an adulterant or contaminant, not the labeled herb.</div>
+        </div>
+      </li>
+      <li onclick="toggleCheck(this)">
+        <span class="cl-check">✓</span>
+        <div class="cl-text">
+          <strong>5. What was the dose and rate of exposure?</strong>
+          <div class="cl-sub">Bolus ≠ sipping. Fasted ≠ fed. Animal gavage ≠ human oral consumption. Does the exposure scenario in the evidence map onto any realistic use pattern for your client? Rate of absorption determines peak plasma concentration and whether toxic thresholds are breached.</div>
+        </div>
+      </li>
+      <li onclick="toggleCheck(this)">
+        <span class="cl-check">✓</span>
+        <div class="cl-text">
+          <strong>6. Were alternative explanations adequately excluded?</strong>
+          <div class="cl-sub">Polypharmacy, concomitant medications, comorbidities, adulteration, misidentification, underlying disease. Any of these can be the actual cause of the event attributed to the herb. Were they assessed or just listed as "possible confounders"?</div>
+        </div>
+      </li>
+      <li onclick="toggleCheck(this)">
+        <span class="cl-check">✓</span>
+        <div class="cl-text">
+          <strong>7. Is the denominator known?</strong>
+          <div class="cl-sub">How many people use this herb without incident? Without exposure prevalence data, you cannot calculate incidence. A high absolute count of adverse event reports means nothing without a denominator. Commonly used herbs will always have more reports than rarely used ones.</div>
+        </div>
+      </li>
+      <li onclick="toggleCheck(this)">
+        <span class="cl-check">✓</span>
+        <div class="cl-text">
+          <strong>8. What does the signal mean for THIS client?</strong>
+          <div class="cl-sub">Is your client's use pattern the one implicated in the evidence? "The evidence is mixed" is not a clinical answer. Identify the preparation form, dose context, and co-use context specific to your client, then map the evidence to those variables. That is your clinical translation.</div>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.75rem;">
+    <div>
+      <div class="progress-bar" style="width:220px;"><div class="progress-fill" id="qr-progress-fill"></div></div>
+      <div class="progress-label" id="qr-progress-label">0 of 8 questions worked through</div>
+    </div>
+    <button class="btn-outline" onclick="resetChecklist()">Reset</button>
+  </div>
+
+  <hr class="divider">
+
+  <div class="grid-2 mt-2">
+    <div class="card">
+      <div class="card-title" style="font-size:14px; font-family:'IBM Plex Mono',monospace; text-transform:uppercase; letter-spacing:0.06em;">Causality Method Classes</div>
+      <div style="margin-top:0.75rem;">
+        <div style="margin-bottom:0.75rem; font-size:13.5px;">
+          <span class="pill pill-gray">Expert Judgment</span> — Narrative probability; flexible; high inter-observer variability. Best for sparse or complex botanical cases.
+        </div>
+        <div style="margin-bottom:0.75rem; font-size:13.5px;">
+          <span class="pill pill-blue">Probabilistic</span> — Bayesian likelihood; rigorous; requires data volume rarely achievable in botanical pharmacovigilance.
+        </div>
+        <div style="font-size:13.5px;">
+          <span class="pill pill-amber">Algorithmic</span> — Structured decision tree; most widely used; criterion weighting often arbitrary. Naranjo is one implementation — designed for pharmaceuticals. The method class matters more than any instrument.
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="font-size:14px; font-family:'IBM Plex Mono',monospace; text-transform:uppercase; letter-spacing:0.06em;">IPPSC Authentication</div>
+      <div style="margin-top:0.75rem; display:flex; flex-direction:column; gap:0.4rem; font-size:13.5px;">
+        <div><span class="pill pill-teal">I</span> <strong>Identity</strong> — Correct plant, correct preparation form, voucher + chemical confirmation</div>
+        <div><span class="pill pill-teal">P</span> <strong>Purity</strong> — Free from adulteration, contaminants, solvent residuals</div>
+        <div><span class="pill pill-teal">P</span> <strong>Potency</strong> — Active constituent at clinically meaningful dose</div>
+        <div><span class="pill pill-teal">S</span> <strong>Strength</strong> — Concentration standardized and batch-consistent</div>
+        <div><span class="pill pill-teal">C</span> <strong>Composition</strong> — Full constituent profile characterized, not just one marker</div>
+      </div>
+      <div class="footnote" style="margin-top:0.75rem;">A source claiming authentication that demonstrates only one element (e.g., DNA barcoding for Identity alone) does not satisfy the standard. All five must be addressed for the toxicity signal to be interpretable.</div>
+    </div>
+  </div>
+
+  <div class="callout callout-green mt-3">
+    <strong>The portable three-part answer for any herb-safety claim:</strong><br>
+    (1) What does the evidence actually implicate — herb category, preparation form, or specific use context?<br>
+    (2) Were causality and authentication standards met in that evidence?<br>
+    (3) Does your client's actual use pattern match the implicated scenario?<br>
+    Only after answering all three can you make a clinically useful risk statement.
+  </div>
+
+  <p class="footnote mt-3">
+    Framework grounded in: Barnes (2003); Meyboom et al. (1997); Edwards (2017); Théophile et al. (2010, 2012); Agbabiaka et al. (2008); Stanciu et al. (2023); EFSA/EMA GTE assessments; WHO-UMC causality criteria. IPPSC as applied in botanical pharmacovigilance per USP and regulatory guidance.
+  </p>
+</div>
+
+</main>
+
+<script>
+  // TAB SWITCHING
+  function switchTab(name, btn) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('panel-' + name).classList.add('active');
+    if (btn) btn.classList.add('active');
+  }
+
+  // ACCORDION
+  function toggleAccordion(id) {
+    const el = document.getElementById(id);
+    el.classList.toggle('open');
+  }
+
+  // METHOD CARDS
+  function toggleMethod(name) {
+    const card = document.getElementById('mc-' + name);
+    const wasActive = card.classList.contains('active');
+    document.querySelectorAll('.method-card').forEach(c => c.classList.remove('active'));
+    if (!wasActive) card.classList.add('active');
+  }
+
+  // LAYER PANELS
+  function switchLayer(prefix, index, btn) {
+    document.querySelectorAll('#' + prefix + '-layer-' + 0).forEach(_ => {});
+    // hide all panels for this prefix
+    let i = 0;
+    while (document.getElementById(prefix + '-layer-' + i)) {
+      document.getElementById(prefix + '-layer-' + i).classList.remove('active');
+      i++;
+    }
+    document.getElementById(prefix + '-layer-' + index).classList.add('active');
+    // update buttons
+    const container = document.getElementById(prefix + '-steps');
+    container.querySelectorAll('.layer-step-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  // IPPSC TOGGLE
+  function toggleIPPSC(el) {
+    el.classList.toggle('checked');
+  }
+
+  // GREEN TEA ADVICE
+  const gtAdvice = {
+    'tea': {
+      label: 'AQUEOUS INFUSION', color: 'var(--accent-green)',
+      text: 'No credible hepatotoxicity signal at normal consumption levels. This preparation form is essentially absent from the adverse event case cluster. Centuries of daily use across billions of people support a low-risk profile. There is no evidence-based reason to advise against this use.'
+    },
+    'extract-food': {
+      label: 'EXTRACT WITH FOOD', color: 'var(--accent-amber)',
+      text: 'A real but preparation-specific signal exists for concentrated GTE supplements. Taking with food reduces EGCG bioavailability and peak plasma concentration. At standard supplement doses, the hepatotoxicity risk is low but not zero — it is dose-dependent and preparation-dependent. Discuss dose, product source, and authentication with your client.'
+    },
+    'extract-fasted': {
+      label: 'EXTRACT FASTED — ELEVATED CONCERN', color: 'var(--accent-red)',
+      text: 'This is the scenario implicated in the hepatotoxicity case cluster. Taking concentrated GTE on an empty stomach substantially increases EGCG bioavailability and peak plasma concentration. The risk is real, rare, preparation-specific, and context-dependent. Advise against fasted use of concentrated EGCG supplements. If the client is using for a specific purpose (weight management), discuss alternatives and the dose-form issue directly.'
+    },
+    'weightloss': {
+      label: 'WEIGHT LOSS SUPPLEMENT — ELEVATED CONCERN', color: 'var(--accent-red)',
+      text: 'Weight-loss supplements containing GTE are frequently marketed for fasted use (before meals or in the morning). This positions the user in exactly the scenario associated with the hepatotoxicity signal: high-dose EGCG extract, bolus delivery, empty stomach. Ask your client whether they are taking it with or without food. Authentication of the specific product is also a concern — these products vary widely in formulation and quality.'
+    },
+    'unknown': {
+      label: 'UNAUTHENTICATED PRODUCT — UNABLE TO ASSESS', color: 'var(--text-muted)',
+      text: 'If the product cannot be authenticated to IPPSC standard, the risk signal is uninterpretable. An adverse event from an unauthenticated product may reflect the labeled ingredient, an adulterant, a solvent residual, or a misidentified botanical. Risk assessment requires a known starting point. Ask your client for the product label, manufacturer COA, and preparation form before proceeding.'
+    }
+  };
+
+  function updateGTAdvice() {
+    const val = document.getElementById('gt-form-select').value;
+    const output = document.getElementById('gt-advice');
+    const textEl = document.getElementById('gt-advice-text');
+    if (!val || !gtAdvice[val]) {
+      output.querySelector('.advice-label').style.color = 'var(--text-muted)';
+      output.querySelector('.advice-label').textContent = 'Select a preparation form above';
+      textEl.style.color = 'var(--text-muted)';
+      textEl.style.fontStyle = 'italic';
+      textEl.textContent = 'Your clinical translation will appear here.';
+      return;
+    }
+    const a = gtAdvice[val];
+    const label = output.querySelector('.advice-label');
+    label.textContent = a.label;
+    label.style.color = a.color;
+    textEl.textContent = a.text;
+    textEl.style.color = 'var(--text-primary)';
+    textEl.style.fontStyle = 'normal';
+  }
+
+  // KRATOM ADVICE
+  const krAdvice = {
+    'curious': {
+      label: 'LIMITED ACUTE RISK SIGNAL — PREPARATION-SPECIFIC CONCERNS APPLY', color: 'var(--accent-amber)',
+      text: 'In the absence of opioid history, CNS depressant co-use, or extract products, the acute fatality signal attributable to kratom pharmacology alone is limited in the case literature. Dependence and tolerance development with regular use are real concerns at this dose level. Product authentication is critical — adulteration with synthetic opioids has been documented in kratom products and cannot be assumed absent.'
+    },
+    'withdrawal': {
+      label: 'COMPLEX RISK PICTURE — CONTEXT-DEPENDENT', color: 'var(--accent-amber)',
+      text: 'This is a high-stakes clinical context. Kratom\'s partial MOR agonism has real value for withdrawal symptom management in some patients. The risk is not primarily from kratom pharmacology in isolation — it is from the underlying vulnerability, potential relapse and co-ingestion, and the use of unregulated, unauthenticated products. The adverse event signal in this population is substantially driven by polypharmacy and population-level baseline risk, not kratom alone. This does not make kratom safe in this context; it makes the risk picture more complex than "kratom caused the harm."'
+    },
+    'extract': {
+      label: 'ELEVATED CONCERN — DOSE-FORM RISK', color: 'var(--accent-red)',
+      text: 'Extract products ("15x," "45x") concentrate alkaloids substantially above the dose range of traditional leaf use. The dose-effect relationship for mitragynine spans stimulant (low dose) to opioid-like (high dose) — extract use positions the client in the upper dose range with significant uncertainty about actual alkaloid content. Advise strongly against extract use. Discuss the dose-concentration relationship directly. Product authentication is critical and extract products have a higher adulteration risk profile.'
+    },
+    'poly': {
+      label: 'HIGH CONCERN — POLYPHARMACY IS THE DOMINANT RISK FACTOR', color: 'var(--accent-red)',
+      text: 'This is the scenario most represented in the fatality case cluster. Kratom\'s partial MOR agonism combined with opioids, benzodiazepines, or significant alcohol creates additive CNS depression and respiratory depression risk. This is not a theoretical concern — it is the pharmacological mechanism of most reported kratom-associated deaths. The risk here is not primarily about kratom\'s intrinsic toxicology; it is the interaction profile. Advise strongly against concurrent use. This is a scope-of-practice conversation.'
+    },
+    'unknown': {
+      label: 'UNAUTHENTICATED PRODUCT — RISK UNASSESSABLE', color: 'var(--text-muted)',
+      text: 'Kratom products without authentication present an unassessable risk profile. Fentanyl and hydrocodone adulteration have been analytically confirmed in kratom products circulating in the US market. A risk assessment based on kratom pharmacology cannot be applied to a product whose actual contents are unknown. Authentication is a prerequisite for any clinical risk estimate. If the product source is unverified, the conversation should focus on that before any other risk discussion.'
+    }
+  };
+
+  function updateKRAdvice() {
+    const val = document.getElementById('kr-form-select').value;
+    const output = document.getElementById('kr-advice');
+    const textEl = document.getElementById('kr-advice-text');
+    if (!val || !krAdvice[val]) {
+      output.querySelector('.advice-label').style.color = 'var(--text-muted)';
+      output.querySelector('.advice-label').textContent = 'Select a use context above';
+      textEl.style.color = 'var(--text-muted)';
+      textEl.style.fontStyle = 'italic';
+      textEl.textContent = 'Your clinical translation will appear here.';
+      return;
+    }
+    const a = krAdvice[val];
+    const label = output.querySelector('.advice-label');
+    label.textContent = a.label;
+    label.style.color = a.color;
+    textEl.textContent = a.text;
+    textEl.style.color = 'var(--text-primary)';
+    textEl.style.fontStyle = 'normal';
+  }
+
+  // MAIN CHECKLIST
+  function toggleCheck(li) {
+    li.classList.toggle('checked');
+    updateChecklistProgress();
+  }
+
+  function updateChecklistProgress() {
+    const items = document.querySelectorAll('#main-checklist li');
+    const checked = document.querySelectorAll('#main-checklist li.checked').length;
+    const total = items.length;
+    const pct = Math.round((checked / total) * 100);
+    document.getElementById('qr-progress-fill').style.width = pct + '%';
+    document.getElementById('qr-progress-fill').style.background = pct >= 75 ? 'var(--accent-green)' : pct >= 40 ? 'var(--accent-amber)' : 'var(--accent-blue)';
+    document.getElementById('qr-progress-label').textContent = checked + ' of ' + total + ' questions worked through';
+  }
+
+  function resetChecklist() {
+    document.querySelectorAll('#main-checklist li').forEach(li => li.classList.remove('checked'));
+    updateChecklistProgress();
+  }
+
+  // Initialize first method card open
+  document.getElementById('mc-exp').classList.add('active');
+</script>
+</body>
+</html>
