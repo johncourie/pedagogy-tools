@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: system-ui, sans-serif; background: #f8f7f4; color: #1a1a18; }
+input[type=range] { width: 100%; cursor: pointer; }
+input[type=number], input[type=text], select {
+  width: 100%; padding: 7px 10px;
+  border: 1px solid #d0cec8; border-radius: 7px;
+  background: #fff; color: #1a1a18;
+  font-size: 14px; font-family: inherit;
+}
+input[type=number]:focus, input[type=text]:focus, select:focus {
+  outline: none; border-color: #5a7a3a;
+}
+.def-word {
+  border-bottom: 1px dotted #5a7a3a;
+  cursor: help;
+  color: inherit;
+}
+.def-tooltip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1e2418;
+  color: #e8ead4;
+  font-size: 12px;
+  line-height: 1.55;
+  padding: 8px 12px;
+  border-radius: 8px;
+  width: 230px;
+  z-index: 999;
+  pointer-events: none;
+  border: 1px solid #3a4a28;
+}
+.def-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: #1e2418;
+}
+.def-wrap {
+  position: relative;
+  display: inline-block;
+  line-height: inherit;
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
+
+const GLOSSARY = {
+  reflexogenic: 'Acting through reflex-arc stimulation rather than systemic concentration. A threshold dose triggers a physiological response via the nervous system. Effect is threshold-dependent — not proportional to dose. More past threshold adds adverse effect, not therapeutic effect.',
+  pharmacokinetic: 'Relating to absorption, distribution, metabolism, and excretion of a substance. In dosing: effect is driven by achieving and sustaining therapeutic serum concentration at the target tissue. Classic sigmoidal dose-response curve.',
+  DHE: 'Dry Herb Equivalent — the mass of dried plant material a given extract dose corresponds to. The lingua franca of herbal dosing comparison: allows tinctures, capsules, and clinical extracts to be compared on a single scale.',
+  menstruum: 'The solvent used in an extraction — water, ethanol, glycerin, or a combination. Solvent polarity determines which constituents are extracted. A glycerite and a 70% ethanol tincture are not equivalent preparations of the same herb.',
+  'extraction ratio': 'ER — ratio of starting herb weight to final extract weight. A 5:1 ER means 5 g dried herb yielded 1 g extract. Determines DHE per dose. If unknown, quantitative comparison to other preparations is limited.',
+  'standardization': 'SE% — the percentage of a defined marker compound in a standardized extract. A 20% extract delivers 200 mg marker per gram. Marker compounds may or may not be the pharmacologically active constituents.',
+  trophorestorative: 'An herb that nourishes, restores, and rebuilds a depleted organ system over sustained use. Effect requires weeks to months; not appropriate for acute application. Classic examples: oat straw, milky oats, nettles.',
+  'specific medicine': 'Eclectic practice of matching a single herb precisely to a specific symptom picture or tissue state, typically at drop doses, for rapid physiological response through reflex arc stimulation. Distinct from bulk pharmacokinetic dosing.',
+  bioavailability: 'The fraction of an administered dose reaching systemic circulation in an active form. Affected by preparation, solvent, food matrix, first-pass metabolism, and route of administration. Oral bioavailability varies substantially across preparations.',
+  tincture: 'A hydroalcoholic extract of plant material. Ratio expresses grams of herb per mL of menstruum — 1:5 means 1 g herb in 5 mL solvent, yielding 200 mg DHE per mL. Ethanol percentage determines constituent profile.',
+  rasayana: 'Ayurvedic category of tonifying, rejuvenating preparations used long-term to build ojas (vital essence) and support longevity. Functional analog to the Western nourishing tonic tradition.',
+  physiomedicalism: 'A 19th-century North American herbal tradition emphasizing vital force, tissue states, and the use of specific botanical agents to correct functional derangements. Lineage ancestor to modern Western herbalism.',
+  'confidence tier': 'A heuristic rating (0–3) of source reliability based on reproducibility and study design — used to weight evidence in triangulation, not to exclude lower tiers. Context can elevate or lower effective confidence regardless of category.',
+  triangulation: 'The practice of deriving a dosing range by comparing multiple independent sources across evidence tiers. No single source is sufficient. The synthesis — where sources agree, conflict, and why — is the clinical argument.',
+  posology: 'The branch of pharmacology concerned with doses: their magnitude, frequency, duration, and the principles governing their selection. From Greek posos (how much) + logos (study).',
+  'nourishing infusion': 'Susun Weed\'s method: 1 oz dried herb steeped in 1 quart of water, covered, for 4–8 hours or overnight. Extracts mineral and nutritional constituents that are lost in short infusions or in alcohol preparations.',
+  'tissue state': 'A Physiomedicalist and Eclectic functional category describing the quality of activity in a tissue — e.g., lax/tense, hot/cold, damp/dry. Guides herb selection within the pharmacologically safe set. Distinct from biomedical diagnosis.',
+  orthogonal: 'Independent, non-redundant dimensions of analysis. Two axes are orthogonal when movement along one implies nothing about position on the other. Mechanism, context, and role are orthogonal in dosing: knowing how an herb acts tells you nothing about whether it is in a simple or formula, or what role it occupies there.',
+  effector: 'In formula architecture: an herb whose role is to direct, amplify, or refine the core herb\'s action toward a specific tissue, organ system, or physiological target. Does not need to be independently therapeutic at its formula dose — it needs to do its directional job at the dose allocated.',
+  catalytic: 'Producing a significant physiological effect at a sub-threshold, sub-pharmacokinetic dose by activating or amplifying another process — circulatory, reflexogenic, or enzymatic. Catalytic herbs in a formula (kickers) operate through threshold mechanisms, not serum concentration. More past the threshold adds adverse effect, not potency.',
+};
+
+function Def({ term, display }) {
+  const [show, setShow] = useState(false);
+  const def = GLOSSARY[term];
+  if (!def) return <span>{display || term}</span>;
+  return (
+    <span className="def-wrap"
+      onMouseEnter={() => setShow(true)}
+      onMouseLeave={() => setShow(false)}>
+      <span className="def-word">{display || term}</span>
+      {show && (
+        <span className="def-tooltip">
+          <span style={{ color: '#8aba5a', display: 'block', marginBottom: 4, fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 600 }}>{term}</span>
+          {def}
+        </span>
+      )}
+    </span>
+  );
+}
+
+const COLORS = {
+  green: { bg: '#eef4e6', border: '#5a7a3a', text: '#2d4a18', mid: '#7aaa4a', dark: '#1e3210' },
+  amber: { bg: '#fdf3e0', border: '#b07020', text: '#6b3e0a', mid: '#d4902a', dark: '#4a2808' },
+  purple: { bg: '#f0eeff', border: '#6050c0', text: '#302070', mid: '#8070d8', dark: '#1e1050' },
+  coral: { bg: '#fdf0ec', border: '#c05030', text: '#6a2810', mid: '#d87050', dark: '#4a1808' },
+  teal: { bg: '#e8f6f2', border: '#2a8a68', text: '#0e4a38', mid: '#4aaa88', dark: '#083028' },
+  blue: { bg: '#eaf2fc', border: '#2868b8', text: '#0e3870', mid: '#5090d8', dark: '#082050' },
+  stone: { bg: '#f4f2ee', border: '#8a8880', text: '#3a3830', mid: '#aaa898', dark: '#2a2820' },
+};
+
+const btn = (active, color) => ({
+  padding: '8px 14px', fontSize: 13, fontFamily: 'inherit', cursor: 'pointer',
+  borderRadius: 9, transition: 'all 0.15s',
+  background: active ? color.bg : '#f4f2ee',
+  border: active ? `2px solid ${color.border}` : '1px solid #d0cec8',
+  color: active ? color.text : '#5a5850',
+  fontWeight: active ? 500 : 400,
+});
+
+const card = (color) => ({
+  background: color ? color.bg : '#fff',
+  border: `1px solid ${color ? color.border + '60' : '#e0ded8'}`,
+  borderRadius: 14, padding: '1.25rem', marginBottom: 14,
+});
+
+const pill = (color) => ({
+  display: 'inline-block', padding: '2px 9px', fontSize: 11, fontWeight: 500,
+  borderRadius: 20, background: color.bg, color: color.text,
+  border: `1px solid ${color.border}60`,
+});
+
+const lbl = { fontSize: 12, color: '#7a7870', display: 'block', marginBottom: 5, marginTop: 10 };
+const notice = (color) => ({ background: color.bg, borderLeft: `3px solid ${color.border}`, borderRadius: '0 6px 6px 0', padding: '10px 14px', marginTop: 12, fontSize: 13, color: color.text, lineHeight: 1.65 });
+
+const TABS = [
+  { label: 'The argument', icon: '❧' },
+  { label: 'Mechanism spectrum', icon: '⟷' },
+  { label: 'Formula architecture', icon: '△' },
+  { label: 'Evidence triangulation', icon: '⊿' },
+  { label: 'DHE calculator', icon: '≡' },
+];
+
+const QUESTIONS = [
+  '…of which herb, and which plant part?',
+  '…in what preparation — tincture, decoction, extract, capsule?',
+  '…at what concentration? 1:5? 1:2? Standardized to what?',
+  '…in which solvent? 40% ethanol? 60%? Glycerite?',
+  '…at what frequency — QD? TID? Every 30 min acutely?',
+  '…for how long — dose to effect, or weeks of chronic use?',
+  '…for this specific client, or a population starting point?',
+  '…as a simple, or in formula? If formula, in what role?',
+];
+
+const SPECTRUM = [
+  {
+    id: 'drop', label: 'Reflexogenic', sub: 'Drop dose · specific medicine', color: COLORS.purple,
+    doseRange: '1–15 drops of a 1:10 tincture per dose',
+    mechanism: 'Receptor sensitization and autonomic reflex arc. Effect is threshold-dependent, not concentration-dependent. Adding more dose past the threshold does not add therapeutic effect — it adds adverse effects. The dose-response curve is not sigmoidal; it is threshold-gated.',
+    lineage: 'Eclectic specific medicine — Scudder, Lloyd, Felter; Matthew Wood; Physiomedicalism; Thomsonian tradition',
+    sourceNote: 'Modern phytotherapy references largely omit or heavily caveat plants in this zone. The Eclectic literature (Felter, Lloyd, King) and Matthew Wood\'s Earthwise Herbal are the primary evidence base. Absence from standard monographs reflects coverage gaps, not evidence of inefficacy.',
+    insight: 'This is not homeopathy. Material doses of pharmacologically active plants act through the nervous system reflexogenically — not via serum concentration. Drop dosing belongs at one pole of the mechanism spectrum, not the evidence review trash bin.',
+    examples: [
+      { herb: 'Aconitum spp.', use: 'Sudden febrile onset, nerve pain', note: '3–5 drops 1:10; threshold-dependent; serious toxicity above range' },
+      { herb: 'Lobelia inflata', use: 'Antispasmodic; emetic at higher dose', note: 'Different therapeutic objects at drop vs. mL dose' },
+      { herb: 'Veratrum viride', use: 'Hypertensive cardiovascular states', note: 'Classic Eclectic specific; narrow therapeutic window' },
+      { herb: 'Gelsemium sempervirens', use: 'Neuralgic pain, febrile', note: 'Dose-dependent toxicity above threshold' },
+    ],
+  },
+  {
+    id: 'pk', label: 'Pharmacokinetic', sub: 'Standard range · serum concentration', color: COLORS.green,
+    doseRange: '1–5 mL tincture (1:5) TID, or equivalent standardized extract',
+    mechanism: 'Systemic serum concentration drives effect. Dose must reach and maintain therapeutic concentration at the target tissue. Classic sigmoidal dose-response. Most clinical trial evidence lives here. DHE conversion is essential for cross-source comparison.',
+    lineage: 'Modern phytotherapy — Bone, Stansbury, Braun & Cohen, BHP, ESCOP, Commission E, AHP monographs',
+    sourceNote: 'Standard modern references are most applicable in this zone and should be your primary starting point — not your stopping point. Any single reference is one constraint, not a conclusion. Cross-reference at least two sources and verify the reference preparation matches your own.',
+    insight: 'Standard dosing references largely describe pharmacokinetic-zone herbs. This makes them genuinely useful — and also genuinely limited. They are one region of the mechanism spectrum, described by one set of preparation conventions.',
+    examples: [
+      { herb: 'Echinacea purpurea', use: 'Immune modulation, upper respiratory', note: '900 mg–3 g DHE/day; dose-response documented' },
+      { herb: 'Valeriana officinalis', use: 'Anxiolytic, sedative, sleep quality', note: 'Standardized valerianic acid; multiple forms studied' },
+      { herb: 'Crataegus monogyna', use: 'Cardiovascular function', note: 'WS 1442 extract well-studied at specific doses' },
+      { herb: 'Silybum marianum', use: 'Hepatoprotection', note: '70–200 mg silymarin TID in clinical trials' },
+    ],
+  },
+  {
+    id: 'tonic', label: 'Tonic / Nutritive', sub: 'Food-adjacent · long arc', color: COLORS.amber,
+    doseRange: 'Quarts of infusion daily; tablespoons of powder; sustained seasonal use',
+    mechanism: 'Effect is cumulative, constitution-level, often nutritional. High volume, long duration, no pharmacokinetic ceiling. Safety established by food-grade consumption patterns. Effect builds over weeks to months and does not follow acute dose-response logic.',
+    lineage: 'Susun Weed (nourishing herbal infusions), traditional European tonic tradition, Ayurvedic rasayana, nourishing food-herb practice across cultures',
+    sourceNote: 'Standard tincture-dose references for these herbs are internally coherent but describe a different therapeutic object. A tincture and a nourishing infusion are categorically different preparations of the same herb. The reference preparation context must match your own, or the comparison is category-invalid.',
+    insight: 'Applying pharmacokinetic dose logic here is a category error. Standard tincture doses of nutritive herbs are often subtherapeutic by an order of magnitude — and also the wrong vehicle. The preparation is as important as the plant.',
+    examples: [
+      { herb: 'Urtica dioica (nettle leaf)', use: 'Mineral nourishment, systemic support', note: '1 oz dried herb steeped overnight in 1 qt water' },
+      { herb: 'Avena sativa (oat straw)', use: 'Nervous system trophorestorative', note: 'Long-term; nutritive model, not pharmacokinetic' },
+      { herb: 'Trifolium pratense (red clover)', use: 'Long-term hormonal and lymphatic support', note: 'Isoflavone accumulation over weeks of use' },
+      { herb: 'Medicago sativa (alfalfa)', use: 'Nutritive mineral source', note: 'True food-herb; dose logic is dietary, not pharmacological' },
+    ],
+  },
+];
+
+const EVIDENCE = [
+  { id: 'clinical', label: 'Peer-reviewed clinical', conf: 3, color: COLORS.blue, range: [1.5, 4.0], caveat: 'Trials use specific preparations. Translation to your tincture requires explicit DHE conversion and preparation matching. Absence of trial data reflects economic bias in research funding, not absence of efficacy.' },
+  { id: 'monograph', label: 'Modern monographs', conf: 2, color: COLORS.green, range: [2.0, 6.0], caveat: 'Any single modern reference is a starting point, not a conclusion. Sources vary in preparation coverage, mechanism zones represented, and how they handle traditional vs. clinical dose discrepancies.' },
+  { id: 'historical', label: 'Traditional & historical', conf: 1, color: COLORS.purple, range: [0.5, 8.0], caveat: 'Identify what is explicit vs. inferred. Convert apothecary units explicitly. Drop-dose specifics and reflexogenic agents often appear only in these sources.' },
+  { id: 'anecdote', label: 'Practitioner experience', conf: 0, color: COLORS.stone, range: [0.5, 10.0], caveat: 'Confidence tier 0 — not zero value, but highest noise. Earns influence over the final range after triangulation is complete, not before. It belongs in the argument; it cannot be the argument.' },
+];
+
+const ROLES = [
+  {
+    id: 'core', label: 'Core', pctDefault: 60, color: COLORS.amber,
+    desc: 'Primary therapeutic action. Must deliver a plausible therapeutic dose within the formula volume.',
+    note: 'Treat this herb\'s mL allocation as if it were a simple. If the DHE falls below its therapeutic simple dose range, the formula won\'t move the primary complaint.',
+  },
+  {
+    id: 'effector', label: 'Effector', pctDefault: 30, color: COLORS.teal,
+    desc: 'Directional or synergistic modifier — tissue specificity, organ affinity, bioavailability support. Does not need to be independently therapeutic.',
+    note: 'Ask: at this dose, does this herb do its directional job? Usually 30–60% of its simple dose. Functional threshold, not therapeutic threshold.',
+  },
+  {
+    id: 'kicker', label: 'Kicker', pctDefault: 10, color: COLORS.coral,
+    desc: 'Catalytic — reflexogenic or bioavailability-based. Ginger, cayenne, prickly ash. Same mechanism as Eclectic drop-dosed specifics, embedded in formula context.',
+    note: 'This is where reflexogenic mechanism re-enters the formula. A small amount is the correct amount. More past the catalytic threshold adds adverse effects, not therapeutic effect.',
+  },
+];
+
+const CONVERSIONS = [
+  ['1 drachm', '= 3.7 mL (apothecary)'],
+  ['1 minim', '≈ 0.06 mL (≈ 1 drop)'],
+  ['1 grain', '= 64.8 mg'],
+  ['1 scruple', '= 1.3 g'],
+  ['1 tsp', '≈ 5 mL (not mass)'],
+  ['1:5 tincture', '= 200 mg DHE per mL'],
+  ['1:2 tincture', '= 500 mg DHE per mL'],
+  ['1:1 liquid extract', '= 1000 mg DHE per mL'],
+];
+
+function Tab0() {
+  const [input, setInput] = useState('');
+  const [fired, setFired] = useState(false);
+  return <>
+    <div style={card()}>
+      <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#8a8880', marginBottom: 8 }}>Core premise</div>
+      <h2 style={{ fontSize: 20, fontWeight: 600, color: '#1a1a18', marginBottom: 12, lineHeight: 1.3 }}>A dose is an argument, not a number.</h2>
+      <p style={{ fontSize: 14, color: '#5a5850', lineHeight: 1.8, marginBottom: 12 }}><Def term="posology">Posology</Def> — the study of doses — sits at the intersection of plant chemistry, human physiology, and clinical judgment. A dose is not a number to memorize. It is a range to reason about: bounded by what the plant can offer, shaped by the preparation that carries it, constrained by the physiology that receives it, and calibrated by the evidence available to defend it.</p>
+      <p style={{ fontSize: 14, color: '#5a5850', lineHeight: 1.8, marginBottom: 12 }}>The herbalist who defers entirely to a single authoritative text and the herbalist who doses from tradition or conviction alone are making the same epistemic error: replacing reasoning with anchoring. One outsources cognition to authority. The other substitutes lineage loyalty or personal certainty for <Def term="triangulation">triangulation</Def>. The surface behaviors look opposite. The underlying failure is identical — and in both cases, the herbalist cannot explain their dose in terms another practitioner could evaluate, challenge, or inherit.</p>
+      <p style={{ fontSize: 14, color: '#5a5850', lineHeight: 1.8 }}>Dosing ranges exist because plants are variable, people are variable, and preparations are variable. Precision matters not as false certainty, but as explicit argument: <em>this dose, this preparation, this strength, this frequency, this duration, for this person, supported by these sources.</em> That is the standard.</p>
+    </div>
+
+    <div style={card()}>
+      <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 6, color: '#1a1a18' }}>Dose interrogator</h3>
+      <p style={{ fontSize: 13, color: '#7a7870', marginBottom: 14, lineHeight: 1.6 }}>Type any bare dose — "2 mL", "500 mg", "3 drops" — and see what the argument is missing.</p>
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 14 }}>
+        <input type="text" placeholder='e.g., "2 mL" or "500 mg TID"' value={input} onChange={e => setInput(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && input && setFired(true)}
+          style={{ flex: 1, minWidth: 160, maxWidth: 260 }} />
+        <button onClick={() => input && setFired(true)} style={{ ...btn(false, COLORS.green), padding: '7px 16px' }}>Interrogate →</button>
+        {fired && <button onClick={() => { setFired(false); setInput(''); }} style={{ ...btn(false, COLORS.stone) }}>Reset</button>}
+      </div>
+      {fired && input && <>
+        <div style={{ fontSize: 16, fontStyle: 'italic', color: COLORS.green.text, marginBottom: 14, paddingLeft: 12, borderLeft: `3px solid ${COLORS.green.border}` }}>"{input}"…</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 9, marginBottom: 14 }}>
+          {QUESTIONS.map((q, i) => (
+            <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+              <span style={{ color: COLORS.coral.border, fontWeight: 700, fontSize: 15, lineHeight: 1.4, minWidth: 16 }}>?</span>
+              <span style={{ fontSize: 14, color: '#2a2820', lineHeight: 1.55 }}>{q}</span>
+            </div>
+          ))}
+        </div>
+        <div style={notice(COLORS.green)}>Eight questions, none of which are the number you wrote. A dose without its argument is not a prescription — it is a guess with a decimal point.</div>
+      </>}
+    </div>
+
+    <div style={card()}>
+      <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 10, color: '#1a1a18' }}>Dosing has three <Def term="orthogonal">orthogonal</Def> axes, not one</h3>
+      <p style={{ fontSize: 14, color: '#5a5850', lineHeight: 1.7, marginBottom: 16 }}>Both failure-mode herbalists anchor to a single number on a single dimension. Clinical dosing reasoning requires all three axes simultaneously.</p>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: 10 }}>
+        {[
+          { label: 'Mechanism axis', color: COLORS.purple, desc: 'Reflexogenic (drops) → pharmacokinetic (mL) → tonic/nutritive (quarts). Not a quantity continuum — a categorical shift in how the herb produces effect.' },
+          { label: 'Context axis', color: COLORS.green, desc: 'Simple (isolated, calibrated) → formula (distributed dose network). The same herb at the same volume does different work in these two contexts.' },
+          { label: 'Role axis', color: COLORS.amber, desc: 'Core (therapeutic mass) → effector (directional, synergistic) → kicker (catalytic). Role in the formula is a primary dosing variable independent of the herb itself.' },
+        ].map(ax => (
+          <div key={ax.label} style={{ ...card(ax.color), marginBottom: 0 }}>
+            <div style={{ fontSize: 14, fontWeight: 600, color: ax.color.text, marginBottom: 7 }}>{ax.label}</div>
+            <div style={{ fontSize: 13, color: ax.color.text, opacity: 0.85, lineHeight: 1.6 }}>{ax.desc}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div style={{ ...card(COLORS.stone), marginBottom: 0 }}>
+      <h3 style={{ fontSize: 15, fontWeight: 600, color: COLORS.stone.text, marginBottom: 8 }}>What this tool covers</h3>
+      <p style={{ fontSize: 14, color: COLORS.stone.text, lineHeight: 1.75 }}>Five interconnected sections: <strong>the argument</strong> (this page — premises and structure), <strong>mechanism spectrum</strong> (drop dose through tonic, with lineage and example herbs), <strong>formula architecture</strong> (core/<Def term="effector">effector</Def>/kicker with live DHE math), <strong>evidence triangulation</strong> (four tiers, interactive range visualization), and <strong>DHE calculator</strong> (cross-preparation comparison). Hover over underlined terms anywhere in the tool for definitions.</p>
+    </div>
+  </>;
+}
+
+function Tab1() {
+  const [zone, setZone] = useState(null);
+  const az = SPECTRUM.find(z => z.id === zone);
+  return <>
+    <div style={card()}>
+      <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 8, color: '#1a1a18' }}>The mechanism spectrum</h2>
+      <p style={{ fontSize: 14, color: '#5a5850', lineHeight: 1.7, marginBottom: 6 }}>Drop dosing and quart dosing are not competing answers to "how much?" They answer different questions entirely — about mechanism, not magnitude. <Def term="specific medicine">Specific medicine</Def> and <Def term="nourishing infusion">nourishing infusions</Def> occupy different regions of this space with full internal coherence. Select a zone to explore.</p>
+      <p style={{ fontSize: 12, color: '#9a9890', fontStyle: 'italic', marginBottom: 20 }}>Matthew Wood's work and the Eclectic tradition sit at the <Def term="reflexogenic">reflexogenic</Def> pole. Standard modern monographs largely describe the middle range. Neither is complete without the other.</p>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginBottom: 10 }}>
+        {SPECTRUM.map(z => (
+          <button key={z.id} onClick={() => setZone(zone === z.id ? null : z.id)}
+            style={{ ...btn(zone === z.id, z.color), padding: '12px 10px', textAlign: 'left', display: 'block' }}>
+            <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 4 }}>{z.label}</div>
+            <div style={{ fontSize: 11, opacity: 0.8, lineHeight: 1.4 }}>{z.sub}</div>
+          </button>
+        ))}
+      </div>
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 4px 14px', borderBottom: '1px solid #e0ded8', marginBottom: 16 }}>
+        <span style={{ fontSize: 11, color: '#9a9890' }}>← 1–15 drops / dose</span>
+        <span style={{ fontSize: 11, color: '#9a9890' }}>1–5 mL TID</span>
+        <span style={{ fontSize: 11, color: '#9a9890' }}>Quarts / day →</span>
+      </div>
+
+      {az ? (
+        <div style={{ background: az.color.bg, border: `1px solid ${az.color.border}50`, borderRadius: 12, padding: '1.25rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr)', gap: 16, marginBottom: 14 }}>
+            <div>
+              <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.1em', color: az.color.mid, marginBottom: 5 }}>Mechanism</div>
+              <p style={{ fontSize: 13, color: az.color.text, lineHeight: 1.7 }}>{az.mechanism}</p>
+              <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.1em', color: az.color.mid, marginTop: 12, marginBottom: 5 }}>Typical dose</div>
+              <p style={{ fontSize: 14, fontWeight: 600, color: az.color.text }}>{az.doseRange}</p>
+              <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.1em', color: az.color.mid, marginTop: 12, marginBottom: 5 }}>Primary lineage</div>
+              <p style={{ fontSize: 12, color: az.color.text, opacity: 0.85, lineHeight: 1.6 }}>{az.lineage}</p>
+            </div>
+            <div>
+              <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.1em', color: az.color.mid, marginBottom: 8 }}>Example herbs</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
+                {az.examples.map(ex => (
+                  <div key={ex.herb} style={{ background: 'rgba(255,255,255,0.55)', borderRadius: 7, padding: '8px 10px', border: `1px solid ${az.color.border}30` }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: az.color.text, marginBottom: 2 }}>{ex.herb}</div>
+                    <div style={{ fontSize: 12, color: az.color.text, opacity: 0.8, marginBottom: 2 }}>{ex.use}</div>
+                    <div style={{ fontSize: 11, color: az.color.mid, fontStyle: 'italic' }}>{ex.note}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div style={{ background: 'rgba(255,255,255,0.65)', borderRadius: 8, padding: '10px 14px', marginBottom: 10, border: `1px solid ${az.color.border}30` }}>
+            <div style={{ fontSize: 12, fontWeight: 600, color: az.color.text, marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Key insight</div>
+            <p style={{ fontSize: 13, color: az.color.text, lineHeight: 1.7, margin: 0 }}>{az.insight}</p>
+          </div>
+          <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.1em', color: az.color.mid, marginBottom: 5 }}>On reference sources</div>
+          <p style={{ fontSize: 12, color: az.color.text, opacity: 0.8, lineHeight: 1.6 }}>{az.sourceNote}</p>
+        </div>
+      ) : (
+        <p style={{ textAlign: 'center', color: '#9a9890', fontStyle: 'italic', fontSize: 14, padding: '1rem 0' }}>Select a zone above to explore its mechanism, lineage, and example herbs</p>
+      )}
+    </div>
+
+    <div style={{ ...card(COLORS.coral), marginBottom: 0 }}>
+      <h3 style={{ fontSize: 15, fontWeight: 600, color: COLORS.coral.text, marginBottom: 8 }}>The category error to avoid</h3>
+      <p style={{ fontSize: 14, color: COLORS.coral.text, lineHeight: 1.75, marginBottom: 10 }}>Comparing 3 drops of aconite to 3 mL of echinacea and asking which is "bigger" is a category error. They operate through different mechanisms on different axes. An Eclectic herbalist prescribing at drop doses is not underdosing relative to modern standards — they are answering a different clinical question through a different mechanism.</p>
+      <p style={{ fontSize: 14, color: COLORS.coral.text, lineHeight: 1.75, margin: 0, opacity: 0.85 }}>This also explains the kicker role in a formula: cayenne at 5 drops, prickly ash at 10 drops — operating by the same <Def term="reflexogenic">reflexogenic</Def> mechanism as an Eclectic specific, embedded in a <Def term="pharmacokinetic">pharmacokinetic</Def>-zone formula. Drop-dose logic doesn't vanish in formula context. It reappears in the kicker.</p>
+    </div>
+  </>;
+}
+
+function Tab2() {
+  const [totalMl, setTotalMl] = useState(10);
+  const [ratio, setRatio] = useState(5);
+  const [corePct, setCorePct] = useState(60);
+  const [effPct, setEffPct] = useState(30);
+  const kickPct = Math.max(0, 100 - corePct - effPct);
+
+  const perRole = [
+    { ...ROLES[0], pct: corePct, ml: +(totalMl * corePct / 100).toFixed(1) },
+    { ...ROLES[1], pct: effPct, ml: +(totalMl * effPct / 100).toFixed(1) },
+    { ...ROLES[2], pct: kickPct, ml: +(totalMl * kickPct / 100).toFixed(1) },
+  ];
+
+  const coreDHE = Math.round(perRole[0].ml / ratio * 1000);
+  const coreStatus = coreDHE < 200 ? 'low' : coreDHE < 500 ? 'borderline' : 'ok';
+  const statusColor = { low: COLORS.coral, borderline: COLORS.amber, ok: COLORS.green }[coreStatus];
+  const statusMsg = {
+    low: `${coreDHE} mg DHE/dose — likely subtherapeutic at 1:${ratio} for pharmacokinetic-zone herbs. Consider increasing core %, increasing total formula volume, or choosing a more concentrated preparation.`,
+    borderline: `${coreDHE} mg DHE/dose — borderline. Verify against the therapeutic simple dose range in your monograph sources before finalizing.`,
+    ok: `${coreDHE} mg DHE/dose — within a plausible therapeutic range for pharmacokinetic-zone herbs at this ratio.`,
+  }[coreStatus];
+
+  return <>
+    <div style={card()}>
+      <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 8, color: '#1a1a18' }}>Formula architecture</h2>
+      <p style={{ fontSize: 14, color: '#5a5850', lineHeight: 1.7, marginBottom: 6 }}>A formula is not six therapeutic doses — it is one therapeutic dose distributed across six plants. Role determines dose logic. Adjust the sliders to see how <Def term="DHE">DHE</Def> changes with allocation decisions.</p>
+      <p style={{ fontSize: 12, color: '#9a9890', fontStyle: 'italic', marginBottom: 18 }}>A common pattern in early formula construction: six herbs, 5 mL/dose total, core at 30% = 1.5 mL at 1:5 = 300 mg DHE. Subtherapeutic. The formula won't move the primary complaint — and the herbalist won't understand why.</p>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12, background: '#f4f2ee', borderRadius: 10, padding: '1rem', marginBottom: 20, border: '1px solid #dedad4' }}>
+        <div>
+          <label style={lbl}>Total dose volume (mL)</label>
+          <input type="range" min="2" max="20" step="0.5" value={totalMl} onChange={e => setTotalMl(parseFloat(e.target.value))} />
+          <span style={{ fontSize: 16, fontWeight: 600, color: '#1a1a18' }}>{totalMl} mL / dose</span>
+        </div>
+        <div>
+          <label style={lbl}><Def term="tincture">Tincture</Def> ratio (1 : X)</label>
+          <select value={ratio} onChange={e => setRatio(parseFloat(e.target.value))}>
+            {[1, 1.5, 2, 2.5, 3, 4, 5, 10].map(r => <option key={r} value={r}>1 : {r}  →  {Math.round(1000/r)} mg DHE/mL</option>)}
+          </select>
+        </div>
+        <div>
+          <label style={lbl}>Core %</label>
+          <input type="range" min="20" max="90" step="5" value={corePct} onChange={e => { const v = parseInt(e.target.value); setCorePct(v); if (v + effPct > 95) setEffPct(95 - v); }} />
+          <span style={{ fontSize: 14, fontWeight: 500, color: COLORS.amber.text }}>{corePct}%</span>
+        </div>
+        <div>
+          <label style={lbl}>Effector %</label>
+          <input type="range" min="0" max="70" step="5" value={effPct} onChange={e => { const v = parseInt(e.target.value); setEffPct(Math.min(v, 95 - corePct)); }} />
+          <span style={{ fontSize: 14, fontWeight: 500, color: COLORS.teal.text }}>{effPct}%</span>
+        </div>
+      </div>
+
+      <div style={{ display: 'flex', height: 30, borderRadius: 8, overflow: 'hidden', marginBottom: 8, border: '1px solid #dedad4' }}>
+        {perRole.map(r => r.pct > 0 && (
+          <div key={r.id} style={{ flex: r.pct, background: r.color.border, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 600, color: '#fff', transition: 'flex 0.25s', minWidth: 0, overflow: 'hidden' }}>
+            {r.pct > 9 ? `${r.label} ${r.pct}%` : ''}
+          </div>
+        ))}
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: '#9a9890', marginBottom: 20 }}>
+        {perRole.map(r => <span key={r.id}>{r.ml} mL</span>)}
+      </div>
+
+      {perRole.map(r => {
+        const dhe = Math.round(r.ml / ratio * 1000);
+        return (
+          <div key={r.id} style={{ ...card(r.color), display: 'grid', gridTemplateColumns: 'minmax(0,1fr) auto', gap: 16, alignItems: 'start' }}>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 7 }}>
+                <span style={{ ...pill(r.color) }}>{r.label}</span>
+                <span style={{ fontSize: 13, color: r.color.mid }}>{r.pct}% of formula</span>
+              </div>
+              <p style={{ fontSize: 13, color: r.color.text, lineHeight: 1.65, marginBottom: 7 }}>{r.desc}</p>
+              <p style={{ fontSize: 12, color: r.color.text, opacity: 0.75, fontStyle: 'italic', lineHeight: 1.55 }}>{r.note}</p>
+              {r.id === 'kicker' && r.pct > 20 && (
+                <div style={notice(COLORS.coral)}>Above 20% of formula volume — past the <Def term="catalytic">catalytic</Def> threshold, this adds adverse effects, not therapeutic effect. Reduce the kicker and redistribute to core or <Def term="effector">effector</Def>.</div>
+              )}
+            </div>
+            <div style={{ textAlign: 'right', minWidth: 100 }}>
+              <div style={{ fontSize: 24, fontWeight: 700, color: r.color.text, lineHeight: 1.1 }}>{r.ml}</div>
+              <div style={{ fontSize: 12, color: r.color.mid, marginBottom: 4 }}>mL / dose</div>
+              <div style={{ fontSize: 16, fontWeight: 600, color: r.color.text }}>{dhe.toLocaleString()}</div>
+              <div style={{ fontSize: 11, color: r.color.mid }}>mg DHE</div>
+            </div>
+          </div>
+        );
+      })}
+
+      <div style={notice(statusColor)}><strong>Core DHE status: </strong>{statusMsg}</div>
+    </div>
+
+    <div style={card()}>
+      <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 8, color: '#1a1a18' }}>Simples as the calibration baseline</h3>
+      <p style={{ fontSize: 14, color: '#5a5850', lineHeight: 1.75, marginBottom: 10 }}>Before you can dose a formula correctly, you need to know what each herb does as a simple — at a known dose, known ratio, known frequency. Historical sources (Eclectics, Moore, Lloyd) are most useful here because they were largely working simples. Their dose observations are relatively clean.</p>
+      <p style={{ fontSize: 14, color: '#5a5850', lineHeight: 1.75, margin: 0 }}>A monograph dose is a simple dose. Your formula is not a simple. The conversion — from reference number to role-appropriate formula allocation — is yours to build.</p>
+    </div>
+  </>;
+}
+
+function Tab3() {
+  const [active, setActive] = useState({ clinical: true, monograph: true, historical: false, anecdote: false });
+  const tiers = EVIDENCE.filter(t => active[t.id]);
+  const MAX_ML = 12;
+  const consMin = tiers.length ? Math.max(...tiers.map(t => t.range[0])) : null;
+  const consMax = tiers.length ? Math.min(...tiers.map(t => t.range[1])) : null;
+  const consOk = consMin !== null && consMin < consMax;
+
+  return <>
+    <div style={card()}>
+      <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 8, color: '#1a1a18' }}>Evidence triangulation</h2>
+      <p style={{ fontSize: 14, color: '#5a5850', lineHeight: 1.7, marginBottom: 6 }}>The four tiers are not a hierarchy to climb — they are four different types of constraints on the same dosing range. Toggle them to see how each one contributes, and what happens when only one is active.</p>
+      <p style={{ fontSize: 12, color: '#9a9890', fontStyle: 'italic', marginBottom: 20 }}>Numbers are illustrative — representative of a hypothetical pharmacokinetic-zone herb, not drawn from a specific botanical.</p>
+
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 24 }}>
+        {EVIDENCE.map(t => (
+          <button key={t.id} onClick={() => setActive(prev => ({ ...prev, [t.id]: !prev[t.id] }))}
+            style={{ ...btn(active[t.id], t.color), display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span style={{ ...pill(t.color), padding: '1px 6px', fontSize: 10 }}>C{t.conf}</span>
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {tiers.length === 0 && <p style={{ color: '#9a9890', fontStyle: 'italic', fontSize: 14, marginBottom: 20 }}>Toggle at least one tier to see its dosing range</p>}
+
+      {tiers.map(t => (
+        <div key={t.id} style={{ marginBottom: 18 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6, alignItems: 'baseline' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ fontSize: 13, fontWeight: 600, color: t.color.text }}>{t.label}</span>
+              <span style={{ ...pill(t.color), padding: '1px 7px', fontSize: 10 }}>C{t.conf}</span>
+            </div>
+            <span style={{ fontSize: 13, fontWeight: 600, color: t.color.text }}>{t.range[0]}–{t.range[1]} mL / dose</span>
+          </div>
+          <div style={{ position: 'relative', height: 18, background: '#f0ede8', borderRadius: 5, marginBottom: 6, border: '1px solid #dedad4' }}>
+            <div style={{ position: 'absolute', left: `${(t.range[0] / MAX_ML) * 100}%`, width: `${((t.range[1] - t.range[0]) / MAX_ML) * 100}%`, height: '100%', background: t.color.bg, border: `1px solid ${t.color.border}`, borderRadius: 4 }} />
+            <div style={{ position: 'absolute', left: `${(t.range[0] / MAX_ML) * 100}%`, width: 2, height: '100%', background: t.color.border, borderRadius: 1 }} />
+            <div style={{ position: 'absolute', left: `${(t.range[1] / MAX_ML) * 100}%`, width: 2, height: '100%', background: t.color.border, borderRadius: 1, transform: 'translateX(-2px)' }} />
+          </div>
+          <p style={{ fontSize: 12, color: '#7a7870', fontStyle: 'italic', lineHeight: 1.55 }}>{t.caveat}</p>
+        </div>
+      ))}
+
+      {tiers.length > 0 && (
+        <div style={{ padding: '1rem', borderRadius: 10, marginTop: 6, background: consOk ? COLORS.green.bg : COLORS.coral.bg, border: `1px solid ${consOk ? COLORS.green.border : COLORS.coral.border}60` }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: consOk ? 10 : 0 }}>
+            <span style={{ fontSize: 14, fontWeight: 600, color: consOk ? COLORS.green.text : COLORS.coral.text }}>{consOk ? 'Consensus range' : 'Sources conflict — no clean intersection'}</span>
+            {consOk && <span style={{ fontSize: 16, fontWeight: 700, color: COLORS.green.text }}>{consMin.toFixed(1)}–{consMax.toFixed(1)} mL</span>}
+          </div>
+          {consOk && (
+            <div style={{ position: 'relative', height: 18, background: 'rgba(255,255,255,0.5)', borderRadius: 5, border: `1px solid ${COLORS.green.border}50` }}>
+              <div style={{ position: 'absolute', left: `${(consMin / MAX_ML) * 100}%`, width: `${((consMax - consMin) / MAX_ML) * 100}%`, height: '100%', background: COLORS.green.border, borderRadius: 4 }} />
+            </div>
+          )}
+          {!consOk && <p style={{ fontSize: 13, color: COLORS.coral.text, lineHeight: 1.65, marginTop: 8 }}>When sources conflict: default to the most conservative ceiling, investigate the discrepancy narratively, and flag uncertainty explicitly in your commentary. Conflict is not failure — it is data about the limits of current evidence.</p>}
+        </div>
+      )}
+    </div>
+
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(195px, 1fr))', gap: 10, marginBottom: 14 }}>
+      {EVIDENCE.map(t => (
+        <div key={t.id} style={{ ...card(active[t.id] ? t.color : null), borderTop: `3px solid ${t.color.border}`, marginBottom: 0, opacity: active[t.id] ? 1 : 0.6, transition: 'opacity 0.2s' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 7 }}>
+            <span style={{ fontSize: 13, fontWeight: 600, color: active[t.id] ? t.color.text : '#3a3830' }}>{t.label}</span>
+            <span style={{ ...pill(t.color), padding: '1px 7px', fontSize: 10 }}>C{t.conf}</span>
+          </div>
+          <p style={{ fontSize: 12, color: active[t.id] ? t.color.text : '#5a5850', lineHeight: 1.6, margin: 0, opacity: 0.9 }}>{t.caveat}</p>
+        </div>
+      ))}
+    </div>
+
+    <div style={{ ...card(COLORS.amber), marginBottom: 0 }}>
+      <h3 style={{ fontSize: 15, fontWeight: 600, color: COLORS.amber.text, marginBottom: 8 }}>The single-source problem</h3>
+      <p style={{ fontSize: 14, color: COLORS.amber.text, lineHeight: 1.75, marginBottom: 10 }}>Try monograph-only above. You get a plausible range — but a single constraint point. It doesn't tell you whether clinical data supports that ceiling, whether historical practice suggests a different lower bound, or whether the reference preparation matches your own.</p>
+      <p style={{ fontSize: 14, color: COLORS.amber.text, opacity: 0.85, lineHeight: 1.75, margin: 0 }}>Add clinical data: the ceiling often tightens. Add historical: the lower bound extends to include drop-dose specifics that standard references don't cover. Three sources minimum is not compliance — it is the minimum <Def term="triangulation">triangulation</Def> needed to locate your range in evidence space.</p>
+    </div>
+  </>;
+}
+
+function Tab4() {
+  const [prepA, setPrepA] = useState('tincture');
+  const [ratioA, setRatioA] = useState(5);
+  const [volA, setVolA] = useState(3);
+  const [dosesA, setDosesA] = useState(3);
+  const [erA, setErA] = useState(5);
+  const [mgA, setMgA] = useState(300);
+  const [seA, setSeA] = useState(20);
+  const [ratioB, setRatioB] = useState(5);
+  const [volB, setVolB] = useState(5);
+  const [dosesB, setDosesB] = useState(3);
+
+  let dheADose, dheADay, markerDay = null;
+  if (prepA === 'tincture') {
+    dheADose = Math.round(volA / ratioA * 1000);
+    dheADay = dheADose * dosesA;
+  } else {
+    dheADose = Math.round(mgA * erA);
+    dheADay = dheADose * dosesA;
+    if (prepA === 'standardized') markerDay = Math.round(mgA * seA / 100 * dosesA);
+  }
+  const dheBDose = Math.round(volB / ratioB * 1000);
+  const dheBDay = dheBDose * dosesB;
+  const pctDiff = dheADay && dheBDay ? Math.round(Math.abs(dheADay - dheBDay) / Math.max(dheADay, dheBDay) * 100) : 0;
+  const within30 = pctDiff <= 30;
+
+  return <>
+    <div style={card()}>
+      <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 8, color: '#1a1a18' }}>DHE calculator</h2>
+      <p style={{ fontSize: 14, color: '#5a5850', lineHeight: 1.7, marginBottom: 6 }}><Def term="DHE">Dry herb equivalent</Def> is the lingua franca of dosing comparison. It lets you put a <Def term="tincture">tincture</Def>, a capsule, and a clinical trial's extract on the same scale. Without it, you're comparing apples and ecosystems.</p>
+      <p style={{ fontSize: 12, color: '#9a9890', fontStyle: 'italic', marginBottom: 20 }}>The formula feedback — "12 mL at 1:5 is subtherapeutic" — is this calculation made visible. 12 mL ÷ 5 × 1000 = 2,400 mg DHE/day. At 1:1, that same volume = 12,000 mg. Not the same preparation.</p>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr)', gap: 14, marginBottom: 14 }}>
+        <div style={{ ...card(COLORS.amber), marginBottom: 0 }}>
+          <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.1em', color: COLORS.amber.mid, marginBottom: 12 }}>Source A</div>
+          <label style={{ ...lbl, color: COLORS.amber.mid, marginTop: 0 }}>Preparation type</label>
+          <select value={prepA} onChange={e => setPrepA(e.target.value)} style={{ marginBottom: 10 }}>
+            <option value="tincture">Tincture (1:X w/v)</option>
+            <option value="extract">Dry extract (ER known)</option>
+            <option value="standardized">Standardized extract (ER + SE%)</option>
+          </select>
+          {prepA === 'tincture' && <>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 8 }}>
+              <div><label style={{ ...lbl, color: COLORS.amber.mid }}>Ratio (1:X)</label><input type="number" min="1" max="20" step="0.5" value={ratioA} onChange={e => setRatioA(parseFloat(e.target.value)||1)} /></div>
+              <div><label style={{ ...lbl, color: COLORS.amber.mid }}>mL / dose</label><input type="number" min="0.1" max="30" step="0.5" value={volA} onChange={e => setVolA(parseFloat(e.target.value)||0)} /></div>
+            </div>
+            <label style={{ ...lbl, color: COLORS.amber.mid }}>Doses / day</label>
+            <input type="number" min="1" max="12" value={dosesA} onChange={e => setDosesA(parseInt(e.target.value)||1)} />
+          </>}
+          {(prepA === 'extract' || prepA === 'standardized') && <>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 8 }}>
+              <div><label style={{ ...lbl, color: COLORS.amber.mid }}><Def term="extraction ratio">Extraction ratio</Def></label><input type="number" min="1" max="100" value={erA} onChange={e => setErA(parseFloat(e.target.value)||1)} /></div>
+              <div><label style={{ ...lbl, color: COLORS.amber.mid }}>mg / dose</label><input type="number" min="1" max="5000" step="25" value={mgA} onChange={e => setMgA(parseFloat(e.target.value)||0)} /></div>
+            </div>
+            {prepA === 'standardized' && <><label style={{ ...lbl, color: COLORS.amber.mid }}><Def term="standardization">Standardization %</Def></label><input type="number" min="0.1" max="100" step="0.5" value={seA} onChange={e => setSeA(parseFloat(e.target.value)||1)} /></>}
+            <label style={{ ...lbl, color: COLORS.amber.mid }}>Doses / day</label>
+            <input type="number" min="1" max="12" value={dosesA} onChange={e => setDosesA(parseInt(e.target.value)||1)} />
+          </>}
+          <div style={{ background: 'rgba(255,255,255,0.65)', borderRadius: 8, padding: '10px 12px', marginTop: 14, border: `1px solid ${COLORS.amber.border}40` }}>
+            <div style={{ fontSize: 20, fontWeight: 700, color: COLORS.amber.text }}>{dheADose.toLocaleString()} <span style={{ fontSize: 13, fontWeight: 400 }}>mg DHE/dose</span></div>
+            <div style={{ fontSize: 15, fontWeight: 600, color: COLORS.amber.text, marginTop: 4 }}>{dheADay.toLocaleString()} <span style={{ fontSize: 12, fontWeight: 400 }}>mg DHE/day</span></div>
+            {markerDay !== null && <div style={{ fontSize: 12, color: COLORS.amber.mid, marginTop: 4 }}>{markerDay} mg marker/day ({seA}% standardized)</div>}
+          </div>
+        </div>
+
+        <div style={{ ...card(COLORS.teal), marginBottom: 0 }}>
+          <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.1em', color: COLORS.teal.mid, marginBottom: 12 }}>Source B — tincture</div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+            <div><label style={{ ...lbl, color: COLORS.teal.mid, marginTop: 0 }}>Ratio (1:X)</label><input type="number" min="1" max="20" step="0.5" value={ratioB} onChange={e => setRatioB(parseFloat(e.target.value)||1)} /></div>
+            <div><label style={{ ...lbl, color: COLORS.teal.mid, marginTop: 0 }}>mL / dose</label><input type="number" min="0.1" max="30" step="0.5" value={volB} onChange={e => setVolB(parseFloat(e.target.value)||0)} /></div>
+          </div>
+          <label style={{ ...lbl, color: COLORS.teal.mid }}>Doses / day</label>
+          <input type="number" min="1" max="12" value={dosesB} onChange={e => setDosesB(parseInt(e.target.value)||1)} />
+          <div style={{ background: 'rgba(255,255,255,0.65)', borderRadius: 8, padding: '10px 12px', marginTop: 14, border: `1px solid ${COLORS.teal.border}40` }}>
+            <div style={{ fontSize: 20, fontWeight: 700, color: COLORS.teal.text }}>{dheBDose.toLocaleString()} <span style={{ fontSize: 13, fontWeight: 400 }}>mg DHE/dose</span></div>
+            <div style={{ fontSize: 15, fontWeight: 600, color: COLORS.teal.text, marginTop: 4 }}>{dheBDay.toLocaleString()} <span style={{ fontSize: 12, fontWeight: 400 }}>mg DHE/day</span></div>
+            <div style={{ fontSize: 12, color: COLORS.teal.mid, marginTop: 4 }}>Marker content: unknown (no SE% data)</div>
+          </div>
+        </div>
+      </div>
+
+      {dheADay > 0 && dheBDay > 0 && (
+        <div style={{ padding: '1rem', borderRadius: 10, background: within30 ? COLORS.green.bg : COLORS.coral.bg, border: `1px solid ${within30 ? COLORS.green.border : COLORS.coral.border}60`, marginBottom: 0 }}>
+          <div style={{ fontSize: 15, fontWeight: 600, color: within30 ? COLORS.green.text : COLORS.coral.text, marginBottom: 6 }}>
+            {within30 ? `Sources are roughly equivalent — ${pctDiff}% difference in DHE/day` : `Sources differ significantly — ${pctDiff}% difference in DHE/day`}
+          </div>
+          <p style={{ fontSize: 13, color: within30 ? COLORS.green.text : COLORS.coral.text, opacity: 0.85, lineHeight: 1.65, margin: 0 }}>
+            {within30
+              ? 'DHE/day is comparable. Still verify: solvent differences, standardization details, and whether clinical evidence was generated with one specific preparation form. Approximate equivalence is not complete equivalence.'
+              : 'These sources are not delivering equivalent doses. Investigate: different preparations? Different evidence tier? Is one drawing from a different mechanism zone? Is one subtherapeutic in this context?'}
+          </p>
+        </div>
+      )}
+    </div>
+
+    <div style={card()}>
+      <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 12, color: '#1a1a18' }}>Quick conversion reference</h3>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 6 }}>
+        {CONVERSIONS.map(([from, to]) => (
+          <div key={from} style={{ background: '#f4f2ee', border: '1px solid #e0ded8', borderRadius: 7, padding: '8px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
+            <span style={{ fontSize: 13, fontWeight: 600, color: '#2a2820', fontFamily: 'monospace' }}>{from}</span>
+            <span style={{ fontSize: 12, color: '#7a7870' }}>{to}</span>
+          </div>
+        ))}
+      </div>
+      <div style={notice(COLORS.coral)}>
+        <strong>What never to do:</strong> Do not transpose a patented extract dose directly to a tincture without <Def term="extraction ratio">ER</Def> and <Def term="standardization">SE%</Def>. Do not assume equal <Def term="bioavailability">bioavailability</Def> across forms. Do not set upper limits from historical anecdote alone — guardrails come from human data and authoritative monographs.
+      </div>
+    </div>
+
+    <div style={{ ...card(COLORS.stone), marginBottom: 0 }}>
+      <h3 style={{ fontSize: 15, fontWeight: 600, color: COLORS.stone.text, marginBottom: 8 }}>Compounded uncertainty disclosure</h3>
+      <p style={{ fontSize: 14, color: COLORS.stone.text, lineHeight: 1.75 }}>DHE estimates carry forward the uncertainty of every missing or inferred parameter. When ER is unknown, when SE% is missing, when density data is absent — each gap adds error that compounds. Disclose it narratively in your commentary. A table with honest uncertainty marks is more valuable than a table that hides its assumptions.</p>
+    </div>
+  </>;
+}
+
+function App() {
+  const [tab, setTab] = useState(0);
+  const PAGES = [Tab0, Tab1, Tab2, Tab3, Tab4];
+  const Page = PAGES[tab];
+
+  return (
+    <div style={{ maxWidth: 900, margin: '0 auto', padding: '1.5rem 1rem 3rem' }}>
+      <div style={{ borderBottom: '2px solid #5a7a3a', paddingBottom: '1rem', marginBottom: '1.5rem' }}>
+        <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.14em', color: '#7a9a5a', marginBottom: 7 }}>Herbal Medicine · <Def term="posology">Posology</Def> &amp; Dosing</div>
+        <h1 style={{ fontSize: 26, fontWeight: 700, color: '#1a1a18', marginBottom: 7, letterSpacing: '-0.02em' }}>A dose is an argument, not a number</h1>
+        <p style={{ fontSize: 14, color: '#7a7870', lineHeight: 1.6 }}>Mechanism spectrum · formula architecture · evidence <Def term="triangulation">triangulation</Def> · <Def term="DHE">DHE</Def> conversion · drop dose to quart</p>
+      </div>
+
+      <div style={{ display: 'flex', gap: 6, marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+        {TABS.map((t, i) => (
+          <button key={i} onClick={() => setTab(i)} style={{ ...btn(tab === i, COLORS.green), display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span style={{ fontSize: 14 }}>{t.icon}</span>
+            <span>{t.label}</span>
+          </button>
+        ))}
+      </div>
+
+      <Page />
+
+      <div style={{ marginTop: '2rem', paddingTop: '1rem', borderTop: '1px solid #dedad4', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+        <span style={{ fontSize: 12, color: '#9a9890' }}>Herbal Posology &amp; Dosing · SOIH · March 2026</span>
+        <div style={{ display: 'flex', gap: 6 }}>
+          {tab > 0 && <button onClick={() => setTab(tab - 1)} style={{ ...btn(false, COLORS.stone), fontSize: 12, padding: '5px 12px' }}>← Previous</button>}
+          {tab < TABS.length - 1 && <button onClick={() => setTab(tab + 1)} style={{ ...btn(false, COLORS.green), fontSize: 12, padding: '5px 12px' }}>Next →</button>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
