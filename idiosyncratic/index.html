@@ -9,10 +9,10 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: #0d1117; color: #e6edf3; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+    body { background: #f5f1eb; color: #211c14; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
     ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #0d1117; }
-    ::-webkit-scrollbar-thumb { background: #21262d; border-radius: 3px; }
+    ::-webkit-scrollbar-track { background: #f5f1eb; }
+    ::-webkit-scrollbar-thumb { background: #cfc5b4; border-radius: 3px; }
   </style>
 </head>
 <body>
@@ -22,17 +22,17 @@
     const { useState } = React;
 
     const C = {
-      bg: "#0d1117",
-      surface: "#161b22",
-      border: "#21262d",
-      accent: "#c9a84c",
-      accentDim: "#7a6430",
-      text: "#e6edf3",
-      muted: "#7d8590",
-      green: "#3fb950",
-      red: "#f85149",
-      blue: "#58a6ff",
-      purple: "#bc8cff",
+      bg: "#f5f1eb",
+      surface: "#fefcf9",
+      border: "#e2dbd0",
+      accent: "#2c5f47",
+      accentDim: "#a3c4b5",
+      text: "#211c14",
+      muted: "#6b5e48",
+      green: "#2c7a4b",
+      red: "#c0392b",
+      blue: "#2b6cb0",
+      purple: "#6b46a8",
     };
 
     const SECTIONS = [
@@ -260,9 +260,9 @@
                 <div style={{ fontSize: 11, color: C.accent, fontFamily: "monospace", marginBottom: 6 }}>CRITICAL QUESTION</div>
                 <div style={{ color: C.text, lineHeight: 1.65, fontSize: 14 }}>{item.prompt}</div>
               </div>
-              <div style={{ background: "#f851490d", border: `1px solid #f8514922`, borderRadius: 6, padding: "12px 14px" }}>
+              <div style={{ background: "#c0392b0d", border: `1px solid #f8514922`, borderRadius: 6, padding: "12px 14px" }}>
                 <div style={{ fontSize: 11, color: C.red, fontFamily: "monospace", marginBottom: 5 }}>⚑ RED FLAG</div>
-                <div style={{ color: "#f8b4b4", fontSize: 13, lineHeight: 1.6 }}>{item.redFlag}</div>
+                <div style={{ color: "#7a2520", fontSize: 13, lineHeight: 1.6 }}>{item.redFlag}</div>
               </div>
               <div style={{ marginTop: 14 }}>
                 <div style={{ fontSize: 11, color: C.muted, marginBottom: 8 }}>Rate your confidence in this evidence for your argument:</div>
@@ -305,9 +305,9 @@
                 <div style={{ fontSize: 11, color: C.accent, fontFamily: "monospace", marginBottom: 6 }}>PRIMARY PROBE</div>
                 <div style={{ color: C.text, lineHeight: 1.65, fontSize: 14 }}>{item.q}</div>
               </div>
-              <div style={{ background: "#58a6ff0d", border: `1px solid #58a6ff22`, borderRadius: 6, padding: "12px 14px" }}>
+              <div style={{ background: "#2b6cb00d", border: `1px solid #58a6ff22`, borderRadius: 6, padding: "12px 14px" }}>
                 <div style={{ fontSize: 11, color: C.blue, fontFamily: "monospace", marginBottom: 5 }}>FOLLOW-UP</div>
-                <div style={{ color: "#b3d0f5", fontSize: 13, lineHeight: 1.6 }}>{item.follow}</div>
+                <div style={{ color: "#1e4a7a", fontSize: 13, lineHeight: 1.6 }}>{item.follow}</div>
               </div>
             </div>
           )}
@@ -328,7 +328,7 @@
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             {["intrinsic", "idiosyncratic", "both"].map(opt => (
               <button key={opt} onClick={() => setSel(opt)} style={{
-                background: sel === opt ? (sel === correct ? "#3fb95033" : "#f8514933") : "none",
+                background: sel === opt ? (sel === correct ? "#2c7a4b33" : "#c0392b33") : "none",
                 border: `1px solid ${sel === opt ? (sel === correct ? C.green : C.red) : C.border}`,
                 color: sel === opt ? (sel === correct ? C.green : C.red) : C.muted,
                 borderRadius: 4, padding: "3px 10px", cursor: "pointer", fontSize: 12,
@@ -382,7 +382,7 @@
                   display: "flex", gap: 10, alignItems: "flex-start", padding: "10px 12px",
                   borderRadius: 6, cursor: "pointer",
                   border: `1px solid ${checks[c.k] ? (c.type === "intrinsic" ? C.green : C.purple) : C.border}`,
-                  background: checks[c.k] ? (c.type === "intrinsic" ? "#3fb95014" : "#bc8cff14") : "transparent",
+                  background: checks[c.k] ? (c.type === "intrinsic" ? "#2c7a4b14" : "#6b46a814") : "transparent",
                   transition: "all 0.15s",
                 }}>
                   <div style={{
@@ -434,8 +434,8 @@
         ["RCTs / prospective cohort studies", C.green, "high"],
         ["Retrospective cohort / epidemiological", C.blue, "moderate"],
         ["In vivo animal models (dose-matched)", C.blue, "moderate, population-limited"],
-        ["Case reports", "#f0a84b", "low — hypothesis-generating only"],
-        ["In vitro / in silico", "#f0a84b", "low — mechanistic only"],
+        ["Case reports", "#b86c10", "low — hypothesis-generating only"],
+        ["In vitro / in silico", "#b86c10", "low — mechanistic only"],
         ["Narrative reviews", C.red, "lowest — selection bias inherent"],
         ["Press releases / regulatory statements", C.red, "not primary evidence"],
       ];
@@ -497,9 +497,9 @@
                 <div style={{ flex: 1 }}>
                   <div style={{ fontWeight: 600, color: C.text, marginBottom: 6 }}>{g.gap}</div>
                   <div style={{ color: C.muted, fontSize: 13, lineHeight: 1.6, marginBottom: 10 }}>{g.why}</div>
-                  <div style={{ background: "#58a6ff0d", border: `1px solid #58a6ff22`, borderRadius: 6, padding: "10px 12px", marginBottom: 8 }}>
+                  <div style={{ background: "#2b6cb00d", border: `1px solid #58a6ff22`, borderRadius: 6, padding: "10px 12px", marginBottom: 8 }}>
                     <div style={{ fontSize: 11, color: C.blue, fontFamily: "monospace", marginBottom: 4 }}>SEARCH PATH</div>
-                    <div style={{ color: "#b3d0f5", fontSize: 13, lineHeight: 1.6 }}>{g.search}</div>
+                    <div style={{ color: "#1e4a7a", fontSize: 13, lineHeight: 1.6 }}>{g.search}</div>
                   </div>
                   <Badge color={C.purple}>Bloom's: {g.bloom}</Badge>
                 </div>
