@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cannabis Dispensary — Industry Memberships &amp; Professional Associations</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: #f9fafb; color: #1a1a2e; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState } = React;
+
+    const data = [
+      {
+        category: "Herbal Industry",
+        name: "American Herbal Products Association (AHPA)",
+        cost: "Active Member: Revenue-based dues\nAssociate Member: $2,000/yr",
+        website: "https://www.ahpa.org/",
+        recommendedFor: "Ownership, compliance officers, product development staff",
+        benefits: "Regulatory guidance, labeling standards, and botanical authentication resources. Positions the dispensary as credible within the broader herbal products industry and aids GMP compliance.",
+        notes: ""
+      },
+      {
+        category: "Herbal Industry",
+        name: "United Plant Savers",
+        cost: "Individual: $50/yr\nHerbal Business: $230/yr",
+        website: "https://unitedplantsavers.org/",
+        recommendedFor: "Owners, sustainability leads, procurement staff",
+        benefits: "Demonstrates commitment to ethical sourcing and sustainability. Access to at-risk plant lists and conservation data relevant to botanical product lines beyond cannabis.",
+        notes: ""
+      },
+      {
+        category: "Herbal Industry",
+        name: "American Herbalists Guild",
+        cost: "General: $70/yr\nRegistered Herbalist: $150/yr\nInstitution: $400/yr",
+        website: "https://www.americanherbalistsguild.com/",
+        recommendedFor: "Budtenders, product specialists, wellness consultants",
+        benefits: "Deepens staff knowledge of herbal medicine traditions and plant therapeutics. Enhances customer consultations on terpene profiles, entourage effects, and complementary botanicals.",
+        notes: ""
+      },
+      {
+        category: "Herbal Industry",
+        name: "American Botanical Council",
+        cost: "Individual: $50/yr\nAcademic: $100/yr\nProfessional: $150/yr\nHerbClip Service: $600/yr\nSmall Business: $690/yr (5 logins)",
+        website: "https://www.herbalgram.org/",
+        recommendedFor: "Managers, product developers, education/training leads",
+        benefits: "Peer-reviewed research access via HerbalGram and HerbClip. Supports evidence-based product selection and staff training with current botanical science.",
+        notes: ""
+      },
+      {
+        category: "Herbal Industry",
+        name: "Society for Ethnobotany (SEB)",
+        cost: "Regular: $75/yr\nCorporate: $150/yr",
+        website: "https://ethnobotany.org/",
+        recommendedFor: "Ownership, education coordinators, community outreach staff",
+        benefits: "Cultural and historical context for plant use. Supports culturally competent marketing and community education. Useful for equity-focused dispensaries.",
+        notes: "Formerly called Society for Economic Botany"
+      },
+      {
+        category: "Cannabis Industry",
+        name: "National Cannabis Industry Association (NCIA)",
+        cost: "Seedling: $1,000/yr\nBlooming: $5,000/yr\nEvergreen: $15,000/yr",
+        website: "https://thecannabisindustry.org/",
+        recommendedFor: "Managers, supervisors, compliance officers, ownership",
+        benefits: "Industry research, policy updates, conferences, and networking with operational leaders. Keeps staff current on regulatory changes critical to daily operations and compliance.",
+        notes: "Quarterly and monthly payment options available at slight premium"
+      },
+      {
+        category: "Cannabis Industry",
+        name: "American Trade Association for Cannabis & Hemp (ATACH)",
+        cost: "Supporter: $10,000/yr\nAdvocate: $25,000/yr\nChampion: $50,000/yr",
+        website: "https://atach.org/",
+        recommendedFor: "Ownership, C-suite, government affairs staff",
+        benefits: "Federal-level advocacy and policy shaping for hemp-derived products (CBD, delta-8). Essential if the dispensary carries or plans to carry hemp-derived product lines.",
+        notes: ""
+      },
+      {
+        category: "Cannabis Industry",
+        name: "Kentucky Cannabis Industry Alliance (KCIA)",
+        cost: "Tier 1: $3,000/yr\nTier 2: $6,000/yr\nTier 3: $12,000/yr\nDispensary: $6,000/yr",
+        website: "https://www.kycanna.org/",
+        recommendedFor: "Ownership, store managers, compliance staff",
+        benefits: "State-specific regulatory intelligence, local networking, and legislative advocacy. Critical for dispensaries operating in or entering the Kentucky market.",
+        notes: "Contact KCIA directly for current tier definitions"
+      },
+      {
+        category: "Professional Association",
+        name: "Cannabis Chamber of Commerce",
+        cost: "Multiple tiers available\n(contact for current pricing)",
+        website: "https://www.thecannabischamber.com/",
+        recommendedFor: "Store managers, marketing staff, business development/partnerships",
+        benefits: "High-level networking, brand-building, and business development education. Strengthens local presence, develops vendor/brand partnerships, and increases revenue opportunities.",
+        notes: "Visit membership page for current tier pricing"
+      },
+      {
+        category: "Professional Association",
+        name: "Women Grow Foundation",
+        cost: "Starting at $79/yr (student)\nUp to $5,000/yr (leadership)",
+        website: "https://womengrow.org/",
+        recommendedFor: "Female employees across all roles; leadership development candidates",
+        benefits: "Mentorship, leadership programs, career development, and advocacy training. Promotes employee retention, leadership diversity, and staff engagement.",
+        notes: "Relaunched Feb 2025 as 501(c)(3) nonprofit. Website moved from womengrow.com to womengrow.org"
+      },
+      {
+        category: "Professional Association",
+        name: "NORML",
+        cost: "Individual: ~$35/yr (or $10/mo sustaining)\nLegal Committee: $300/yr\n($150 public defenders)",
+        website: "https://norml.org/",
+        recommendedFor: "Ownership, compliance staff, government affairs, all employees interested in policy",
+        benefits: "The dominant cannabis policy and advocacy organization since 1970. Legislative alerts, policy analysis, and public credibility on reform issues. Membership signals industry commitment.",
+        notes: "Donation-based membership; $35+ qualifies. Also has state-level chapters with separate dues"
+      },
+      {
+        category: "Professional Association",
+        name: "Americans for Safe Access (ASA)",
+        cost: "Individual: $35+/yr\nStudent/Senior: $25/yr\nBusiness: $1,000+/yr",
+        website: "https://www.safeaccessnow.org/",
+        recommendedFor: "Patient-facing staff, compliance officers, medical dispensary managers",
+        benefits: "Patient-focused advocacy aligned with medical access priorities. Training resources, legal support network, and patient rights education. Essential for medical-license dispensaries.",
+        notes: ""
+      },
+      {
+        category: "Professional Association",
+        name: "Society of Cannabis Clinicians (SCC)",
+        cost: "Contact SCC for current dues",
+        website: "https://www.cannabisclinicians.org/",
+        recommendedFor: "Staff with clinical or patient-counseling responsibilities; pharmacists, wellness consultants",
+        benefits: "Medical cannabis research access, dosing guidance, quarterly meetings with global experts, and 20% discount on education programs. Strengthens evidence-based patient consultations.",
+        notes: "Includes $300+ in free educational resources with membership"
+      },
+      {
+        category: "Equity & Community",
+        name: "Minorities for Medical Marijuana (M4MM)",
+        cost: "Donation-based\n(no fixed dues published)",
+        website: "https://www.minorities4medicalmarijuana.org/",
+        recommendedFor: "Ownership, HR staff, community outreach, social equity program managers",
+        benefits: "Equity programming, expungement support, business licensing bootcamp, supplier diversity programs. Demonstrates substantive commitment to equity beyond performative DEI.",
+        notes: "Contact: m4mmunited@gmail.com or (877) 900-0832"
+      },
+      {
+        category: "Equity & Community",
+        name: "Minority Cannabis Business Association (MCBA)",
+        cost: "Individual: $100\u2013$1,000/yr\nCorporate: $2,500\u2013$50,000/yr",
+        website: "https://www.minoritycannabis.org/",
+        recommendedFor: "Ownership, equity program managers, government affairs, HR",
+        benefits: "Networking with equity licensees, policy advocacy on social equity provisions, Power Hours, Town Halls, Equity Workshop Tour access, and federal lobbying. Largest national trade association for minority cannabis businesses.",
+        notes: "Individual tiers: Supporter $100, Advocate $500, Professional $1,000. Corporate tiers: Ally $2,500 to Game Changer $50,000"
+      },
+      {
+        category: "Training Program",
+        name: "Cannabis Training University",
+        cost: "~$199\u2013$299 per enrollment",
+        website: "https://cannabistraininguniversity.com/",
+        recommendedFor: "Budtenders, product specialists, new hires",
+        benefits: "Formal education on strains, cannabinoids, terpenes, sales techniques, and compliance. Reduces onboarding time, compliance errors, and improves customer service and sales.",
+        notes: "Not a professional association; a training/certification provider"
+      },
+      {
+        category: "Training Program",
+        name: "Trichome Institute",
+        cost: "~$149\u2013$499 per certification",
+        website: "https://trichomeinstitute.com/",
+        recommendedFor: "Budtenders, product specialists, quality assurance staff",
+        benefits: "Interpening certification and sensory evaluation skills. Produces highly trained staff capable of sophisticated product recommendations, directly increasing customer trust and sales.",
+        notes: "Not a professional association; a training/certification provider"
+      },
+      {
+        category: "Training Program",
+        name: "Budtenders Association (BTA)",
+        cost: "Free membership",
+        website: "https://budtendersassociation.ca/",
+        recommendedFor: "All frontline dispensary staff, budtenders",
+        benefits: "Cannabis education, retail research, market intelligence, and brand health insights. Free professionalizing resource for budtenders with peer networking opportunities.",
+        notes: "Canada-based but resources applicable broadly. No membership fee"
+      },
+      {
+        category: "Science & Quality",
+        name: "Council for Responsible Nutrition (CRN)",
+        cost: "Revenue-based dues\n(contact CRN for tiers)",
+        website: "https://www.crnusa.org/",
+        recommendedFor: "Ownership, product development, compliance \u2014 especially if carrying supplements/edibles/wellness products",
+        benefits: "GMP guidance and regulatory frameworks for ingestible products. Industry intelligence on developing dietary supplement regulations applicable to cannabis edibles and wellness lines.",
+        notes: "Four-tiered associate member structure based on company size. Serving the supplement industry since 1973"
+      }
+    ];
+
+    const categories = [...new Set(data.map(d => d.category))];
+    const categoryColors = {
+      "Herbal Industry": { badge: "#dcfce7", text: "#166534" },
+      "Cannabis Industry": { badge: "#f3e8ff", text: "#6b21a8" },
+      "Professional Association": { badge: "#dbeafe", text: "#1e40af" },
+      "Equity & Community": { badge: "#fce7f3", text: "#9d174d" },
+      "Training Program": { badge: "#fef3c7", text: "#92400e" },
+      "Science & Quality": { badge: "#ccfbf1", text: "#115e59" }
+    };
+
+    function App() {
+      const [filter, setFilter] = useState("All");
+      const [expandedRow, setExpandedRow] = useState(null);
+      const [searchTerm, setSearchTerm] = useState("");
+
+      const filtered = data
+        .filter(d => filter === "All" || d.category === filter)
+        .filter(d =>
+          searchTerm === "" ||
+          d.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          d.benefits.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          d.recommendedFor.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+
+      return (
+        <div style={{ maxWidth: 1280, margin: "0 auto", padding: 24 }}>
+          <h1 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4, color: "#1a1a2e" }}>
+            Cannabis Dispensary &mdash; Industry Memberships &amp; Professional Associations
+          </h1>
+          <p style={{ fontSize: 13, color: "#666", marginBottom: 16 }}>
+            {data.length} organizations across {categories.length} categories. Click any row to expand full details.
+          </p>
+
+          <input
+            type="text"
+            placeholder="Search organizations, benefits, or roles..."
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+            style={{
+              width: "100%",
+              maxWidth: 400,
+              padding: "8px 12px",
+              borderRadius: 6,
+              border: "1px solid #d1d5db",
+              fontSize: 13,
+              marginBottom: 12,
+              outline: "none"
+            }}
+          />
+
+          <div style={{ display: "flex", gap: 6, marginBottom: 16, flexWrap: "wrap", alignItems: "center" }}>
+            {["All", ...categories].map(cat => (
+              <button
+                key={cat}
+                onClick={() => setFilter(cat)}
+                style={{
+                  padding: "5px 12px",
+                  borderRadius: 6,
+                  border: filter === cat ? "2px solid #4f46e5" : "1px solid #d1d5db",
+                  background: filter === cat ? "#eef2ff" : "#fff",
+                  color: filter === cat ? "#4338ca" : "#374151",
+                  fontWeight: filter === cat ? 600 : 400,
+                  fontSize: 12,
+                  cursor: "pointer"
+                }}
+              >
+                {cat} ({cat === "All" ? data.length : data.filter(d => d.category === cat).length})
+              </button>
+            ))}
+          </div>
+
+          <div style={{ fontSize: 12, color: "#888", marginBottom: 8 }}>
+            Showing {filtered.length} of {data.length} organizations
+          </div>
+
+          <div style={{ overflowX: "auto", borderRadius: 8, border: "1px solid #e5e7eb" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+              <thead>
+                <tr style={{ background: "#f8fafc" }}>
+                  {["Organization", "Annual Cost", "Website", "Recommended For", "Key Business Benefits"].map((h, i) => (
+                    <th key={i} style={{
+                      padding: "10px 12px",
+                      textAlign: "left",
+                      fontWeight: 600,
+                      color: "#374151",
+                      borderBottom: "2px solid #e5e7eb",
+                      fontSize: 11,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em",
+                      whiteSpace: "nowrap"
+                    }}>
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((org, idx) => {
+                  const colors = categoryColors[org.category] || { badge: "#f3f4f6", text: "#374151" };
+                  const isExpanded = expandedRow === idx;
+                  return (
+                    <tr
+                      key={idx}
+                      onClick={() => setExpandedRow(isExpanded ? null : idx)}
+                      style={{
+                        borderBottom: "1px solid #e5e7eb",
+                        cursor: "pointer",
+                        background: isExpanded ? "#f0f4ff" : idx % 2 === 0 ? "#fff" : "#fafafa",
+                        transition: "background 0.15s"
+                      }}
+                      onMouseEnter={e => { if (!isExpanded) e.currentTarget.style.background = "#f5f7ff"; }}
+                      onMouseLeave={e => { if (!isExpanded) e.currentTarget.style.background = isExpanded ? "#f0f4ff" : idx % 2 === 0 ? "#fff" : "#fafafa"; }}
+                    >
+                      <td style={{ padding: "10px 12px", verticalAlign: "top", minWidth: 220 }}>
+                        <div style={{ fontWeight: 600, color: "#1a1a2e", marginBottom: 4 }}>{org.name}</div>
+                        <span style={{
+                          display: "inline-block",
+                          padding: "2px 8px",
+                          borderRadius: 4,
+                          fontSize: 10,
+                          fontWeight: 500,
+                          background: colors.badge,
+                          color: colors.text
+                        }}>
+                          {org.category}
+                        </span>
+                        {isExpanded && org.notes && (
+                          <div style={{ marginTop: 6, fontSize: 11, color: "#6b7280", fontStyle: "italic" }}>
+                            Note: {org.notes}
+                          </div>
+                        )}
+                      </td>
+                      <td style={{ padding: "10px 12px", verticalAlign: "top", whiteSpace: "pre-line", minWidth: 180, fontSize: 12, color: "#374151" }}>
+                        {org.cost}
+                      </td>
+                      <td style={{ padding: "10px 12px", verticalAlign: "top", minWidth: 160 }}>
+                        <a
+                          href={org.website}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={e => e.stopPropagation()}
+                          style={{ color: "#4f46e5", textDecoration: "none", fontSize: 12, wordBreak: "break-all" }}
+                        >
+                          {org.website.replace(/^https?:\/\//, "").replace(/\/$/, "")}
+                        </a>
+                      </td>
+                      <td style={{ padding: "10px 12px", verticalAlign: "top", minWidth: 180, fontSize: 12, color: "#374151" }}>
+                        {org.recommendedFor}
+                      </td>
+                      <td style={{ padding: "10px 12px", verticalAlign: "top", minWidth: 260, fontSize: 12, color: "#374151", lineHeight: 1.5 }}>
+                        {isExpanded ? org.benefits : org.benefits.length > 140 ? org.benefits.slice(0, 140) + "..." : org.benefits}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          <div style={{ marginTop: 16, padding: 12, background: "#fffbeb", border: "1px solid #fde68a", borderRadius: 6, fontSize: 11, color: "#92400e" }}>
+            <strong>Data verification notes:</strong> Costs verified via organizational websites where possible (March 2026). Revenue-based and "contact for pricing" entries indicate organizations that do not publicly list fixed dues. The Cannabis Marketing Association was excluded &mdash; it shut down in early 2025. The Cannabis Certification Council was excluded &mdash; its domain now redirects to an unrelated site. Women Grow relaunched in Feb 2025 as the Women Grow Foundation (womengrow.org). Always confirm current pricing directly with each organization before budgeting.
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>
