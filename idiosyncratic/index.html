@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kratom Toxicity: Intrinsic or Idiosyncratic? — Metacognitive Scaffold</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0d1117; color: #e6edf3; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0d1117; }
+    ::-webkit-scrollbar-thumb { background: #21262d; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    const C = {
+      bg: "#0d1117",
+      surface: "#161b22",
+      border: "#21262d",
+      accent: "#c9a84c",
+      accentDim: "#7a6430",
+      text: "#e6edf3",
+      muted: "#7d8590",
+      green: "#3fb950",
+      red: "#f85149",
+      blue: "#58a6ff",
+      purple: "#bc8cff",
+    };
+
+    const SECTIONS = [
+      { id: "concept",   short: "Concepts",  label: "I. Conceptual Frame" },
+      { id: "evidence",  short: "Evidence",  label: "II. Evidence Audit" },
+      { id: "bias",      short: "Bias",      label: "III. Bias Radar" },
+      { id: "sources",   short: "Sources",   label: "IV. Source Gap" },
+      { id: "synthesis", short: "Peer",      label: "V. Peer Loop" },
+      { id: "preflight", short: "Preflight", label: "VI. Essay Preflight" },
+      { id: "live",      short: "Live",      label: "⬡ Live Session" },
+    ];
+
+    const EVIDENCE_ITEMS = [
+      {
+        id: "e1",
+        label: "Meireles et al. (2019) — Review paper",
+        source: "Required reading",
+        evidenceType: "Narrative review",
+        prompt: "What is the difference between a narrative review and a systematic review in terms of how conclusions are weighted? Who funded this, and what institutional context shapes its framing?",
+        redFlag: "Review authors describe kratom as a 'drug of abuse' in the abstract before presenting evidence. What does this do to the framing?",
+      },
+      {
+        id: "e2",
+        label: "FDA Commissioner Gottlieb Statement (2018)",
+        source: "Required reading",
+        evidenceType: "Regulatory statement",
+        prompt: "This is a press release, not a peer-reviewed paper. What type of evidence does it cite? In silico modeling vs. clinical trials — what's the difference in evidentiary weight?",
+        redFlag: "The FDA used computational modeling to assert opioid-like activity. Does in silico binding affinity data tell you about toxicity at consumer doses?",
+      },
+      {
+        id: "e3",
+        label: "Outside Magazine — Kratom & weightlifting death",
+        source: "Required reading",
+        evidenceType: "Journalism / single case",
+        prompt: "The article notes that 'the fact that the tests turned up nothing doesn't rule out the possibility that something else was at play.' What kind of inference is this? How does postmortem redistribution complicate toxicological interpretation?",
+        redFlag: "3,500 ng/mL mitragynine cited. What is the normal range in regular users? Without a reference range, what does the number mean?",
+      },
+      {
+        id: "e4",
+        label: "Traditional Southeast Asian use (historical)",
+        source: "Background / supplemental",
+        evidenceType: "Ethnobotanical record",
+        prompt: "No deaths attributed to kratom were reported in Southeast Asia during the same period Western deaths were recorded. What are two possible explanations — one that supports idiosyncratic toxicity and one that doesn't?",
+        redFlag: "Traditional use involved chewing fresh leaves, 10–30/day. How does this differ from encapsulated extracts or concentrated powders? Does form matter?",
+      },
+      {
+        id: "e5",
+        label: "Animal model studies (rat/mouse LD50 data)",
+        source: "Within Meireles review",
+        evidenceType: "Animal model",
+        prompt: "LD50 of 173.20 mg/kg (alkaloid extract) in mice. What is the estimated human consumer dose in mg/kg? Can you calculate an approximate ratio? What does this tell you about intrinsic toxicity at consumer doses?",
+        redFlag: "Sub-chronic high doses caused kidney and lung damage in rats. Does this reflect traditional use patterns? What dose was used relative to human-equivalent dosing?",
+      },
+      {
+        id: "e6",
+        label: "CYP450 inhibition data (Meireles / pharmacokinetics)",
+        source: "Within Meireles review",
+        evidenceType: "In vitro / mechanistic",
+        prompt: "Mitragynine inhibits CYP2D6, CYP3A4, CYP2C9. What class of toxicity does this implicate — intrinsic or idiosyncratic? Which co-administered substances would become dangerous as a result?",
+        redFlag: "~80% of deaths involved polypharmacy or known substance misuse history. If CYP inhibition is the mechanism, what does this tell you about the population at risk?",
+      },
+    ];
+
+    const BIAS_ITEMS = [
+      {
+        id: "b1",
+        source: "Meireles et al. (2019)",
+        type: "Framing bias",
+        q: "Count how many times the word 'abuse' appears in the abstract vs. 'therapeutic.' What does the ratio signal about the authors' interpretive frame before the evidence is presented?",
+        follow: "The paper cites 44 FDA-reported deaths. What percentage of the 15 million estimated US users does this represent? Is the denominator ever stated?",
+      },
+      {
+        id: "b2",
+        source: "FDA Gottlieb Statement",
+        type: "Regulatory / political bias",
+        q: "The FDA used 'public health assessment via structural evaluation' — a computational docking model. What assumptions does this method require? Does structural similarity to opioids imply equivalent clinical risk?",
+        follow: "Mitragynine is a partial µ-agonist that shows minimal β-arrestin recruitment — the pathway associated with respiratory depression in classic opioids. Did the FDA statement address this pharmacological distinction?",
+      },
+      {
+        id: "b3",
+        source: "Case reports generally",
+        type: "Selection / reporting bias",
+        q: "Case reports enter the literature when something goes wrong. What is the denominator — uneventful uses — and why is it never published? What does this do to the apparent risk estimate?",
+        follow: "Corkery et al. (2019) found zero deaths in Asia during a comparable reporting window. What would need to be true for this to be explained by something other than population/form/dose differences?",
+      },
+      {
+        id: "b4",
+        source: "Regulatory history",
+        type: "Civilizational / colonial bias",
+        q: "Kratom was banned in Thailand in 1943 — during a period when it was competing with opium tax revenue. Germany overturned its kava ban when evidence failed reproducibility. What pattern does this suggest about how botanical risk is assessed vs. how pharmaceutical risk is assessed?",
+        follow: "Would the regulatory response have been different if kratom had originated in Western Europe rather than Southeast Asia? How would you argue this without it being purely rhetorical?",
+      },
+    ];
+
+    const SOURCE_GAPS = [
+      {
+        gap: "No systematic review cited",
+        why: "Narrative reviews aggregate selectively. A systematic review with explicit inclusion criteria is a higher evidentiary standard.",
+        search: "Search: 'kratom mitragynine systematic review' in PubMed. Look for Stanciu et al. 2023 on overdose risk.",
+        bloom: "Analysis",
+      },
+      {
+        gap: "No respiratory depression data cited",
+        why: "The core opioid overdose risk is respiratory depression. Does mitragynine cause it? This is a testable pharmacological claim with rodent data available.",
+        search: "Henningfield et al. (2022) Psychopharmacology. Search 'mitragynine respiratory depression rodent model.'",
+        bloom: "Evaluation",
+      },
+      {
+        gap: "No cardiac safety data in humans",
+        why: "Meireles cites cardiotoxicity via hERG channel blockade (in vitro). But what does the clinical ECG data in regular users show?",
+        search: "Search: 'kratom mitragynine electrocardiographic users' — there is a 2020 human cohort study showing no significant ECG abnormalities at ~434 mg mitragynine/day.",
+        bloom: "Evaluation",
+      },
+      {
+        gap: "No pharmacokinetic dose-response in humans",
+        why: "To argue intrinsic toxicity, you need a dose-response curve in the relevant population. Rat LD50 data doesn't give this.",
+        search: "Trakulsrichai et al. (2015) Drug Des Dev Ther — human PK study of mitragynine. McCurdy lab at UF: researchgate.net/profile/Christopher-Mccurdy",
+        bloom: "Synthesis",
+      },
+      {
+        gap: "No traditional use pharmacoepidemiology",
+        why: "Millions of users in Southeast Asia over decades with near-zero attributed mortality. This is epidemiological signal that requires explanation, not dismissal.",
+        search: "Ellis et al. (2019) CPT — structural evaluation paper. Singh et al. multiple papers on Malaysia user populations.",
+        bloom: "Application",
+      },
+    ];
+
+    const PREFLIGHT = [
+      { id: "p1", q: "Does your intro state a specific, falsifiable hypothesis?", tip: "Example: 'Kratom's adverse events are predominantly idiosyncratic, driven by CYP-mediated drug interactions and non-traditional use patterns, rather than intrinsic toxicity at consumer doses.'" },
+      { id: "p2", q: "Have you defined both toxicity types using specific criteria — not just dictionary definitions?", tip: "Intrinsic = dose-dependent, reproducible, mechanism-linked, population-invariant. Idiosyncratic = minority of users, variable onset, co-factor dependent, not reproducible." },
+      { id: "p3", q: "Have you engaged with the bias in at least two sources — including one you're using to support your argument?", tip: "Acknowledging limits in your own supporting sources makes your argument stronger, not weaker." },
+      { id: "p4", q: "Do you have at least 5 primary peer-reviewed sources OUTSIDE the course materials?", tip: "If all your citations are from the provided list, you haven't done the research component. PubMed, Google Scholar, McCurdy lab publications, Stanciu 2023." },
+      { id: "p5", q: "Have you addressed the population mismatch (traditional use vs. Western concentrated extracts)?", tip: "This is the most important confound in the dataset. If you haven't addressed it, your analysis is incomplete." },
+      { id: "p6", q: "Have you addressed the polypharmacy confound specifically — not just mentioned it?", tip: "~80% of deaths involved co-administration. What does this tell you mechanistically? CYP inhibition + narrow therapeutic window drugs = specific risk profile." },
+      { id: "p7", q: "Does your conclusion actually answer the question — intrinsic OR idiosyncratic — with a defensible position?", tip: "'Both' without a framework for when each applies is a non-answer." },
+      { id: "p8", q: "Did you revise your essay after the peer discussion? What specifically changed?", tip: "If your discussion post and your essay are identical in argument, you didn't use the discussion. That's the point of the discussion." },
+    ];
+
+    const LIVE_QUESTIONS = [
+      {
+        tier: "Conceptual",
+        q: "If everything is intrinsically toxic at a high enough dose — which is true — why does that NOT settle the intrinsic vs. idiosyncratic question for kratom at consumer doses?",
+        purpose: "Exposes the difference between theoretical toxicity ceiling and actual adverse event mechanism.",
+      },
+      {
+        tier: "Mechanistic",
+        q: "Mitragynine is a partial µ-agonist with low β-arrestin recruitment. Classic opioids are full µ-agonists with high β-arrestin recruitment. What is the clinical implication of this distinction for respiratory depression risk?",
+        purpose: "Tests whether students accepted FDA framing uncritically vs. engaged with the pharmacology.",
+      },
+      {
+        tier: "Epidemiological",
+        q: "Zero kratom deaths in Southeast Asia during the same window Western deaths were reported. Give two explanations that support idiosyncratic mechanisms AND two that don't.",
+        purpose: "Forces multi-hypothesis thinking rather than single-cause narrative.",
+      },
+      {
+        tier: "Evidentiary",
+        q: "The Meireles paper is a narrative review. Walk me through the evidence hierarchy from weakest to strongest source you have on this topic. Where does Meireles land?",
+        purpose: "Tests evidence literacy, not content recall.",
+      },
+      {
+        tier: "Applied",
+        q: "You're designing a label for a kratom product going to market. What dose, what warnings, what contraindications — based only on evidence you can actually defend? Where are the gaps?",
+        purpose: "Forces translation from academic argument to practical risk communication.",
+      },
+      {
+        tier: "Meta",
+        q: "The kava ban was overturned in Germany because risk wasn't reproducible. Compare the Germany kava situation to the current US kratom situation — what's the same, what's different, what does the comparison tell you about regulatory risk assessment?",
+        purpose: "Tests module-to-module synthesis and pattern recognition.",
+      },
+    ];
+
+    // ── Primitives ───────────────────────────────────────────────────────────
+
+    function Badge({ children, color = C.accent }) {
+      return (
+        <span style={{
+          background: color + "22", color, border: `1px solid ${color}44`,
+          borderRadius: 4, padding: "2px 8px", fontSize: 11,
+          fontFamily: "monospace", letterSpacing: "0.05em", display: "inline-block",
+        }}>{children}</span>
+      );
+    }
+
+    function Card({ children, style = {} }) {
+      return (
+        <div style={{
+          background: C.surface, border: `1px solid ${C.border}`,
+          borderRadius: 8, padding: "20px 24px", marginBottom: 16, ...style,
+        }}>{children}</div>
+      );
+    }
+
+    function SectionHeader({ label, sub }) {
+      return (
+        <div style={{ marginBottom: 24 }}>
+          <div style={{ fontFamily: "Georgia, serif", fontSize: 22, color: C.accent, letterSpacing: "0.02em" }}>{label}</div>
+          {sub && <div style={{ color: C.muted, fontSize: 13, marginTop: 6, lineHeight: 1.5 }}>{sub}</div>}
+        </div>
+      );
+    }
+
+    // ── Evidence card (self-contained state) ─────────────────────────────────
+
+    function EvidenceCard({ item }) {
+      const [open, setOpen] = useState(false);
+      const [rating, setRating] = useState(null);
+      return (
+        <Card>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
+            <div>
+              <div style={{ fontWeight: 600, color: C.text, marginBottom: 6 }}>{item.label}</div>
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                <Badge color={C.blue}>{item.source}</Badge>
+                <Badge color={C.purple}>{item.evidenceType}</Badge>
+              </div>
+            </div>
+            <button onClick={() => setOpen(!open)} style={{
+              background: "none", border: `1px solid ${C.border}`, color: C.muted,
+              borderRadius: 4, padding: "4px 10px", cursor: "pointer", fontSize: 12, whiteSpace: "nowrap",
+            }}>{open ? "▲ close" : "▼ examine"}</button>
+          </div>
+          {open && (
+            <div style={{ marginTop: 16, borderTop: `1px solid ${C.border}`, paddingTop: 16 }}>
+              <div style={{ marginBottom: 14 }}>
+                <div style={{ fontSize: 11, color: C.accent, fontFamily: "monospace", marginBottom: 6 }}>CRITICAL QUESTION</div>
+                <div style={{ color: C.text, lineHeight: 1.65, fontSize: 14 }}>{item.prompt}</div>
+              </div>
+              <div style={{ background: "#f851490d", border: `1px solid #f8514922`, borderRadius: 6, padding: "12px 14px" }}>
+                <div style={{ fontSize: 11, color: C.red, fontFamily: "monospace", marginBottom: 5 }}>⚑ RED FLAG</div>
+                <div style={{ color: "#f8b4b4", fontSize: 13, lineHeight: 1.6 }}>{item.redFlag}</div>
+              </div>
+              <div style={{ marginTop: 14 }}>
+                <div style={{ fontSize: 11, color: C.muted, marginBottom: 8 }}>Rate your confidence in this evidence for your argument:</div>
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                  {["strong", "moderate", "weak", "unusable"].map(r => (
+                    <button key={r} onClick={() => setRating(r)} style={{
+                      background: rating === r ? C.accent + "33" : "none",
+                      border: `1px solid ${rating === r ? C.accent : C.border}`,
+                      color: rating === r ? C.accent : C.muted,
+                      borderRadius: 4, padding: "4px 10px", cursor: "pointer", fontSize: 12,
+                    }}>{r}</button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+        </Card>
+      );
+    }
+
+    // ── Bias card ────────────────────────────────────────────────────────────
+
+    function BiasCard({ item }) {
+      const [open, setOpen] = useState(false);
+      return (
+        <Card>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
+            <div>
+              <div style={{ fontWeight: 600, color: C.text, marginBottom: 6 }}>{item.source}</div>
+              <Badge color={C.red}>{item.type}</Badge>
+            </div>
+            <button onClick={() => setOpen(!open)} style={{
+              background: "none", border: `1px solid ${C.border}`, color: C.muted,
+              borderRadius: 4, padding: "4px 10px", cursor: "pointer", fontSize: 12,
+            }}>{open ? "▲ close" : "▼ examine"}</button>
+          </div>
+          {open && (
+            <div style={{ marginTop: 16, borderTop: `1px solid ${C.border}`, paddingTop: 16 }}>
+              <div style={{ marginBottom: 14 }}>
+                <div style={{ fontSize: 11, color: C.accent, fontFamily: "monospace", marginBottom: 6 }}>PRIMARY PROBE</div>
+                <div style={{ color: C.text, lineHeight: 1.65, fontSize: 14 }}>{item.q}</div>
+              </div>
+              <div style={{ background: "#58a6ff0d", border: `1px solid #58a6ff22`, borderRadius: 6, padding: "12px 14px" }}>
+                <div style={{ fontSize: 11, color: C.blue, fontFamily: "monospace", marginBottom: 5 }}>FOLLOW-UP</div>
+                <div style={{ color: "#b3d0f5", fontSize: 13, lineHeight: 1.6 }}>{item.follow}</div>
+              </div>
+            </div>
+          )}
+        </Card>
+      );
+    }
+
+    // ── Claim row (extracted from map to satisfy rules of hooks) ─────────────
+
+    function ClaimRow({ claim, correct, isLast }) {
+      const [sel, setSel] = useState(null);
+      return (
+        <div style={{
+          borderBottom: !isLast ? `1px solid ${C.border}` : "none",
+          paddingBottom: 14, marginBottom: 14,
+        }}>
+          <div style={{ color: C.text, fontSize: 13, lineHeight: 1.6, marginBottom: 8 }}>"{claim}"</div>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            {["intrinsic", "idiosyncratic", "both"].map(opt => (
+              <button key={opt} onClick={() => setSel(opt)} style={{
+                background: sel === opt ? (sel === correct ? "#3fb95033" : "#f8514933") : "none",
+                border: `1px solid ${sel === opt ? (sel === correct ? C.green : C.red) : C.border}`,
+                color: sel === opt ? (sel === correct ? C.green : C.red) : C.muted,
+                borderRadius: 4, padding: "3px 10px", cursor: "pointer", fontSize: 12,
+              }}>{opt}</button>
+            ))}
+            {sel && sel !== correct && (
+              <span style={{ color: C.muted, fontSize: 12, alignSelf: "center" }}>→ consider: {correct}</span>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    // ── Section components ───────────────────────────────────────────────────
+
+    function ConceptSection() {
+      const [checks, setChecks] = useState({});
+      const toggle = k => setChecks(p => ({ ...p, [k]: !p[k] }));
+
+      const criteria = [
+        { k: "c1", label: "Dose-dependent: toxic effects increase predictably with dose", type: "intrinsic" },
+        { k: "c2", label: "Reproducible: adverse event can be replicated in controlled conditions", type: "intrinsic" },
+        { k: "c3", label: "Population-invariant: occurs across most exposed individuals given sufficient dose", type: "intrinsic" },
+        { k: "c4", label: "Mechanism-linked: clear causal pathway from constituent to organ damage", type: "intrinsic" },
+        { k: "c5", label: "Minority occurrence: affects small % of users at any dose", type: "idiosyncratic" },
+        { k: "c6", label: "Co-factor dependent: requires convergence of host factors (genetics, disease, drugs)", type: "idiosyncratic" },
+        { k: "c7", label: "Not reproducible: cannot be reliably replicated in controlled models", type: "idiosyncratic" },
+        { k: "c8", label: "Unpredictable onset: timing and severity vary without clear dose relationship", type: "idiosyncratic" },
+      ];
+
+      const claims = [
+        { claim: "Rat LD50 data shows lethality at very high doses", correct: "intrinsic" },
+        { claim: "80% of US deaths involved polypharmacy or substance misuse history", correct: "idiosyncratic" },
+        { claim: "CYP2D6 inhibition could amplify co-administered drug levels unpredictably", correct: "idiosyncratic" },
+        { claim: "No deaths in Southeast Asia during same reporting window", correct: "idiosyncratic" },
+        { claim: "Traditional leaf chewing rarely causes harm; concentrated extracts do", correct: "both" },
+        { claim: "High-dose rat studies show hepatotoxicity and nephrotoxicity", correct: "intrinsic" },
+      ];
+
+      return (
+        <div>
+          <SectionHeader
+            label="I. Conceptual Frame"
+            sub="Before you can classify kratom, you need sharp criteria. Mark which criteria apply to each toxicity type — then apply those criteria to kratom-specific claims."
+          />
+          <Card>
+            <div style={{ fontSize: 13, color: C.accent, fontFamily: "monospace", marginBottom: 16 }}>STEP 1 — Build your criteria set</div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 8 }}>
+              {criteria.map(c => (
+                <div key={c.k} onClick={() => toggle(c.k)} style={{
+                  display: "flex", gap: 10, alignItems: "flex-start", padding: "10px 12px",
+                  borderRadius: 6, cursor: "pointer",
+                  border: `1px solid ${checks[c.k] ? (c.type === "intrinsic" ? C.green : C.purple) : C.border}`,
+                  background: checks[c.k] ? (c.type === "intrinsic" ? "#3fb95014" : "#bc8cff14") : "transparent",
+                  transition: "all 0.15s",
+                }}>
+                  <div style={{
+                    width: 16, height: 16, border: `2px solid ${checks[c.k] ? (c.type === "intrinsic" ? C.green : C.purple) : C.muted}`,
+                    borderRadius: 3, flexShrink: 0, marginTop: 1,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: 10, color: c.type === "intrinsic" ? C.green : C.purple,
+                  }}>{checks[c.k] ? "✓" : ""}</div>
+                  <div>
+                    <div style={{ fontSize: 12, color: C.text, lineHeight: 1.5, marginBottom: 4 }}>{c.label}</div>
+                    <Badge color={c.type === "intrinsic" ? C.green : C.purple}>{c.type}</Badge>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Card>
+
+          <Card>
+            <div style={{ fontSize: 13, color: C.accent, fontFamily: "monospace", marginBottom: 16 }}>STEP 2 — Apply criteria to kratom data</div>
+            <div style={{ fontSize: 12, color: C.muted, marginBottom: 12 }}>
+              For each claim, decide: intrinsic, idiosyncratic, or both?
+            </div>
+            {claims.map((c, i) => (
+              <ClaimRow key={i} claim={c.claim} correct={c.correct} isLast={i === claims.length - 1} />
+            ))}
+          </Card>
+
+          <Card style={{ borderColor: C.accentDim }}>
+            <div style={{ fontSize: 13, color: C.accent, fontFamily: "monospace", marginBottom: 10 }}>THE CORE TENSION</div>
+            <div style={{ color: C.text, fontSize: 14, lineHeight: 1.7 }}>
+              Everything is intrinsically toxic at a high enough dose — this is Paracelsus and it is not controversial.
+              The question is not "can kratom cause harm at extreme doses?" It is:{" "}
+              <strong style={{ color: C.accent }}>does kratom produce harm at consumer doses through a predictable,
+              dose-dependent mechanism in a general population — or does it require a specific convergence of
+              co-factors to produce adverse events?</strong>
+            </div>
+            <div style={{ marginTop: 12, color: C.muted, fontSize: 13, lineHeight: 1.6 }}>
+              A position of "both" is valid — but only if you specify: intrinsic at what dose, in what form,
+              via what mechanism; idiosyncratic for which co-factor cluster. "Both" without that specificity is not an argument.
+            </div>
+          </Card>
+        </div>
+      );
+    }
+
+    function EvidenceSection() {
+      const hierarchy = [
+        ["Systematic review / meta-analysis", C.green, "highest"],
+        ["RCTs / prospective cohort studies", C.green, "high"],
+        ["Retrospective cohort / epidemiological", C.blue, "moderate"],
+        ["In vivo animal models (dose-matched)", C.blue, "moderate, population-limited"],
+        ["Case reports", "#f0a84b", "low — hypothesis-generating only"],
+        ["In vitro / in silico", "#f0a84b", "low — mechanistic only"],
+        ["Narrative reviews", C.red, "lowest — selection bias inherent"],
+        ["Press releases / regulatory statements", C.red, "not primary evidence"],
+      ];
+      return (
+        <div>
+          <SectionHeader
+            label="II. Evidence Audit"
+            sub="Expand each source. Engage with the critical question before deciding how to use it. Mark your confidence rating. If you rate a source as 'weak' but plan to cite it, you need to address why."
+          />
+          {EVIDENCE_ITEMS.map(item => <EvidenceCard key={item.id} item={item} />)}
+          <Card style={{ borderColor: C.accentDim }}>
+            <div style={{ fontSize: 13, color: C.accent, fontFamily: "monospace", marginBottom: 12 }}>EVIDENCE HIERARCHY</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+              {hierarchy.map(([label, color, note], i) => (
+                <div key={i} style={{ display: "flex", gap: 10, alignItems: "center" }}>
+                  <div style={{ width: 8, height: 8, borderRadius: "50%", background: color, flexShrink: 0 }} />
+                  <span style={{ color: C.text, fontSize: 13 }}>{label}</span>
+                  <span style={{ color: C.muted, fontSize: 11, fontFamily: "monospace" }}>— {note}</span>
+                </div>
+              ))}
+            </div>
+          </Card>
+        </div>
+      );
+    }
+
+    function BiasSection() {
+      return (
+        <div>
+          <SectionHeader
+            label="III. Bias Radar"
+            sub="Identifying bias does not mean dismissing the source. It means you understand its limits and cite it accordingly."
+          />
+          {BIAS_ITEMS.map(item => <BiasCard key={item.id} item={item} />)}
+        </div>
+      );
+    }
+
+    function SourcesSection() {
+      const resources = [
+        ["McCurdy Lab (UF) — primary kratom researcher", "researchgate.net/profile/Christopher-Mccurdy", "https://www.researchgate.net/profile/Christopher-Mccurdy"],
+        ["NIH NIDA Kratom Symposium (video)", "videocast.nih.gov/watch=44774", "https://videocast.nih.gov/watch=44774"],
+        ["NPR: Kratom lawsuits & deaths coverage (2023)", "npr.org/2023/07/08/1186514144/…", "https://www.npr.org/2023/07/08/1186514144/kratom-herbal-supplement-lawsuits-deaths-fda"],
+        ["PubMed — search 'mitragynine toxicity systematic review'", "pubmed.ncbi.nlm.nih.gov", "https://pubmed.ncbi.nlm.nih.gov"],
+      ];
+      return (
+        <div>
+          <SectionHeader
+            label="IV. Source Gap Analysis"
+            sub="Five external peer-reviewed sources are required. Below are gaps in the typical student essay. Each gap includes a search path — you still have to find, read, and evaluate the source."
+          />
+          {SOURCE_GAPS.map((g, i) => (
+            <Card key={i}>
+              <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
+                <div style={{
+                  background: C.red + "22", color: C.red, border: `1px solid ${C.red}44`,
+                  borderRadius: 4, padding: "2px 8px", fontSize: 11, fontFamily: "monospace", flexShrink: 0, marginTop: 2,
+                }}>GAP</div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontWeight: 600, color: C.text, marginBottom: 6 }}>{g.gap}</div>
+                  <div style={{ color: C.muted, fontSize: 13, lineHeight: 1.6, marginBottom: 10 }}>{g.why}</div>
+                  <div style={{ background: "#58a6ff0d", border: `1px solid #58a6ff22`, borderRadius: 6, padding: "10px 12px", marginBottom: 8 }}>
+                    <div style={{ fontSize: 11, color: C.blue, fontFamily: "monospace", marginBottom: 4 }}>SEARCH PATH</div>
+                    <div style={{ color: "#b3d0f5", fontSize: 13, lineHeight: 1.6 }}>{g.search}</div>
+                  </div>
+                  <Badge color={C.purple}>Bloom's: {g.bloom}</Badge>
+                </div>
+              </div>
+            </Card>
+          ))}
+          <Card style={{ borderColor: C.accentDim }}>
+            <div style={{ fontSize: 13, color: C.accent, fontFamily: "monospace", marginBottom: 12 }}>KEY EXTERNAL RESOURCES</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {resources.map(([label, display, url], i) => (
+                <div key={i} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
+                  <div style={{ color: C.accent, fontSize: 12, flexShrink: 0, marginTop: 2 }}>→</div>
+                  <div>
+                    <div style={{ color: C.text, fontSize: 13 }}>{label}</div>
+                    <a href={url} target="_blank" rel="noopener noreferrer"
+                      style={{ color: C.muted, fontSize: 11, fontFamily: "monospace", textDecoration: "none" }}
+                      onMouseOver={e => e.target.style.color = C.blue}
+                      onMouseOut={e => e.target.style.color = C.muted}
+                    >{display}</a>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Card>
+        </div>
+      );
+    }
+
+    function SynthesisSection() {
+      const [step, setStep] = useState(0);
+      const steps = [
+        {
+          label: "Before discussion",
+          q: "What is your current hypothesis? Write one sentence: 'Kratom toxicity is primarily [intrinsic/idiosyncratic] because ___.'",
+          sub: "Don't polish it. The point is to have something concrete to update.",
+        },
+        {
+          label: "During discussion",
+          q: "Read two peer posts before responding. For each, identify: (a) one claim you can extend with evidence, (b) one assumption they haven't interrogated.",
+          sub: "Peer responses that just agree or vaguely expand add nothing. Ask the question that exposes the gap.",
+        },
+        {
+          label: "After discussion",
+          q: "What specifically changed in your argument from your original hypothesis? If nothing changed, explain why you found no peer posts that challenged your position — that is itself a claim requiring justification.",
+          sub: "Updating your position based on evidence from peers is not weakness. It is the assignment.",
+        },
+      ];
+      const anatomy = [
+        ["Cite what they said specifically", "Avoids strawmanning; forces you to read carefully"],
+        ["Add a source they didn't use", "Expands the crowd-sourced knowledge base as intended"],
+        ["Ask a mechanistic question", "e.g., 'You cite CYP inhibition — which isoform? What drugs become dangerous as a result?'"],
+        ["Challenge an assumption, not a conclusion", "Conclusions follow from assumptions. Better to target the premise."],
+      ];
+      return (
+        <div>
+          <SectionHeader
+            label="V. Peer Synthesis Loop"
+            sub="Discussion is not a formality. Your initial post is a hypothesis. Peer posts are data. Your essay is the synthesis."
+          />
+          <div style={{ display: "flex", marginBottom: 20, borderRadius: 8, overflow: "hidden", border: `1px solid ${C.border}` }}>
+            {steps.map((s, i) => (
+              <button key={i} onClick={() => setStep(i)} style={{
+                flex: 1, padding: "10px 8px",
+                background: step === i ? C.accent + "22" : "transparent",
+                border: "none",
+                borderRight: i < 2 ? `1px solid ${C.border}` : "none",
+                color: step === i ? C.accent : C.muted,
+                fontSize: 12, cursor: "pointer", fontFamily: "monospace",
+              }}>{s.label}</button>
+            ))}
+          </div>
+          <Card>
+            <div style={{ fontSize: 16, color: C.text, lineHeight: 1.6, marginBottom: 10 }}>{steps[step].q}</div>
+            <div style={{ color: C.muted, fontSize: 13, lineHeight: 1.5, fontStyle: "italic" }}>{steps[step].sub}</div>
+          </Card>
+          <Card style={{ borderColor: C.accentDim }}>
+            <div style={{ fontSize: 13, color: C.accent, fontFamily: "monospace", marginBottom: 12 }}>GOOD PEER RESPONSE ANATOMY</div>
+            {anatomy.map(([act, why], i) => (
+              <div key={i} style={{
+                display: "flex", gap: 10, marginBottom: 10, paddingBottom: 10,
+                borderBottom: i < anatomy.length - 1 ? `1px solid ${C.border}` : "none",
+              }}>
+                <div style={{ color: C.green, fontSize: 12, flexShrink: 0, marginTop: 2 }}>✓</div>
+                <div>
+                  <div style={{ color: C.text, fontSize: 13, fontWeight: 600 }}>{act}</div>
+                  <div style={{ color: C.muted, fontSize: 12 }}>{why}</div>
+                </div>
+              </div>
+            ))}
+          </Card>
+        </div>
+      );
+    }
+
+    function PreflightSection() {
+      const [checks, setChecks] = useState({});
+      const toggle = k => setChecks(p => ({ ...p, [k]: !p[k] }));
+      const checked = Object.values(checks).filter(Boolean).length;
+      const pct = Math.round((checked / PREFLIGHT.length) * 100);
+      return (
+        <div>
+          <SectionHeader
+            label="VI. Essay Preflight"
+            sub="Run this before submitting. Not a rubric — a diagnostic. If you can honestly check every box, you've done the work. If you can't, you know exactly what to fix."
+          />
+          <Card>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+              <div style={{ fontSize: 13, color: C.muted }}>Checklist progress</div>
+              <div style={{ fontSize: 14, color: checked === PREFLIGHT.length ? C.green : C.accent, fontFamily: "monospace" }}>
+                {checked} / {PREFLIGHT.length}
+              </div>
+            </div>
+            <div style={{ background: C.border, borderRadius: 4, height: 4, marginBottom: 20 }}>
+              <div style={{
+                background: checked === PREFLIGHT.length ? C.green : C.accent,
+                height: 4, borderRadius: 4, width: `${pct}%`, transition: "width 0.3s",
+              }} />
+            </div>
+            {PREFLIGHT.map(item => (
+              <div key={item.id} onClick={() => toggle(item.id)} style={{
+                display: "flex", gap: 12, alignItems: "flex-start",
+                padding: "12px 0", borderBottom: `1px solid ${C.border}`, cursor: "pointer",
+              }}>
+                <div style={{
+                  width: 18, height: 18,
+                  border: `2px solid ${checks[item.id] ? C.green : C.border}`,
+                  borderRadius: 4, flexShrink: 0, marginTop: 1,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: 11, color: C.green,
+                  background: checks[item.id] ? C.green + "22" : "transparent",
+                  transition: "all 0.15s",
+                }}>{checks[item.id] ? "✓" : ""}</div>
+                <div>
+                  <div style={{
+                    color: checks[item.id] ? C.muted : C.text, fontSize: 14, lineHeight: 1.6,
+                    textDecoration: checks[item.id] ? "line-through" : "none",
+                  }}>{item.q}</div>
+                  <div style={{ color: C.muted, fontSize: 12, marginTop: 4, lineHeight: 1.5, fontStyle: "italic" }}>{item.tip}</div>
+                </div>
+              </div>
+            ))}
+          </Card>
+        </div>
+      );
+    }
+
+    function LiveSection() {
+      const [activeIdx, setActiveIdx] = useState(null);
+      return (
+        <div>
+          <SectionHeader
+            label="⬡ Live Session"
+            sub="Questions designed for synchronous Q&A. Each targets a specific failure mode. Instructor-facing purpose notes included."
+          />
+          <Card style={{ borderColor: C.accentDim, marginBottom: 24 }}>
+            <div style={{ fontSize: 13, color: C.accent, fontFamily: "monospace", marginBottom: 8 }}>SESSION DESIGN NOTE</div>
+            <div style={{ color: C.text, fontSize: 13, lineHeight: 1.7 }}>
+              Questions are ordered conceptual → mechanistic → epidemiological → applied.
+              Start with the conceptual question to surface definitional failures.
+              The mechanistic question reveals whether students accepted FDA framing uncritically.
+              Save the applied question ("design the label") for the last 10 minutes — it synthesizes everything
+              and exposes gaps students think they've covered.
+            </div>
+          </Card>
+          {LIVE_QUESTIONS.map((q, i) => (
+            <Card key={i} onClick={() => setActiveIdx(activeIdx === i ? null : i)} style={{
+              cursor: "pointer",
+              borderColor: activeIdx === i ? C.accent + "66" : C.border,
+              transition: "border-color 0.15s",
+            }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
+                <div>
+                  <Badge color={C.blue}>{q.tier}</Badge>
+                  <div style={{ color: C.text, fontSize: 14, lineHeight: 1.6, marginTop: 8 }}>{q.q}</div>
+                </div>
+                <div style={{ color: C.muted, fontSize: 12, flexShrink: 0 }}>{activeIdx === i ? "▲" : "▼"}</div>
+              </div>
+              {activeIdx === i && (
+                <div style={{ marginTop: 12, borderTop: `1px solid ${C.border}`, paddingTop: 12 }}>
+                  <div style={{ fontSize: 11, color: C.accent, fontFamily: "monospace", marginBottom: 5 }}>PEDAGOGICAL PURPOSE</div>
+                  <div style={{ color: C.muted, fontSize: 13, lineHeight: 1.6 }}>{q.purpose}</div>
+                </div>
+              )}
+            </Card>
+          ))}
+        </div>
+      );
+    }
+
+    // ── Root app ─────────────────────────────────────────────────────────────
+
+    const SECTION_MAP = {
+      concept:   ConceptSection,
+      evidence:  EvidenceSection,
+      bias:      BiasSection,
+      sources:   SourcesSection,
+      synthesis: SynthesisSection,
+      preflight: PreflightSection,
+      live:      LiveSection,
+    };
+
+    function App() {
+      const [active, setActive] = useState("concept");
+      const ActiveSection = SECTION_MAP[active];
+      return (
+        <div style={{ background: C.bg, minHeight: "100vh", color: C.text, fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif" }}>
+
+          {/* Header */}
+          <div style={{
+            borderBottom: `1px solid ${C.border}`, padding: "16px 32px",
+            display: "flex", alignItems: "baseline", gap: 16, flexWrap: "wrap",
+          }}>
+            <div style={{ fontFamily: "Georgia, serif", fontSize: 18, color: C.accent, letterSpacing: "0.02em" }}>
+              Kratom Toxicity
+            </div>
+            <div style={{ color: C.muted, fontSize: 13 }}>Intrinsic or Idiosyncratic?</div>
+            <div style={{ marginLeft: "auto", color: C.muted, fontSize: 11, fontFamily: "monospace" }}>
+              Metacognitive Scaffold
+            </div>
+          </div>
+
+          {/* Nav */}
+          <div style={{
+            borderBottom: `1px solid ${C.border}`, padding: "0 32px",
+            display: "flex", overflowX: "auto",
+          }}>
+            {SECTIONS.map(s => (
+              <button key={s.id} onClick={() => setActive(s.id)} style={{
+                padding: "12px 16px", background: "none", border: "none",
+                borderBottom: active === s.id ? `2px solid ${C.accent}` : "2px solid transparent",
+                color: active === s.id ? C.accent : C.muted,
+                fontSize: 13, cursor: "pointer", whiteSpace: "nowrap",
+                fontFamily: "monospace", transition: "color 0.15s", marginBottom: -1,
+              }}>{s.short}</button>
+            ))}
+          </div>
+
+          {/* Content */}
+          <div style={{ maxWidth: 820, margin: "0 auto", padding: "32px 24px" }}>
+            <ActiveSection />
+          </div>
+
+          {/* Footer */}
+          <div style={{
+            borderTop: `1px solid ${C.border}`, padding: "14px 32px",
+            display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8,
+          }}>
+            <div style={{ color: C.muted, fontSize: 11, fontFamily: "monospace" }}>
+              This tool scaffolds thinking. It does not answer the question. The essay is yours.
+            </div>
+            <div style={{ color: C.muted, fontSize: 11 }}>Herbal Medicine · Toxicology</div>
+          </div>
+
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>
