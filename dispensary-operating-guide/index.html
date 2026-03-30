@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dispensary Operating Manual Checklist</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 1.5rem; font-family: system-ui, sans-serif; font-size: 14px; color: #1a1a18; background: #fff; }
+  @media (prefers-color-scheme: dark) {
+    body { background: #1a1a18; color: #e0ded6; }
+    table { border-color: #3a3a36; }
+    thead tr { background: #242420; }
+    th { color: #9c9a92; border-color: #3a3a36; }
+    td { border-color: #2e2e2a; }
+    tr.done td { opacity: 0.4; }
+    .progress-bar { background: #3a3a36; }
+    .progress-fill { background: #378add; }
+    .tag-req { background: #3d1f1f; color: #f09595; }
+    .tag-ex  { background: #1f3320; color: #97c459; }
+    .section-note { color: #9c9a92; }
+  }
+  h1 { font-size: 20px; font-weight: 500; margin: 0 0 0.25rem; }
+  .subtitle { font-size: 13px; color: #73726c; margin-bottom: 1.5rem; }
+  h3 { font-size: 15px; font-weight: 500; margin: 1.8rem 0 0.5rem; }
+  h3:first-of-type { margin-top: 0; }
+  .progress-label { font-size: 12px; color: #73726c; margin-bottom: 0.35rem; }
+  .progress-bar { height: 6px; background: #e0ded6; border-radius: 3px; margin-bottom: 1.5rem; overflow: hidden; }
+  .progress-fill { height: 100%; background: #378add; border-radius: 3px; transition: width 0.3s; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; font-size: 13px; }
+  thead tr { background: #f1efe8; }
+  th { text-align: left; padding: 8px 10px; font-weight: 500; font-size: 12px; color: #73726c; border-bottom: 1px solid #d3d1c7; }
+  td { padding: 7px 10px; border-bottom: 1px solid #e8e6de; vertical-align: top; }
+  td:first-child { white-space: nowrap; font-size: 12px; color: #73726c; }
+  td:last-child { text-align: center; }
+  tr.done td { opacity: 0.45; }
+  tr.done td:nth-child(2) { text-decoration: line-through; }
+  .cb { cursor: pointer; accent-color: #378add; width: 15px; height: 15px; }
+  .tag { display: inline-block; font-size: 11px; padding: 1px 6px; border-radius: 3px; font-weight: 500; margin-left: 5px; }
+  .tag-req { background: #fcebeb; color: #a32d2d; }
+  .tag-ex  { background: #eaf3de; color: #3b6d11; }
+  .section-note { font-size: 12px; color: #73726c; margin: 0 0 0.6rem; line-height: 1.6; }
+  .note-col { font-size: 12px; color: #73726c; }
+</style>
+</head>
+<body>
+
+<h1>Dispensary Operating Manual Checklist</h1>
+<p class="subtitle">21 CFR 111 compliance map — QA642 final project</p>
+
+<div class="progress-label" id="prog-label">0 of 0 items checked</div>
+<div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+
+<!-- TABLE 1: Rubric deliverables -->
+<h3>Rubric deliverables <span class="tag tag-req">required</span></h3>
+<table id="tbl-rubric">
+  <thead>
+    <tr><th>CFR anchor</th><th>Deliverable</th><th>Note</th><th style="width:36px"></th></tr>
+  </thead>
+  <tbody>
+    <tr><td>—</td><td>Dispensary name and location</td><td class="note-col">Brief description + target market</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>—</td><td>Local / state / federal law section</td><td class="note-col">Name the codes; don't just link FDA</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.8–14</td><td>Employee roles + onboarding training by role</td><td class="note-col">Use week 11 prompt as minimum role list</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.8–14</td><td>One fully written health &amp; hygiene SOP <span class="tag tag-ex">example</span></td><td class="note-col">E.g. Handwashing SOP — version no. + revision date required</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.25–35</td><td>Facility and equipment maintenance / calibration log list</td><td class="note-col">—</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.25–35</td><td>One fully written maintenance or calibration log <span class="tag tag-ex">example</span></td><td class="note-col">Version + revision date required</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.55–95</td><td>SOP list for compounding and dispensing</td><td class="note-col">—</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.205–210</td><td>Master Manufacturing Record (MMR) <span class="tag tag-req">required</span></td><td class="note-col">Formalized recipe = controlled document</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.255–260</td><td>Batch Production Record (BPR) <span class="tag tag-req">required</span></td><td class="note-col">Log of actual steps + measurements per run</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.55–95</td><td>One fully written compounding procedure <span class="tag tag-ex">example</span></td><td class="note-col">Version + revision date required</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>—</td><td>Professional / industry organization list</td><td class="note-col">Short narrative justifying startup resources spent on each</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>—</td><td>Supplier assessment and review policy</td><td class="note-col">Distinct from material disposition — see AHPA Section 10 tool</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>—</td><td>One intake and quality check log (cut &amp; sifted herbs) <span class="tag tag-ex">example</span></td><td class="note-col">Simulated delivery scenario</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.553–570</td><td>Adverse event reporting policy</td><td class="note-col">Include recall procedures for compounded product</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>—</td><td>Executive summary: herbal → THC dispensary transition</td><td class="note-col">Must explicitly state where frameworks converge and where they don't</td><td><input class="cb" type="checkbox"></td></tr>
+  </tbody>
+</table>
+
+<!-- TABLE 2: Full SOP table of contents -->
+<h3>21 CFR 111 SOP coverage — full table of contents</h3>
+<p class="section-note">Every row below belongs in your table of contents. Only rubric-flagged items need to be fully written. Each document requires a version number and revision date.</p>
+<table id="tbl-sops">
+  <thead>
+    <tr><th>CFR section</th><th>SOP / document title</th><th>Type</th><th style="width:36px"></th></tr>
+  </thead>
+  <tbody>
+    <tr><td>111.8–14</td><td>Handwashing SOP</td><td class="note-col">Personnel</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.8–14</td><td>Presenteeism SOP</td><td class="note-col">Personnel</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.8–14</td><td>Personal hygiene SOP</td><td class="note-col">Personnel</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.15–23</td><td>Garbage collection, storage, removal SOP</td><td class="note-col">Sanitation</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.15–23</td><td>Sewage cleaning and sanitation SOP</td><td class="note-col">Sanitation</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.15–23</td><td>Pest control — daily in-house procedure</td><td class="note-col">Sanitation</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.15–23</td><td>Pest control service contract</td><td class="note-col">Sanitation</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.15–23</td><td>Water supply testing SOP</td><td class="note-col">Sanitation</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.25–35</td><td>Warehouse equipment: cleaning, sanitation, maintenance, storage, software backups</td><td class="note-col">Equipment</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.25–35</td><td>Dispensary equipment: cleaning, sanitation, maintenance, storage, software backups</td><td class="note-col">Equipment</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.25–35</td><td>Utensils (warehouse and dispensary): cleaning, sanitation, storage</td><td class="note-col">Equipment</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.55–95</td><td>Raw material data sheet (organoleptic, macroscopic, microscopic, chemical)</td><td class="note-col">Production system</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.55–95</td><td>Certificate of Analysis retention procedure (supplier)</td><td class="note-col">Production system</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.55–95</td><td>Reserve sample procedure</td><td class="note-col">Production system</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.55–95</td><td>Material disposition review process</td><td class="note-col">Production system</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.55–95</td><td>Supply chain log</td><td class="note-col">Production system</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.55–95</td><td>In-process quality control log</td><td class="note-col">Production system</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.55–95</td><td>In-process adjustment procedure</td><td class="note-col">Production system</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.55–95</td><td>Packaging specifications</td><td class="note-col">Production system</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.55–95</td><td>Labeling specifications</td><td class="note-col">Production system</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.103–140</td><td>Component material disposition review</td><td class="note-col">Quality control</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.103–140</td><td>In-process adjustment disposition</td><td class="note-col">Quality control</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.103–140</td><td>Returned products disposition review process</td><td class="note-col">Quality control</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.153–180</td><td>Disposition of contaminated materials procedure</td><td class="note-col">Packaging &amp; labeling</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.153–180</td><td>Completed product data sheets retention</td><td class="note-col">Packaging &amp; labeling</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.153–180</td><td>Disposition of returned materials procedure</td><td class="note-col">Packaging &amp; labeling</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.153–180</td><td>Master and batch LOT records</td><td class="note-col">Packaging &amp; labeling</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.153–180</td><td>Labeling requirements checklist (identity, net qty, nutrition, ingredients, manufacturer)</td><td class="note-col">Packaging &amp; labeling</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.205–210</td><td>Master Manufacturing Record form</td><td class="note-col">MMR</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.255–260</td><td>Batch Production Record form</td><td class="note-col">BPR</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.303–325</td><td>Laboratory data sheet retention (electronic or paper)</td><td class="note-col">Lab operations</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.353–375</td><td>Manufacturing operations: sanitation, contamination, rejection</td><td class="note-col">Manufacturing</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.403–430</td><td>Packaging procedure</td><td class="note-col">Pkg &amp; labeling ops</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.403–430</td><td>Labeling procedure</td><td class="note-col">Pkg &amp; labeling ops</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.453–475</td><td>Completed batch records (distribution)</td><td class="note-col">Holding &amp; distribution</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.453–475</td><td>Distribution records</td><td class="note-col">Holding &amp; distribution</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.453–475</td><td>Holding records</td><td class="note-col">Holding &amp; distribution</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.503–535</td><td>Returned product procedure</td><td class="note-col">Returned product</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.503–535</td><td>Returned product form</td><td class="note-col">Returned product</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.503–535</td><td>Returned product disposition</td><td class="note-col">Returned product</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.503–535</td><td>Returned product disposition form</td><td class="note-col">Returned product</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.553–570</td><td>Customer complaint form</td><td class="note-col">Complaints</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.553–570</td><td>Complaint disposition form</td><td class="note-col">Complaints</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>111.605–610</td><td>Record retention schedule and document control policy</td><td class="note-col">Record keeping</td><td><input class="cb" type="checkbox"></td></tr>
+  </tbody>
+</table>
+
+<!-- TABLE 3: Document control -->
+<h3>Document control — applies to every document above</h3>
+<table id="tbl-docctrl">
+  <thead>
+    <tr><th>Element</th><th>Requirement</th><th style="width:36px"></th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Version number</td><td>On every SOP, log, and form</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>Revision date</td><td>On every SOP, log, and form</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>Discrete documents</td><td>Each SOP is a standalone file, not a section of a narrative</td><td><input class="cb" type="checkbox"></td></tr>
+    <tr><td>Retention schedule</td><td>Defined per 111.605–610</td><td><input class="cb" type="checkbox"></td></tr>
+  </tbody>
+</table>
+
+<script>
+function updateProgress() {
+  const all = document.querySelectorAll('.cb');
+  const checked = document.querySelectorAll('.cb:checked');
+  const pct = all.length ? Math.round(checked.length / all.length * 100) : 0;
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-label').textContent = checked.length + ' of ' + all.length + ' items checked';
+}
+document.querySelectorAll('.cb').forEach(cb => {
+  cb.addEventListener('change', function() {
+    this.closest('tr').classList.toggle('done', this.checked);
+    updateProgress();
+  });
+});
+updateProgress();
+</script>
+</body>
+</html>
