@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BPR Reference Tool — 21 CFR Part 111</title>
+<style>
+:root {
+  --reg: #B91C1C;
+  --reg-bg: #FEF2F2;
+  --reg-border: #FECACA;
+  --ind: #1D4ED8;
+  --ind-bg: #EFF6FF;
+  --ind-border: #BFDBFE;
+  --di: #047857;
+  --di-bg: #ECFDF5;
+  --di-border: #A7F3D0;
+  --gray-50: #F9FAFB;
+  --gray-100: #F3F4F6;
+  --gray-200: #E5E7EB;
+  --gray-300: #D1D5DB;
+  --gray-400: #9CA3AF;
+  --gray-500: #6B7280;
+  --gray-600: #4B5563;
+  --gray-700: #374151;
+  --gray-800: #1F2937;
+  --gray-900: #111827;
+  --present: #059669;
+  --partial: #D97706;
+  --missing: #DC2626;
+  --na: #6B7280;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; color: var(--gray-800); background: #fff; line-height: 1.5; font-size: 15px; }
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+/* NAV */
+header { background: var(--gray-900); color: #fff; padding: 16px 0; position: sticky; top: 0; z-index: 100; }
+header .container { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+header h1 { font-size: 18px; font-weight: 600; letter-spacing: -0.02em; }
+header h1 span { color: var(--gray-400); font-weight: 400; }
+nav { display: flex; gap: 4px; }
+nav button { background: transparent; border: 1px solid transparent; color: var(--gray-400); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500; transition: all 0.15s; }
+nav button:hover { color: #fff; background: rgba(255,255,255,0.08); }
+nav button.active { color: #fff; background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.2); }
+
+/* MODE VIEWS */
+.view { display: none; padding: 32px 0; }
+.view.active { display: block; }
+
+/* LEARN MODE */
+.learn-controls { display: flex; gap: 12px; align-items: center; margin-bottom: 24px; flex-wrap: wrap; }
+.search-box { flex: 1; min-width: 200px; padding: 10px 14px; border: 1px solid var(--gray-300); border-radius: 6px; font-size: 14px; outline: none; }
+.search-box:focus { border-color: var(--gray-500); box-shadow: 0 0 0 2px rgba(107,114,128,0.15); }
+.filter-btn { padding: 6px 14px; border-radius: 20px; border: 1px solid; cursor: pointer; font-size: 12px; font-weight: 600; transition: all 0.15s; }
+.filter-btn[data-domain="Regulatory"] { color: var(--reg); border-color: var(--reg-border); background: var(--reg-bg); }
+.filter-btn[data-domain="Industry"] { color: var(--ind); border-color: var(--ind-border); background: var(--ind-bg); }
+.filter-btn[data-domain="Data Integrity"] { color: var(--di); border-color: var(--di-border); background: var(--di-bg); }
+.filter-btn.inactive { opacity: 0.35; }
+.element-count { font-size: 13px; color: var(--gray-500); margin-left: auto; }
+
+.element-card { border: 1px solid var(--gray-200); border-radius: 8px; margin-bottom: 8px; overflow: hidden; transition: box-shadow 0.15s; }
+.element-card:hover { box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+.element-header { display: flex; align-items: center; padding: 12px 16px; cursor: pointer; gap: 12px; user-select: none; }
+.element-header:hover { background: var(--gray-50); }
+.element-num { font-size: 12px; font-weight: 700; color: var(--gray-400); min-width: 28px; }
+.element-name { flex: 1; font-weight: 500; font-size: 14px; }
+.domain-badge { font-size: 11px; font-weight: 600; padding: 2px 10px; border-radius: 12px; white-space: nowrap; }
+.domain-badge.reg { color: var(--reg); background: var(--reg-bg); border: 1px solid var(--reg-border); }
+.domain-badge.ind { color: var(--ind); background: var(--ind-bg); border: 1px solid var(--ind-border); }
+.domain-badge.di { color: var(--di); background: var(--di-bg); border: 1px solid var(--di-border); }
+.expand-icon { font-size: 12px; color: var(--gray-400); transition: transform 0.2s; width: 16px; text-align: center; }
+.element-card.expanded .expand-icon { transform: rotate(90deg); }
+.element-bar { width: 4px; min-height: 100%; flex-shrink: 0; border-radius: 2px; }
+.element-bar.reg { background: var(--reg); }
+.element-bar.ind { background: var(--ind); }
+.element-bar.di { background: var(--di); }
+.element-details { display: none; padding: 0 16px 16px 56px; }
+.element-card.expanded .element-details { display: block; }
+.detail-section { margin-bottom: 12px; }
+.detail-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gray-500); margin-bottom: 4px; }
+.detail-text { font-size: 14px; color: var(--gray-700); line-height: 1.6; }
+.source-link { font-size: 13px; color: var(--gray-600); font-family: "SF Mono", "Fira Code", monospace; }
+
+/* TEMPLATE MODE */
+.template-controls { display: flex; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; align-items: flex-start; }
+.format-options { display: flex; flex-direction: column; gap: 8px; }
+.format-options label { display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; }
+.format-options input[type="radio"] { accent-color: var(--gray-700); }
+.toggle-row { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+.toggle-row input[type="checkbox"] { accent-color: var(--gray-700); }
+.template-actions { display: flex; gap: 8px; margin-bottom: 16px; }
+.btn { padding: 8px 18px; border-radius: 6px; border: 1px solid var(--gray-300); background: #fff; color: var(--gray-700); font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; }
+.btn:hover { background: var(--gray-50); border-color: var(--gray-400); }
+.btn-primary { background: var(--gray-900); color: #fff; border-color: var(--gray-900); }
+.btn-primary:hover { background: var(--gray-700); }
+.template-preview { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 8px; padding: 20px; font-family: "SF Mono", "Fira Code", "Courier New", monospace; font-size: 13px; line-height: 1.7; white-space: pre-wrap; max-height: 600px; overflow-y: auto; color: var(--gray-700); }
+
+/* AUDIT MODE */
+.audit-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 24px; padding: 20px; background: var(--gray-50); border-radius: 8px; border: 1px solid var(--gray-200); }
+.audit-meta label { font-size: 12px; font-weight: 600; color: var(--gray-600); display: flex; flex-direction: column; gap: 4px; }
+.audit-meta input, .audit-meta select { padding: 8px 12px; border: 1px solid var(--gray-300); border-radius: 6px; font-size: 14px; background: #fff; }
+.audit-meta input:focus, .audit-meta select:focus { outline: none; border-color: var(--gray-500); box-shadow: 0 0 0 2px rgba(107,114,128,0.15); }
+.progress-bar-wrap { margin-bottom: 24px; }
+.progress-info { display: flex; justify-content: space-between; font-size: 13px; color: var(--gray-500); margin-bottom: 6px; }
+.progress-bar { height: 8px; background: var(--gray-200); border-radius: 4px; overflow: hidden; display: flex; }
+.progress-seg { height: 100%; transition: width 0.3s; }
+.progress-seg.present { background: var(--present); }
+.progress-seg.partial { background: var(--partial); }
+.progress-seg.missing { background: var(--missing); }
+.progress-seg.na { background: var(--gray-300); }
+.audit-bulk { display: flex; gap: 8px; margin-bottom: 16px; }
+.audit-row { display: grid; grid-template-columns: 4px 36px 1fr 140px 1fr; gap: 0; border: 1px solid var(--gray-200); border-radius: 8px; margin-bottom: 6px; overflow: hidden; align-items: stretch; }
+.audit-bar { border-radius: 0; }
+.audit-num { display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--gray-400); background: var(--gray-50); }
+.audit-element { padding: 10px 14px; display: flex; flex-direction: column; justify-content: center; }
+.audit-element-name { font-size: 13px; font-weight: 500; }
+.audit-element-source { font-size: 11px; color: var(--gray-500); font-family: monospace; }
+.audit-status { display: flex; align-items: center; padding: 8px; }
+.audit-status select { width: 100%; padding: 6px 8px; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 13px; background: #fff; }
+.audit-notes { padding: 8px; display: flex; align-items: center; }
+.audit-notes textarea { width: 100%; padding: 6px 8px; border: 1px solid var(--gray-200); border-radius: 4px; font-size: 13px; resize: vertical; min-height: 36px; font-family: inherit; }
+.audit-notes textarea:focus { outline: none; border-color: var(--gray-400); }
+.status-present select { border-color: var(--present); background: #ECFDF5; }
+.status-partial select { border-color: var(--partial); background: #FFFBEB; }
+.status-missing select { border-color: var(--missing); background: #FEF2F2; }
+.status-na select { border-color: var(--gray-300); background: var(--gray-50); }
+
+/* WORKFLOW MODE */
+.workflow-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 24px; padding: 20px; background: var(--gray-50); border-radius: 8px; border: 1px solid var(--gray-200); }
+.workflow-meta label { font-size: 12px; font-weight: 600; color: var(--gray-600); display: flex; flex-direction: column; gap: 4px; }
+.workflow-meta input, .workflow-meta select, .workflow-meta textarea { padding: 8px 12px; border: 1px solid var(--gray-300); border-radius: 6px; font-size: 14px; background: #fff; font-family: inherit; }
+.workflow-meta textarea { min-height: 60px; resize: vertical; }
+.workflow-actions { display: flex; gap: 8px; margin-bottom: 24px; }
+.report-preview { background: #fff; border: 2px solid var(--gray-300); border-radius: 8px; padding: 40px; max-width: 800px; margin: 0 auto; font-size: 14px; }
+.report-preview h2 { text-align: center; font-size: 20px; margin-bottom: 4px; letter-spacing: 0.05em; text-transform: uppercase; }
+.report-preview .report-subtitle { text-align: center; color: var(--gray-500); font-size: 13px; margin-bottom: 24px; }
+.report-meta-grid { display: grid; grid-template-columns: 140px 1fr; gap: 4px 16px; font-size: 13px; margin-bottom: 24px; padding-bottom: 24px; border-bottom: 2px solid var(--gray-200); }
+.report-meta-grid dt { font-weight: 600; color: var(--gray-600); }
+.report-meta-grid dd { color: var(--gray-800); }
+.report-summary { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 24px; }
+.summary-card { text-align: center; padding: 12px 8px; border-radius: 6px; border: 1px solid var(--gray-200); }
+.summary-card .num { font-size: 28px; font-weight: 700; }
+.summary-card .lbl { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gray-500); }
+.summary-card.sc-present .num { color: var(--present); }
+.summary-card.sc-partial .num { color: var(--partial); }
+.summary-card.sc-missing .num { color: var(--missing); }
+.findings-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 24px; }
+.findings-table th { background: var(--gray-100); text-align: left; padding: 8px 10px; border-bottom: 2px solid var(--gray-300); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.03em; }
+.findings-table td { padding: 6px 10px; border-bottom: 1px solid var(--gray-200); vertical-align: top; }
+.findings-table tr.row-present td:nth-child(3) { color: var(--present); font-weight: 600; }
+.findings-table tr.row-partial td:nth-child(3) { color: var(--partial); font-weight: 600; }
+.findings-table tr.row-missing td:nth-child(3) { color: var(--missing); font-weight: 600; }
+.report-footer { text-align: center; font-size: 11px; color: var(--gray-400); padding-top: 24px; border-top: 2px solid var(--gray-200); }
+.status-approved { color: var(--present); font-weight: 700; }
+.status-draft { color: var(--partial); font-weight: 700; }
+.status-needs-revision { color: var(--missing); font-weight: 700; }
+.toast { position: fixed; bottom: 24px; right: 24px; background: var(--gray-900); color: #fff; padding: 12px 20px; border-radius: 8px; font-size: 13px; z-index: 200; opacity: 0; transform: translateY(8px); transition: all 0.3s; pointer-events: none; }
+.toast.show { opacity: 1; transform: translateY(0); }
+
+/* PRINT */
+@media print {
+  header, nav, .learn-controls, .template-controls, .template-actions, .audit-meta, .audit-bulk, .progress-bar-wrap, .workflow-meta, .workflow-actions, .toast, .btn { display: none !important; }
+  .view { display: none !important; padding: 0 !important; }
+  .view.active { display: block !important; }
+  body { font-size: 11pt; }
+  .container { max-width: 100%; padding: 0; }
+  .element-card { break-inside: avoid; border: 1px solid #ccc; }
+  .element-card.expanded .element-details { display: block; }
+  .report-preview { border: none; padding: 0; max-width: 100%; }
+  .audit-row { break-inside: avoid; }
+  .findings-table { font-size: 10pt; }
+  @page { margin: 0.75in; }
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  header .container { flex-direction: column; align-items: flex-start; }
+  nav { width: 100%; overflow-x: auto; }
+  .audit-row { grid-template-columns: 4px 1fr; grid-template-rows: auto auto auto; }
+  .audit-num { display: none; }
+  .audit-status, .audit-notes { padding: 4px 12px; }
+  .report-summary { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* GUIDE TAB */
+.guide { max-width: 760px; }
+.guide h2 { font-size: 22px; font-weight: 700; margin-bottom: 8px; color: var(--gray-900); }
+.guide h3 { font-size: 16px; font-weight: 600; margin-top: 28px; margin-bottom: 8px; color: var(--gray-800); }
+.guide h4 { font-size: 14px; font-weight: 600; margin-top: 20px; margin-bottom: 6px; color: var(--gray-700); }
+.guide p { font-size: 14px; line-height: 1.7; color: var(--gray-700); margin-bottom: 12px; }
+.guide ul { margin: 0 0 12px 20px; font-size: 14px; line-height: 1.7; color: var(--gray-700); }
+.guide li { margin-bottom: 6px; }
+.guide .pipeline { display: flex; align-items: center; gap: 12px; margin: 20px 0; font-size: 14px; font-weight: 600; }
+.guide .pipe-step { padding: 8px 18px; border-radius: 6px; }
+.guide .pipe-arrow { color: var(--gray-400); font-size: 18px; }
+.guide .pipe-learn { background: var(--gray-100); color: var(--gray-700); }
+.guide .pipe-template { background: #EDE9FE; color: #6D28D9; }
+.guide .pipe-audit { background: var(--ind-bg); color: var(--ind); }
+.guide .pipe-workflow { background: var(--di-bg); color: var(--di); }
+.guide .tip-box { background: var(--gray-50); border: 1px solid var(--gray-200); border-left: 4px solid var(--gray-400); border-radius: 6px; padding: 14px 18px; margin: 16px 0; font-size: 13px; color: var(--gray-600); line-height: 1.6; }
+.guide code { font-family: "SF Mono", "Fira Code", monospace; font-size: 13px; background: var(--gray-100); padding: 1px 5px; border-radius: 3px; }
+.guide .domain-legend { display: flex; gap: 16px; margin: 12px 0; }
+.guide .domain-legend span { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; }
+.guide .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.guide .dot-reg { background: var(--reg); }
+.guide .dot-ind { background: var(--ind); }
+.guide .dot-di { background: var(--di); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <h1>BPR Reference Tool <span>21 CFR Part 111</span></h1>
+    <nav>
+      <button class="active" data-mode="learn">Learn</button>
+      <button data-mode="template">Template</button>
+      <button data-mode="audit">Audit</button>
+      <button data-mode="workflow">Workflow</button>
+      <button data-mode="guide">Guide</button>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+
+  <!-- LEARN VIEW -->
+  <div id="learn-view" class="view active">
+    <div class="learn-controls">
+      <input type="text" class="search-box" id="learn-search" placeholder="Search elements, sources, rationale...">
+      <button class="filter-btn" data-domain="Regulatory">Regulatory</button>
+      <button class="filter-btn" data-domain="Industry">Industry</button>
+      <button class="filter-btn" data-domain="Data Integrity">Data Integrity</button>
+      <span class="element-count" id="learn-count"></span>
+    </div>
+    <div id="learn-list"></div>
+  </div>
+
+  <!-- TEMPLATE VIEW -->
+  <div id="template-view" class="view">
+    <div class="template-controls">
+      <div class="format-options">
+        <label><input type="radio" name="tpl-format" value="checklist" checked> Checklist (plain text)</label>
+        <label><input type="radio" name="tpl-format" value="tsv"> Tab-separated (Excel/Sheets)</label>
+        <label><input type="radio" name="tpl-format" value="html"> HTML table (editable)</label>
+      </div>
+      <div>
+        <div class="toggle-row"><input type="checkbox" id="tpl-notes"> <label for="tpl-notes">Include implementation guidance</label></div>
+        <div class="toggle-row" style="margin-top:6px"><input type="checkbox" id="tpl-rationale"> <label for="tpl-rationale">Include rationale</label></div>
+      </div>
+    </div>
+    <div class="template-actions">
+      <button class="btn btn-primary" id="tpl-copy">Copy to Clipboard</button>
+      <button class="btn" id="tpl-download">Download File</button>
+    </div>
+    <pre class="template-preview" id="tpl-preview"></pre>
+  </div>
+
+  <!-- AUDIT VIEW -->
+  <div id="audit-view" class="view">
+    <div class="audit-meta">
+      <label>Product Name <input type="text" id="audit-product" placeholder="e.g., Astragalus Glycerite"></label>
+      <label>BPR Date Reviewed <input type="date" id="audit-date"></label>
+      <label>Reviewer Name <input type="text" id="audit-reviewer" placeholder="Full name"></label>
+      <label>Status
+        <select id="audit-approval">
+          <option value="Draft">Draft</option>
+          <option value="Approved">Approved</option>
+          <option value="Needs Revision">Needs Revision</option>
+        </select>
+      </label>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-info"><span id="progress-text">0 of 42 reviewed</span><span id="progress-pct">0%</span></div>
+      <div class="progress-bar" id="progress-bar"></div>
+    </div>
+    <div class="audit-bulk">
+      <button class="btn" id="audit-mark-all">Mark All Present</button>
+      <button class="btn" id="audit-reset">Reset All</button>
+    </div>
+    <div id="audit-list"></div>
+  </div>
+
+  <!-- WORKFLOW VIEW -->
+  <div id="workflow-view" class="view">
+    <div class="workflow-meta">
+      <label>Audit Session ID <input type="text" id="wf-session" readonly></label>
+      <label>Product Name <input type="text" id="wf-product"></label>
+      <label>BPR Under Review <input type="text" id="wf-bpr" placeholder="Document ID or filename"></label>
+      <label>Reviewer Name <input type="text" id="wf-reviewer"></label>
+      <label>Reviewer Title <input type="text" id="wf-title" placeholder="e.g., QA Manager"></label>
+      <label>Approval Status
+        <select id="wf-approval">
+          <option value="Draft">Draft</option>
+          <option value="Approved">Approved</option>
+          <option value="Needs Revision">Needs Revision</option>
+        </select>
+      </label>
+      <label>Approval Date <input type="date" id="wf-date"></label>
+      <label style="grid-column: 1/-1;">Comments <textarea id="wf-comments" placeholder="Approver notes..."></textarea></label>
+    </div>
+    <div class="workflow-actions">
+      <button class="btn btn-primary" id="wf-print">Print / Save as PDF</button>
+      <button class="btn" id="wf-html">Download HTML Artifact</button>
+      <button class="btn" id="wf-json">Copy JSON</button>
+    </div>
+    <div id="report-container"></div>
+  </div>
+
+  <!-- GUIDE VIEW -->
+  <div id="guide-view" class="view">
+    <div class="guide">
+
+      <h2>How to Use This Tool</h2>
+      <p>This tool contains 42 elements drawn from three domains that together define what belongs in a well-designed Batch Production Record. It supports two primary workflows: a design pipeline for building new BPRs and a compliance pipeline for reviewing existing ones.</p>
+
+      <div class="domain-legend">
+        <span><span class="dot dot-reg"></span> Regulatory (21 CFR 111)</span>
+        <span><span class="dot dot-ind"></span> Industry Best Practice</span>
+        <span><span class="dot dot-di"></span> Data Integrity</span>
+      </div>
+
+      <h3>The Design Pipeline</h3>
+      <div class="pipeline">
+        <span class="pipe-step pipe-learn">Learn</span>
+        <span class="pipe-arrow">&rarr;</span>
+        <span class="pipe-step pipe-template">Template</span>
+      </div>
+      <p>Use this sequence when you are building a new BPR or redesigning an existing template.</p>
+
+      <h4>Step 1 &mdash; Learn</h4>
+      <p>Start here to understand what goes into a BPR and why. Each of the 42 elements is presented as an expandable card. Click a card to reveal its regulatory source, rationale, and implementation guidance.</p>
+      <ul>
+        <li><strong>Filter by domain</strong> using the colored buttons at the top. Isolate just the regulatory requirements, or focus on data integrity principles. Combine filters freely.</li>
+        <li><strong>Search</strong> across all fields &mdash; element names, CFR section numbers, keywords like "label" or "traceability," or concepts like "ALCOA."</li>
+        <li><strong>Read the rationale.</strong> This is the most important field. A designer who understands why a requirement exists will make better judgment calls when adapting the template to a specific product or process.</li>
+      </ul>
+
+      <h4>Step 2 &mdash; Template</h4>
+      <p>Generate a starter document to take into Word, Excel, or another tool for product-specific development. This is scaffolding, not a finished BPR.</p>
+      <ul>
+        <li><strong>Checklist (plain text)</strong> &mdash; Printable, with checkboxes, sources, and domain tags. Good for design meetings or verifying that a draft BPR covers all 42 elements.</li>
+        <li><strong>Tab-separated (TSV)</strong> &mdash; Paste directly into Excel or Google Sheets. Add your own columns for SOP references, responsible parties, or product-specific details.</li>
+        <li><strong>HTML table</strong> &mdash; Open in a browser, copy-paste into Word. Includes "Present" and "Notes" columns for gap tracking during template development.</li>
+      </ul>
+      <p>Toggle <strong>Include implementation guidance</strong> and <strong>Include rationale</strong> to control how much context appears in the export.</p>
+
+      <h3>The Compliance Pipeline</h3>
+      <div class="pipeline">
+        <span class="pipe-step pipe-audit">Audit</span>
+        <span class="pipe-arrow">&rarr;</span>
+        <span class="pipe-step pipe-workflow">Workflow</span>
+      </div>
+      <p>Use this sequence when you are reviewing an existing BPR for compliance gaps.</p>
+
+      <h4>Step 3 &mdash; Audit</h4>
+      <p>Perform a gap analysis by comparing a real BPR against the 42-element reference.</p>
+      <ul>
+        <li><strong>Fill in session metadata</strong> at the top: product name, BPR date, your name, and draft/approved status.</li>
+        <li><strong>Work through each element.</strong> Open the BPR you're auditing alongside this tool. For each element, set the status:
+          <ul>
+            <li><strong>Present</strong> &mdash; Fully addressed in the BPR.</li>
+            <li><strong>Partial</strong> &mdash; Exists but incomplete, ambiguous, or doesn't meet the implementation guidance.</li>
+            <li><strong>Missing</strong> &mdash; Not in the BPR at all.</li>
+            <li><strong>N/A</strong> &mdash; Does not apply to this product or process.</li>
+          </ul>
+        </li>
+        <li><strong>Record evidence in the notes field.</strong> Be concrete: "Section 2.1.3, but missing verifier initials field" is useful; "Needs work" is not.</li>
+        <li>The <strong>progress bar</strong> tracks completion, color-coded by finding type.</li>
+        <li>Use <strong>Mark All Present</strong> if starting from a known-good BPR and flagging exceptions only.</li>
+      </ul>
+      <div class="tip-box">All audit data lives in memory. If you close or refresh the page, it's gone. Proceed to the Workflow tab to export, or use <strong>Copy JSON</strong> in the Workflow tab to save your data externally.</div>
+
+      <h4>Step 4 &mdash; Workflow</h4>
+      <p>Turn your audit into a formal, timestamped artifact for a document management system.</p>
+      <ul>
+        <li>Switching to this tab <strong>automatically pulls audit metadata forward</strong> (product name, reviewer, approval status). Complete the remaining fields: your title, the BPR document ID, and any approver comments.</li>
+        <li>The <strong>report preview</strong> updates in real time. It includes an executive summary with counts and a detailed findings table with per-element status, source, and notes.</li>
+        <li>Set the <strong>approval status</strong> to Draft, Approved, or Needs Revision.</li>
+      </ul>
+      <p>Three export options:</p>
+      <ul>
+        <li><strong>Print / Save as PDF</strong> &mdash; Opens the browser's print dialog. The print stylesheet hides all controls and renders only the report. Choose "Save as PDF" for a clean artifact.</li>
+        <li><strong>Download HTML Artifact</strong> &mdash; A standalone file with all styles inline, no scripts, no interactivity. A frozen record you can archive or upload to a DMS.</li>
+        <li><strong>Copy JSON</strong> &mdash; Structured data (metadata, summary, per-element findings) for API integration or programmatic processing.</li>
+      </ul>
+
+      <h3>Using Tabs Independently</h3>
+      <p>You don't have to run the full pipeline. Each tab works on its own:</p>
+      <ul>
+        <li><strong>Learn</strong> &mdash; Reference and training during onboarding, SOP development, or CFR citation lookup.</li>
+        <li><strong>Template</strong> &mdash; Quick export for planning sessions. No audit data needed.</li>
+        <li><strong>Audit</strong> &mdash; Gap analysis without generating a formal report. Use JSON export to save work externally.</li>
+        <li><strong>Workflow</strong> &mdash; Manual report generation if you've already audited on paper. The findings table will show "Not reviewed" for elements not assessed in the Audit tab.</li>
+      </ul>
+
+      <h3>Tips</h3>
+      <ul>
+        <li>Domain colors are consistent across all tabs: <span style="color:var(--reg);font-weight:600;">red</span> = Regulatory, <span style="color:var(--ind);font-weight:600;">blue</span> = Industry, <span style="color:var(--di);font-weight:600;">green</span> = Data Integrity. During audits, this lets you visually triage: regulatory gaps are compliance risks, industry gaps are quality risks, data integrity gaps are audit risks.</li>
+        <li>The session ID (e.g., <code>BPR-AUDIT-20260410-247</code>) is auto-generated with the date baked in. Replace it with your own document control number if needed.</li>
+        <li>The tool works <strong>entirely offline</strong> once opened. No external dependencies, no analytics, no data leaving your machine.</li>
+        <li>State is intentionally not persisted between sessions. This keeps things simple and avoids stale data. Export before you close.</li>
+      </ul>
+
+    </div>
+  </div>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── DATA ───
+const BPR_ELEMENTS = [
+  {id:1,element:"Finished batch number",source:"21 CFR 111.260(a)(1)",domain:"Regulatory",rationale:"Traceability of the bulk finished product.",guidance:"Pre-printed field with defined format (e.g., HERB-YYMMDD-###). Format should encode product, date, and sequence minimum."},
+  {id:2,element:"Packaged product lot number(s)",source:"21 CFR 111.260(a)(2), 111.415(f)",domain:"Regulatory",rationale:"Traceability from finished batch through to each packaged lot.",guidance:"Separate field(s) from batch #. One batch may yield multiple lots. Include cross-reference to packaging record if lots are assigned downstream."},
+  {id:3,element:"Equipment identity",source:"21 CFR 111.260(b)",domain:"Regulatory",rationale:"Links batch to specific equipment for cleaning verification and failure investigation.",guidance:"Pre-print equipment list with asset ID fields. Include model and serial or internal asset tag. Dropdown or checkbox if electronic."},
+  {id:4,element:"Equipment maintenance, cleaning & sanitizing date/time",source:"21 CFR 111.260(c)",domain:"Regulatory",rationale:"Confirms equipment was clean before use; supports contamination investigations.",guidance:"Date/time fields or cross-reference to equipment log. Either is compliant; cross-reference is more scalable. Indicate which approach your SOP uses."},
+  {id:5,element:"Component unique identifiers",source:"21 CFR 111.260(d)",domain:"Regulatory",rationale:"Connects each input to its receiving record, CoA, and supplier.",guidance:"Pre-print component names with blank for lot/control #. Include packaging and label stock identifiers, not just botanical/chemical inputs."},
+  {id:6,element:"Component identity & weight/measure",source:"21 CFR 111.260(e)",domain:"Regulatory",rationale:"Confirms correct materials in correct amounts entered the batch.",guidance:"Pre-print target weight/volume and units. Provide blank for actual measured value adjacent to target. Units must be pre-printed, never handwritten."},
+  {id:7,element:"Actual yield & % theoretical yield",source:"21 CFR 111.260(f)",domain:"Regulatory",rationale:"Detects process loss, diversion, or error; triggers investigation if outside range.",guidance:"Pre-print theoretical yield and acceptable range. Provide formula or calculation space. Flag if actual yield falls outside acceptable %."},
+  {id:8,element:"In-process monitoring results",source:"21 CFR 111.260(g)",domain:"Regulatory",rationale:"Real-time process verification (e.g., menstruum coverage, temperature, time).",guidance:"Pre-print expected values and acceptance criteria. Provide pass/fail or actual-value fields. Reference the in-process specifications SOP."},
+  {id:9,element:"In-process testing/examination results",source:"21 CFR 111.260(h)",domain:"Regulatory",rationale:"Analytical or observational checks during production.",guidance:"Record results directly or cross-reference to lab notebook/LIMS. Either is compliant per the regulation."},
+  {id:10,element:"Finished batch specification conformance",source:"21 CFR 111.260(i), 111.70(e)&(g)",domain:"Regulatory",rationale:"Confirms finished product meets identity, purity, strength, composition, and contamination limits.",guidance:"Organoleptic fields (odor, color, taste, appearance) with pre-printed expected descriptions and blanks for actual observations. Cross-reference to finished batch specs SOP."},
+  {id:11,element:"Date & initials \u2014 each process step",source:"21 CFR 111.260(j)(1)\u2013(2)",domain:"Regulatory",rationale:"Contemporaneous attribution of who did what and when.",guidance:"Pre-print each step with date and initials fields. Steps should mirror the master manufacturing record sequence exactly."},
+  {id:12,element:"2-person verification \u2014 weighing",source:"21 CFR 111.260(j)(2)(i)\u2013(ii)",domain:"Regulatory",rationale:"Independent check that the correct mass/volume was measured.",guidance:"Adjacent initial fields: one for performer, one for verifier. Verifier must be a different person \u2014 state this on the form."},
+  {id:13,element:"2-person verification \u2014 addition",source:"21 CFR 111.260(j)(2)(iii)\u2013(iv)",domain:"Regulatory",rationale:"Independent check that the component was actually added to the batch.",guidance:"Same dual-initial pattern as weighing. Can be combined on one line per component if layout permits."},
+  {id:14,element:"Packaging & label unique identifiers + quantity",source:"21 CFR 111.260(k)(1)",domain:"Regulatory",rationale:"Tracks materials used in packaging; supports label reconciliation.",guidance:"Pre-print packaging item descriptions with fields for lot #, quantity issued, quantity used, quantity returned/destroyed."},
+  {id:15,element:"Actual or representative label",source:"21 CFR 111.260(k)(2)",domain:"Regulatory",rationale:"Proves the correct label was applied to the batch.",guidance:"Designated area to affix label or cross-reference to label specification sheet. State which method your SOP requires."},
+  {id:16,element:"Packaging & labeling test/exam results",source:"21 CFR 111.260(k)(3)",domain:"Regulatory",rationale:"Confirms label accuracy, adhesion, legibility, correct lot/expiry.",guidance:"Visual examination fields with date/initials. Cross-reference to packaging & labeling SOP."},
+  {id:17,element:"QC review \u2014 batch record review",source:"21 CFR 111.260(l)(1)",domain:"Regulatory",rationale:"Independent quality review of all monitoring, testing, and documentation.",guidance:"Checklist-style sign-off: component specs, in-process specs, finished batch specs, packaging/labeling specs \u2014 each Met/Not Met with QC signature and date."},
+  {id:18,element:"QC review \u2014 reprocessing approval",source:"21 CFR 111.260(l)(2)",domain:"Regulatory",rationale:"QC must approve any reprocessing before it occurs.",guidance:"Conditional section: \u201CReprocessing required? Y/N.\u201D If yes, requires QC signature before proceeding."},
+  {id:19,element:"QC review \u2014 batch release/rejection",source:"21 CFR 111.260(l)(3)\u2013(4)",domain:"Regulatory",rationale:"Final disposition decision for both bulk batch and packaged product.",guidance:"Separate release decisions for (a) finished batch and (b) packaged/labeled product. Signature, date, and disposition (release/reject/hold)."},
+  {id:20,element:"Material review & disposition documentation",source:"21 CFR 111.260(m)",domain:"Regulatory",rationale:"Documents investigation and decision when materials fail specs.",guidance:"Conditional section: \u201CMaterial review required? Y/N.\u201D If yes, attach or cross-reference investigation documentation."},
+  {id:21,element:"Reprocessing documentation",source:"21 CFR 111.260(n)",domain:"Regulatory",rationale:"Full record of any reprocessing performed.",guidance:"Conditional section with procedure description, re-testing results, and QC re-review. Must be contemporaneous."},
+  {id:22,element:"Document control header",source:"ISO 9001:2015 \u00a77.5; WHO TRS 986 Annex 2",domain:"Industry",rationale:"Every controlled document needs unambiguous identification.",guidance:"Header on every page: document ID, version/revision #, effective date, page X of Y. Pre-printed, not handwritten."},
+  {id:23,element:"Master manufacturing record reference",source:"21 CFR 111.205; WHO TRS 986 Annex 2",domain:"Industry",rationale:"BPR must trace back to the approved master record it was generated from.",guidance:"Pre-print the MMR document ID and version. If the MMR changes, the BPR template must be re-issued."},
+  {id:24,element:"Product name, strength, and dosage form",source:"WHO TRS 986 Annex 2; PIC/S PE 009-16",domain:"Industry",rationale:"Prevents mix-ups when multiple products are in production.",guidance:"Pre-print on the header. Include botanical binomial, common name, and dosage form (tincture, glycerite, capsule, etc.)."},
+  {id:25,element:"Batch size / scale",source:"WHO TRS 986 Annex 2; ISPE GAMP 5",domain:"Industry",rationale:"Anchors all quantities and expected yields to a defined scale.",guidance:"Pre-print target batch size. All component quantities should be calculated from this. If scaling is routine, include a scaling factor field."},
+  {id:26,element:"Supplier and CoA cross-reference",source:"NSF/ANSI 173; AHPA GMP guidance",domain:"Industry",rationale:"Connects components to supplier identity and analytical verification.",guidance:"Field for supplier name and CoA reference number for each component. Verifies incoming material was released before use."},
+  {id:27,element:"Environmental conditions",source:"PIC/S PE 009-16; USP <1116>",domain:"Industry",rationale:"Temperature, humidity, and cleanliness affect product quality.",guidance:"Pre-print acceptable ranges. Record actual conditions at start and end of production (minimum). Critical for hygroscopic materials and microbial-sensitive processes."},
+  {id:28,element:"Expiration / retest date assignment",source:"21 CFR 111.410; AHPA GMP guidance",domain:"Industry",rationale:"Every batch needs a defined shelf life or retest interval.",guidance:"Pre-print the shelf life policy (e.g., \u201C24 months from manufacture\u201D). Calculate and record the expiration or retest date."},
+  {id:29,element:"Storage conditions for finished batch",source:"USP <659>; WHO TRS 986 Annex 2",domain:"Industry",rationale:"Incorrect storage degrades product before it reaches the consumer.",guidance:"Pre-print required storage conditions (temperature, light, humidity). Record where the batch is stored post-production."},
+  {id:30,element:"Deviation / non-conformance section",source:"ICH Q10; PIC/S PE 009-16",domain:"Industry",rationale:"Unplanned events must be captured in real time, not on a separate form that gets lost.",guidance:"Dedicated section at end of BPR: description, impact assessment, corrective action, QC review. Pre-printed \u201CNo deviations occurred\u201D checkbox for the normal case."},
+  {id:31,element:"Signature / initials log",source:"PIC/S PE 009-16; FDA Data Integrity Guidance (2018)",domain:"Industry",rationale:"Initials are meaningless without a key that links them to a full name.",guidance:"Include a signature log on the first or last page: printed name, signature, initials, role, date. Every person who touches the BPR signs this log."},
+  {id:32,element:"Training verification reference",source:"21 CFR 111.14; ISO 9001:2015 \u00a77.2",domain:"Industry",rationale:"Personnel must be trained on the SOP before executing it.",guidance:"Statement or checkbox: \u201CAll personnel listed above are current on training for [MMR ID].\u201D Cross-reference to training records."},
+  {id:33,element:"ALCOA+ compliance by design",source:"FDA Data Integrity Guidance (2018); WHO TRS 996 Annex 5",domain:"Data Integrity",rationale:"Attributable, Legible, Contemporaneous, Original, Accurate + Complete, Consistent, Enduring, Available.",guidance:"Design principle, not a single field. Every field on the BPR should satisfy all ALCOA+ attributes. Audit your draft against each attribute."},
+  {id:34,element:"Pre-printed units of measure",source:"FDA Data Integrity Guidance (2018); PIC/S PI 041-1",domain:"Data Integrity",rationale:"Eliminates transcription errors and unit ambiguity.",guidance:"Never leave units to be handwritten. Pre-print \u201Cg\u201D, \u201CmL\u201D, \u201C\u00b0C\u201D, etc. adjacent to every numeric entry field."},
+  {id:35,element:"Pre-printed acceptance criteria",source:"PIC/S PI 041-1; WHO TRS 996 Annex 5",domain:"Data Integrity",rationale:"Operator must know the target before recording the result, not after.",guidance:"Print expected ranges, descriptions, or pass/fail thresholds directly on the form next to the data entry field."},
+  {id:36,element:"No-blank-field policy",source:"FDA Data Integrity Guidance (2018); PIC/S PI 041-1",domain:"Data Integrity",rationale:"Blank fields are ambiguous \u2014 was it skipped, not applicable, or forgotten?",guidance:"Instruct on the form: \u201CNo field may be left blank. Use N/A or draw a single line through unused fields.\u201D Pre-print this instruction."},
+  {id:37,element:"Error correction method",source:"FDA Data Integrity Guidance (2018); PIC/S PI 041-1",domain:"Data Integrity",rationale:"White-out, overwriting, and scribbling destroy the audit trail.",guidance:"Pre-print correction instructions: \u201CSingle line through error, date, initials, and reason. Original entry must remain legible.\u201D"},
+  {id:38,element:"Date and time format standardization",source:"ISO 8601; PIC/S PI 041-1",domain:"Data Integrity",rationale:"\u201C3/4/25\u201D is ambiguous across locales; \u201C15:00\u201D vs \u201C3:00 PM\u201D causes confusion.",guidance:"Pre-print the required format (e.g., DD-MMM-YYYY, 24-hour clock) on the form header and in field labels."},
+  {id:39,element:"Calculation fields with pre-printed formulas",source:"PIC/S PI 041-1; ISPE GAMP 5",domain:"Data Integrity",rationale:"Operators should not be inventing formulas on the fly.",guidance:"Pre-print the formula (e.g., \u201CActual Yield \u00f7 Theoretical Yield \u00d7 100 = ___%\u201D). Provide intermediate calculation blanks if multi-step."},
+  {id:40,element:"Checkboxes and structured responses over free text",source:"FDA Data Integrity Guidance (2018)",domain:"Data Integrity",rationale:"Free text is slower, less legible, and harder to review.",guidance:"Use checkboxes, Yes/No, Met/Not Met, and dropdown-style fields wherever the set of valid responses is known. Reserve free text for descriptions and deviations."},
+  {id:41,element:"Sequential page numbering",source:"PIC/S PE 009-16",domain:"Data Integrity",rationale:"Detects missing or inserted pages.",guidance:"Pre-print \u201CPage ___ of ___\u201D on every page. Total page count should be pre-printed once the template is finalized."},
+  {id:42,element:"Attachment log",source:"PIC/S PE 009-16; WHO TRS 986 Annex 2",domain:"Industry",rationale:"CoAs, labels, deviation reports, and other attachments need to be inventoried.",guidance:"Table at end of BPR: attachment description, document ID, number of pages, attached by (initials), date. Prevents attachments from being separated and lost."}
+];
+
+// ─── STATE ───
+const state = {
+  mode: 'learn',
+  learnFilters: { domains: new Set(['Regulatory','Industry','Data Integrity']), search: '' },
+  audit: {},
+  expandedLearn: new Set()
+};
+BPR_ELEMENTS.forEach(el => { state.audit[el.id] = { status: '', notes: '' }; });
+
+// ─── HELPERS ───
+function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+function domainClass(d) { if (d === 'Regulatory') return 'reg'; if (d.startsWith('Data')) return 'di'; return 'ind'; }
+function domainKey(d) { if (d === 'Regulatory') return 'Regulatory'; if (d.startsWith('Data')) return 'Data Integrity'; return 'Industry'; }
+function toast(msg) {
+  const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+function now() { return new Date().toISOString().replace('T',' ').slice(0,19) + ' UTC'; }
+function today() { return new Date().toISOString().slice(0,10); }
+function sessionId() { const d = today().replace(/-/g,''); return 'BPR-AUDIT-' + d + '-' + String(Math.floor(Math.random()*900)+100); }
+
+// ─── MODE SWITCHING ───
+document.querySelectorAll('nav button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    const mode = btn.dataset.mode;
+    document.getElementById(mode + '-view').classList.add('active');
+    state.mode = mode;
+    if (mode === 'template') renderTemplate();
+    if (mode === 'workflow') prefillWorkflow();
+    if (mode === 'workflow') renderReport();
+  });
+});
+
+// ─── LEARN MODE ───
+function renderLearn() {
+  const list = document.getElementById('learn-list');
+  const s = state.learnFilters.search.toLowerCase();
+  const filtered = BPR_ELEMENTS.filter(el => {
+    const dk = domainKey(el.domain);
+    if (!state.learnFilters.domains.has(dk)) return false;
+    if (s && !(el.element.toLowerCase().includes(s) || el.source.toLowerCase().includes(s) || el.rationale.toLowerCase().includes(s) || el.guidance.toLowerCase().includes(s))) return false;
+    return true;
+  });
+  document.getElementById('learn-count').textContent = filtered.length + ' of ' + BPR_ELEMENTS.length + ' elements';
+  list.innerHTML = filtered.map(el => {
+    const dc = domainClass(el.domain);
+    const expanded = state.expandedLearn.has(el.id);
+    return '<div class="element-card' + (expanded ? ' expanded' : '') + '" data-id="' + el.id + '">' +
+      '<div class="element-header">' +
+        '<span class="expand-icon">\u25B6</span>' +
+        '<span class="element-num">#' + el.id + '</span>' +
+        '<span class="element-name">' + esc(el.element) + '</span>' +
+        '<span class="domain-badge ' + dc + '">' + esc(domainKey(el.domain)) + '</span>' +
+      '</div>' +
+      '<div class="element-details">' +
+        '<div class="detail-section"><div class="detail-label">Source</div><div class="source-link">' + esc(el.source) + '</div></div>' +
+        '<div class="detail-section"><div class="detail-label">Rationale</div><div class="detail-text">' + esc(el.rationale) + '</div></div>' +
+        '<div class="detail-section"><div class="detail-label">Implementation Guidance</div><div class="detail-text">' + esc(el.guidance) + '</div></div>' +
+      '</div></div>';
+  }).join('');
+  list.querySelectorAll('.element-header').forEach(h => {
+    h.addEventListener('click', () => {
+      const id = parseInt(h.parentElement.dataset.id);
+      if (state.expandedLearn.has(id)) state.expandedLearn.delete(id); else state.expandedLearn.add(id);
+      h.parentElement.classList.toggle('expanded');
+    });
+  });
+}
+document.getElementById('learn-search').addEventListener('input', e => { state.learnFilters.search = e.target.value; renderLearn(); });
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const d = btn.dataset.domain;
+    btn.classList.toggle('inactive');
+    if (state.learnFilters.domains.has(d)) state.learnFilters.domains.delete(d); else state.learnFilters.domains.add(d);
+    renderLearn();
+  });
+});
+renderLearn();
+
+// ─── TEMPLATE MODE ───
+function getTemplateFormat() { return document.querySelector('input[name="tpl-format"]:checked').value; }
+function renderTemplate() {
+  const fmt = getTemplateFormat();
+  const notes = document.getElementById('tpl-notes').checked;
+  const rat = document.getElementById('tpl-rationale').checked;
+  let out = '';
+  if (fmt === 'checklist') {
+    out = 'BATCH PRODUCTION RECORD \u2014 DESIGN CHECKLIST\nProduct: ________________________\nDate:    ________________________\n\n';
+    BPR_ELEMENTS.forEach(el => {
+      out += '\u2610 #' + String(el.id).padStart(2,' ') + '  ' + el.element + '\n';
+      out += '     Source: ' + el.source + '  |  Domain: ' + domainKey(el.domain) + '\n';
+      if (rat) out += '     Rationale: ' + el.rationale + '\n';
+      if (notes) out += '     Guidance: ' + el.guidance + '\n';
+      out += '\n';
+    });
+  } else if (fmt === 'tsv') {
+    const cols = ['#','Element','Source','Domain'];
+    if (rat) cols.push('Rationale');
+    if (notes) cols.push('Implementation Guidance');
+    out = cols.join('\t') + '\n';
+    BPR_ELEMENTS.forEach(el => {
+      const row = [el.id, el.element, el.source, domainKey(el.domain)];
+      if (rat) row.push(el.rationale);
+      if (notes) row.push(el.guidance);
+      out += row.join('\t') + '\n';
+    });
+  } else {
+    out = '<table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse;font-family:Arial,sans-serif;font-size:13px;">\n<tr style="background:#f3f4f6;font-weight:bold;">';
+    out += '<th>#</th><th>Element</th><th>Source</th><th>Domain</th><th>Present</th><th>Notes</th>';
+    if (rat) out += '<th>Rationale</th>';
+    if (notes) out += '<th>Guidance</th>';
+    out += '</tr>\n';
+    BPR_ELEMENTS.forEach(el => {
+      out += '<tr><td>' + el.id + '</td><td>' + esc(el.element) + '</td><td style="font-family:monospace;font-size:12px;">' + esc(el.source) + '</td><td>' + esc(domainKey(el.domain)) + '</td><td>\u2610</td><td></td>';
+      if (rat) out += '<td>' + esc(el.rationale) + '</td>';
+      if (notes) out += '<td>' + esc(el.guidance) + '</td>';
+      out += '</tr>\n';
+    });
+    out += '</table>';
+  }
+  document.getElementById('tpl-preview').textContent = out;
+}
+document.querySelectorAll('input[name="tpl-format"], #tpl-notes, #tpl-rationale').forEach(el => el.addEventListener('change', renderTemplate));
+
+document.getElementById('tpl-copy').addEventListener('click', () => {
+  navigator.clipboard.writeText(document.getElementById('tpl-preview').textContent).then(() => toast('Copied to clipboard'));
+});
+document.getElementById('tpl-download').addEventListener('click', () => {
+  const fmt = getTemplateFormat();
+  const content = document.getElementById('tpl-preview').textContent;
+  let ext = 'txt', mime = 'text/plain';
+  if (fmt === 'tsv') { ext = 'tsv'; mime = 'text/tab-separated-values'; }
+  if (fmt === 'html') { ext = 'html'; mime = 'text/html'; }
+  const blob = new Blob([content], {type: mime});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'BPR-template-' + today() + '.' + ext;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast('Downloaded ' + a.download);
+});
+
+// ─── AUDIT MODE ───
+function renderAudit() {
+  const list = document.getElementById('audit-list');
+  list.innerHTML = BPR_ELEMENTS.map(el => {
+    const dc = domainClass(el.domain);
+    const s = state.audit[el.id].status;
+    const sc = s ? 'status-' + s.toLowerCase().replace(' ','-') : '';
+    return '<div class="audit-row" data-id="' + el.id + '">' +
+      '<div class="audit-bar element-bar ' + dc + '"></div>' +
+      '<div class="audit-num">' + el.id + '</div>' +
+      '<div class="audit-element"><div class="audit-element-name">' + esc(el.element) + '</div><div class="audit-element-source">' + esc(el.source) + '</div></div>' +
+      '<div class="audit-status ' + sc + '"><select data-id="' + el.id + '">' +
+        '<option value=""' + (!s ? ' selected' : '') + '>-- Select --</option>' +
+        '<option value="Present"' + (s==='Present' ? ' selected' : '') + '>Present</option>' +
+        '<option value="Partial"' + (s==='Partial' ? ' selected' : '') + '>Partial</option>' +
+        '<option value="Missing"' + (s==='Missing' ? ' selected' : '') + '>Missing</option>' +
+        '<option value="N/A"' + (s==='N/A' ? ' selected' : '') + '>N/A</option>' +
+      '</select></div>' +
+      '<div class="audit-notes"><textarea data-id="' + el.id + '" placeholder="Evidence / gaps / notes...">' + esc(state.audit[el.id].notes) + '</textarea></div>' +
+    '</div>';
+  }).join('');
+  list.querySelectorAll('.audit-status select').forEach(sel => {
+    sel.addEventListener('change', e => {
+      const id = parseInt(e.target.dataset.id);
+      state.audit[id].status = e.target.value;
+      const row = e.target.closest('.audit-row');
+      row.querySelector('.audit-status').className = 'audit-status' + (e.target.value ? ' status-' + e.target.value.toLowerCase().replace(' ','-') : '');
+      updateProgress();
+    });
+  });
+  list.querySelectorAll('.audit-notes textarea').forEach(ta => {
+    ta.addEventListener('input', e => { state.audit[parseInt(e.target.dataset.id)].notes = e.target.value; });
+  });
+  updateProgress();
+}
+function updateProgress() {
+  const counts = { Present:0, Partial:0, Missing:0, 'N/A':0, '':0 };
+  BPR_ELEMENTS.forEach(el => { counts[state.audit[el.id].status] = (counts[state.audit[el.id].status]||0) + 1; });
+  const reviewed = 42 - counts[''];
+  document.getElementById('progress-text').textContent = reviewed + ' of 42 reviewed';
+  document.getElementById('progress-pct').textContent = Math.round(reviewed/42*100) + '%';
+  const bar = document.getElementById('progress-bar');
+  bar.innerHTML = ['Present','Partial','Missing','N/A'].map(k => {
+    const pct = (counts[k]||0)/42*100;
+    return pct > 0 ? '<div class="progress-seg ' + k.toLowerCase().replace('/','') + '" style="width:' + pct + '%"></div>' : '';
+  }).join('') + (counts[''] > 0 ? '<div class="progress-seg" style="width:' + (counts['']/42*100) + '%;background:var(--gray-200)"></div>' : '');
+}
+document.getElementById('audit-mark-all').addEventListener('click', () => {
+  BPR_ELEMENTS.forEach(el => { state.audit[el.id].status = 'Present'; });
+  renderAudit();
+});
+document.getElementById('audit-reset').addEventListener('click', () => {
+  if (!confirm('Reset all audit data?')) return;
+  BPR_ELEMENTS.forEach(el => { state.audit[el.id] = { status: '', notes: '' }; });
+  renderAudit();
+});
+renderAudit();
+
+// ─── WORKFLOW MODE ───
+const _sid = sessionId();
+document.getElementById('wf-session').value = _sid;
+document.getElementById('wf-date').value = today();
+
+function prefillWorkflow() {
+  const p = document.getElementById('audit-product').value;
+  const r = document.getElementById('audit-reviewer').value;
+  const a = document.getElementById('audit-approval').value;
+  if (p) document.getElementById('wf-product').value = p;
+  if (r) document.getElementById('wf-reviewer').value = r;
+  if (a) document.getElementById('wf-approval').value = a;
+  renderReport();
+}
+
+function getWfMeta() {
+  return {
+    sessionId: document.getElementById('wf-session').value,
+    product: document.getElementById('wf-product').value || '(not specified)',
+    bpr: document.getElementById('wf-bpr').value || '(not specified)',
+    reviewer: document.getElementById('wf-reviewer').value || '(not specified)',
+    title: document.getElementById('wf-title').value || '',
+    approval: document.getElementById('wf-approval').value,
+    date: document.getElementById('wf-date').value || today(),
+    comments: document.getElementById('wf-comments').value
+  };
+}
+function getSummary() {
+  const c = { total:42, Present:0, Partial:0, Missing:0, 'N/A':0, unreviewed:0 };
+  BPR_ELEMENTS.forEach(el => {
+    const s = state.audit[el.id].status;
+    if (!s) c.unreviewed++; else c[s] = (c[s]||0) + 1;
+  });
+  return c;
+}
+
+function renderReport() {
+  const m = getWfMeta();
+  const s = getSummary();
+  const sc = m.approval === 'Approved' ? 'status-approved' : m.approval === 'Needs Revision' ? 'status-needs-revision' : 'status-draft';
+  let findings = '';
+  BPR_ELEMENTS.forEach(el => {
+    const a = state.audit[el.id];
+    const st = a.status || 'Not reviewed';
+    const rc = st === 'Present' ? 'row-present' : st === 'Partial' ? 'row-partial' : st === 'Missing' ? 'row-missing' : '';
+    findings += '<tr class="' + rc + '"><td>' + el.id + '</td><td>' + esc(el.element) + '</td><td>' + esc(st) + '</td><td style="font-family:monospace;font-size:11px;">' + esc(el.source) + '</td><td>' + esc(a.notes || '\u2014') + '</td></tr>';
+  });
+  document.getElementById('report-container').innerHTML =
+    '<div class="report-preview" id="report-body">' +
+      '<h2>BPR Audit Report</h2>' +
+      '<div class="report-subtitle">21 CFR Part 111 Compliance Reference</div>' +
+      '<dl class="report-meta-grid">' +
+        '<dt>Session ID</dt><dd>' + esc(m.sessionId) + '</dd>' +
+        '<dt>Product</dt><dd>' + esc(m.product) + '</dd>' +
+        '<dt>BPR Under Review</dt><dd>' + esc(m.bpr) + '</dd>' +
+        '<dt>Reviewed By</dt><dd>' + esc(m.reviewer) + (m.title ? ', ' + esc(m.title) : '') + '</dd>' +
+        '<dt>Status</dt><dd class="' + sc + '">' + esc(m.approval) + '</dd>' +
+        '<dt>Approval Date</dt><dd>' + esc(m.date) + '</dd>' +
+        (m.comments ? '<dt>Comments</dt><dd>' + esc(m.comments) + '</dd>' : '') +
+      '</dl>' +
+      '<div class="report-summary">' +
+        '<div class="summary-card"><div class="num">' + s.total + '</div><div class="lbl">Total</div></div>' +
+        '<div class="summary-card sc-present"><div class="num">' + s.Present + '</div><div class="lbl">Present</div></div>' +
+        '<div class="summary-card sc-partial"><div class="num">' + s.Partial + '</div><div class="lbl">Partial</div></div>' +
+        '<div class="summary-card sc-missing"><div class="num">' + s.Missing + '</div><div class="lbl">Missing</div></div>' +
+        '<div class="summary-card"><div class="num">' + s['N/A'] + '</div><div class="lbl">N/A</div></div>' +
+      '</div>' +
+      '<table class="findings-table"><thead><tr><th>#</th><th>Element</th><th>Status</th><th>Source</th><th>Notes</th></tr></thead><tbody>' + findings + '</tbody></table>' +
+      '<div class="report-footer">Generated: ' + now() + ' &middot; ' + esc(m.sessionId) + '<br>This is an audit artifact for document management systems.</div>' +
+    '</div>';
+}
+
+document.querySelectorAll('#workflow-view .workflow-meta input, #workflow-view .workflow-meta select, #workflow-view .workflow-meta textarea').forEach(el => {
+  el.addEventListener('input', renderReport);
+  el.addEventListener('change', renderReport);
+});
+
+document.getElementById('wf-print').addEventListener('click', () => { window.print(); });
+
+document.getElementById('wf-html').addEventListener('click', () => {
+  const body = document.getElementById('report-body');
+  const html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>BPR Audit Report</title><style>body{font-family:Arial,sans-serif;font-size:13px;color:#1f2937;max-width:800px;margin:40px auto;padding:0 20px;line-height:1.5}h2{text-align:center;font-size:20px;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.05em}.report-subtitle{text-align:center;color:#6b7280;font-size:13px;margin-bottom:24px}.report-meta-grid{display:grid;grid-template-columns:140px 1fr;gap:4px 16px;font-size:13px;margin-bottom:24px;padding-bottom:24px;border-bottom:2px solid #e5e7eb}dt{font-weight:600;color:#4b5563}dd{margin:0}.report-summary{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:24px}.summary-card{text-align:center;padding:12px 8px;border-radius:6px;border:1px solid #e5e7eb}.summary-card .num{font-size:28px;font-weight:700}.summary-card .lbl{font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:#6b7280}.sc-present .num{color:#059669}.sc-partial .num{color:#d97706}.sc-missing .num{color:#dc2626}.findings-table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:24px}.findings-table th{background:#f3f4f6;text-align:left;padding:8px 10px;border-bottom:2px solid #d1d5db;font-weight:600;font-size:11px;text-transform:uppercase}.findings-table td{padding:6px 10px;border-bottom:1px solid #e5e7eb;vertical-align:top}.row-present td:nth-child(3){color:#059669;font-weight:600}.row-partial td:nth-child(3){color:#d97706;font-weight:600}.row-missing td:nth-child(3){color:#dc2626;font-weight:600}.report-footer{text-align:center;font-size:11px;color:#9ca3af;padding-top:24px;border-top:2px solid #e5e7eb}.status-approved{color:#059669;font-weight:700}.status-draft{color:#d97706;font-weight:700}.status-needs-revision{color:#dc2626;font-weight:700}</style></head><body>' + body.innerHTML + '</body></html>';
+  const blob = new Blob([html], {type:'text/html'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'BPR-Audit-Report-' + today() + '.html';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast('Downloaded ' + a.download);
+});
+
+document.getElementById('wf-json').addEventListener('click', () => {
+  const m = getWfMeta();
+  const data = {
+    meta: m,
+    summary: getSummary(),
+    findings: BPR_ELEMENTS.map(el => ({
+      id: el.id,
+      element: el.element,
+      source: el.source,
+      domain: domainKey(el.domain),
+      status: state.audit[el.id].status || 'Not reviewed',
+      notes: state.audit[el.id].notes || ''
+    })),
+    generated: now()
+  };
+  navigator.clipboard.writeText(JSON.stringify(data, null, 2)).then(() => toast('JSON copied to clipboard'));
+});
+</script>
+</body>
+</html>
