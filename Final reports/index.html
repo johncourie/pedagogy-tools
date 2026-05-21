@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Diagnosing Failure Modes in the Final Report — HPDM Capstone</title>
+<style>
+  :root{
+    --bg:#f5f4ee;
+    --surface:#ffffff;
+    --ink:#23271f;
+    --ink-soft:#5a6053;
+    --ink-faint:#8a8f80;
+    --accent:#3c6e57;
+    --accent-deep:#2a4f3f;
+    --accent-tint:#e7efe8;
+    --line:#dad9cd;
+    --excerpt-rule:#c7c5b4;
+    --annotation-bg:#eef2ec;
+    --warn-bg:#f4eede;
+    --warn-rule:#c9a94e;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--serif);
+    font-size:18px;
+    line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px;}
+
+  /* ---------- header ---------- */
+  .site-header{
+    background:var(--accent-deep);
+    color:#f3f1e7;
+    padding:46px 0 40px;
+    border-bottom:3px solid var(--warn-rule);
+  }
+  .site-header .kicker{
+    font-family:var(--sans);
+    font-size:12px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:#a9c6b6;
+    margin-bottom:14px;
+  }
+  .site-header h1{
+    font-size:34px;
+    line-height:1.18;
+    margin:0 0 10px;
+    font-weight:600;
+  }
+  .site-header .running-case{
+    font-family:var(--sans);
+    font-size:14px;
+    color:#cfdbcf;
+    margin:0;
+  }
+  .site-header .running-case strong{color:#fff;}
+
+  /* ---------- progress ---------- */
+  .progress{
+    position:sticky;top:0;z-index:20;
+    background:rgba(245,244,238,.96);
+    backdrop-filter:saturate(140%) blur(4px);
+    border-bottom:1px solid var(--line);
+  }
+  .progress-inner{
+    display:flex;align-items:center;gap:14px;
+    padding-top:9px;padding-bottom:9px;
+    font-family:var(--sans);
+  }
+  .progress-label{font-size:12px;letter-spacing:.04em;color:var(--ink-soft);text-transform:uppercase;}
+  .steps{display:flex;gap:8px;list-style:none;margin:0;padding:0;}
+  .steps li a{
+    display:flex;align-items:center;justify-content:center;
+    width:28px;height:28px;border-radius:50%;
+    border:1.5px solid var(--line);
+    color:var(--ink-faint);
+    font-size:13px;font-weight:600;text-decoration:none;
+    transition:all .25s ease;
+  }
+  .steps li.done a{
+    background:var(--accent);border-color:var(--accent);color:#fff;
+  }
+  .progress-count{font-size:13px;color:var(--ink-soft);margin-left:auto;}
+  .progress-track{height:3px;background:var(--line);}
+  .progress-bar{height:3px;width:0;background:var(--accent);transition:width .35s ease;}
+
+  /* ---------- generic ---------- */
+  main{padding:8px 0 40px;}
+  section{margin:42px 0;}
+  p{margin:0 0 16px;}
+  em{font-style:italic;}
+  h2.section-title{
+    font-family:var(--sans);
+    font-size:13px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--accent);
+    margin:0 0 6px;font-weight:700;
+  }
+  .lede{font-size:20px;line-height:1.55;color:var(--ink);}
+
+  /* ---------- callouts ---------- */
+  .howto{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-left:4px solid var(--accent);
+    border-radius:4px;
+    padding:22px 24px;
+    font-size:16.5px;
+    line-height:1.6;
+  }
+  .howto h3{
+    font-family:var(--sans);font-size:13px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--accent);margin:0 0 10px;
+  }
+  .howto p:last-child{margin-bottom:0;}
+  .howto .save-note{
+    font-family:var(--sans);font-size:13px;color:var(--ink-soft);
+    margin-top:14px;padding-top:12px;border-top:1px dashed var(--line);
+  }
+
+  /* ---------- case file ---------- */
+  .casefile{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:6px;
+    overflow:hidden;
+  }
+  .casefile-head{
+    background:var(--accent-tint);
+    border-bottom:1px solid var(--line);
+    padding:14px 24px;
+    font-family:var(--sans);
+    font-size:13px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--accent-deep);font-weight:700;
+  }
+  .casefile-body{padding:6px 24px 20px;}
+  .field{padding:16px 0;border-bottom:1px solid var(--line);}
+  .field:last-child{border-bottom:none;}
+  .field .flabel{
+    font-family:var(--sans);font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--ink-faint);margin-bottom:5px;
+  }
+  .field p{margin:0;font-size:16.5px;}
+  .options{display:grid;gap:12px;margin-top:6px;}
+  .option{
+    border:1px solid var(--line);border-radius:5px;
+    padding:13px 15px;background:#fbfaf5;
+  }
+  .option .otag{
+    font-family:var(--sans);font-weight:700;font-size:13px;
+    color:var(--accent-deep);
+  }
+  .option .otext{font-size:15.5px;color:var(--ink-soft);margin-top:2px;}
+  .constraints{
+    display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;
+  }
+  .chip{
+    font-family:var(--sans);font-size:13px;
+    background:var(--warn-bg);border:1px solid var(--warn-rule);
+    border-radius:20px;padding:4px 12px;color:#6b5a23;
+  }
+
+  /* ---------- excerpt ---------- */
+  .excerpt-block{
+    border-top:2px solid var(--accent-deep);
+    padding-top:24px;
+  }
+  .excerpt-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:4px;}
+  .excerpt-num{
+    font-family:var(--sans);font-weight:700;font-size:15px;
+    color:var(--accent-deep);
+  }
+  .excerpt-from{
+    font-family:var(--sans);font-size:13px;font-style:normal;
+    color:var(--ink-faint);
+  }
+  .excerpt-body{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-left:3px solid var(--excerpt-rule);
+    border-radius:4px;
+    padding:22px 26px 8px;
+    margin:14px 0 0;
+    font-size:17.5px;
+  }
+  .excerpt-body table{
+    border-collapse:collapse;width:100%;margin:6px 0 20px;
+    font-family:var(--sans);font-size:14.5px;
+  }
+  .excerpt-body caption{
+    caption-side:top;text-align:left;
+    font-family:var(--sans);font-size:13px;color:var(--ink-faint);
+    padding-bottom:6px;
+  }
+  .excerpt-body th,.excerpt-body td{
+    border:1px solid var(--line);padding:7px 11px;text-align:left;
+  }
+  .excerpt-body th{background:var(--accent-tint);font-weight:600;}
+  .excerpt-body td:last-child,.excerpt-body th:last-child{text-align:right;}
+
+  /* ---------- diagnose prompt ---------- */
+  .diagnose-prompt{
+    background:var(--warn-bg);
+    border-left:4px solid var(--warn-rule);
+    border-radius:0 4px 4px 0;
+    padding:14px 18px;
+    margin:18px 0 0;
+    font-size:16px;
+  }
+  .diagnose-prompt strong{font-family:var(--sans);font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:#6b5a23;}
+
+  /* ---------- forms ---------- */
+  .diagnose-form{margin-top:16px;}
+  .diagnose-form label,.reflect,.cf-block label{
+    display:block;
+    font-family:var(--sans);
+    font-size:13.5px;font-weight:600;color:var(--ink-soft);
+    margin-bottom:16px;
+  }
+  textarea{
+    display:block;width:100%;margin-top:6px;
+    font-family:var(--serif);font-size:16px;line-height:1.5;
+    color:var(--ink);
+    background:var(--surface);
+    border:1px solid var(--line);border-radius:4px;
+    padding:10px 12px;resize:vertical;
+    font-weight:400;
+  }
+  textarea:focus{outline:2px solid var(--accent);outline-offset:0;border-color:var(--accent);}
+
+  .cf-block{
+    background:#fbfaf5;border:1px dashed var(--excerpt-rule);
+    border-radius:5px;padding:14px 16px;margin-bottom:16px;
+  }
+  .cf-q{
+    font-family:var(--sans);font-size:14px;font-weight:600;
+    color:var(--accent-deep);margin:0 0 10px;line-height:1.45;
+  }
+  .radio-row{display:flex;flex-direction:column;gap:7px;margin-bottom:4px;}
+  .radio-row label{
+    display:flex;align-items:flex-start;gap:8px;
+    font-family:var(--sans);font-size:14.5px;font-weight:500;
+    color:var(--ink);margin:0;cursor:pointer;
+  }
+  .radio-row input{margin-top:3px;flex:none;accent-color:var(--accent);}
+
+  /* ---------- reveal ---------- */
+  .reveal-row{
+    display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+    margin-top:8px;
+  }
+  .reveal-hint{
+    font-family:var(--sans);font-size:13px;color:var(--ink-faint);font-style:italic;
+  }
+  .reveal-btn{
+    font-family:var(--sans);font-size:14.5px;font-weight:600;
+    background:var(--accent);color:#fff;
+    border:none;border-radius:5px;
+    padding:10px 20px;cursor:pointer;
+    transition:background .2s ease;
+  }
+  .reveal-btn:hover{background:var(--accent-deep);}
+  .reveal-btn.is-open{background:var(--ink-soft);}
+
+  /* ---------- annotation ---------- */
+  .annotation{
+    background:var(--annotation-bg);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:24px 26px;
+    margin-top:18px;
+    animation:fade .4s ease;
+  }
+  .annotation.collapsed{display:none;}
+  @keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+  .mode-tag{
+    display:inline-block;
+    font-family:var(--sans);font-size:13px;font-weight:700;
+    letter-spacing:.03em;
+    background:var(--accent-deep);color:#fff;
+    padding:5px 13px;border-radius:4px;
+    margin-bottom:16px;
+  }
+  .ann-block{margin-bottom:16px;}
+  .ann-block:last-child{margin-bottom:0;}
+  .ann-block h4{
+    font-family:var(--sans);font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--accent);margin:0 0 5px;
+  }
+  .ann-block p{margin:0 0 10px;font-size:16.5px;}
+  .ann-block p:last-child{margin-bottom:0;}
+  .ann-block.fix{
+    background:var(--accent-tint);
+    border-radius:4px;padding:14px 16px;
+  }
+  .ann-block.fix h4{color:var(--accent-deep);}
+
+  /* ---------- self-compare ---------- */
+  .self-compare{
+    margin-top:20px;padding-top:18px;
+    border-top:1px solid var(--line);
+  }
+  .self-compare h4{
+    font-family:var(--sans);font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--ink-soft);margin:0 0 4px;
+  }
+  .self-compare .sc-sub{font-size:15px;color:var(--ink-soft);margin:0 0 10px;}
+
+  /* ---------- described modes divider ---------- */
+  .divider{
+    text-align:center;margin:50px 0 30px;
+  }
+  .divider .dline{
+    font-family:var(--sans);font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--ink-faint);
+    display:inline-block;
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    padding:8px 0;width:100%;
+  }
+
+  /* ---------- self review ---------- */
+  .review-item{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:5px;
+    padding:16px 18px;
+    margin-bottom:12px;
+  }
+  .review-item .ri-head{display:flex;gap:10px;align-items:flex-start;}
+  .review-item .ri-check{margin-top:4px;flex:none;width:17px;height:17px;accent-color:var(--accent);}
+  .review-item .ri-num{
+    font-family:var(--sans);font-weight:700;color:var(--accent-deep);font-size:14px;
+  }
+  .review-item .ri-q{font-size:16px;}
+  .review-item .ri-q b{font-family:var(--sans);font-size:14px;}
+  .review-item textarea{margin-top:10px;}
+
+  /* ---------- footer ---------- */
+  .site-footer{
+    border-top:1px solid var(--line);
+    margin-top:50px;padding:28px 0 60px;
+  }
+  .footer-actions{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px;}
+  .btn-ghost{
+    font-family:var(--sans);font-size:14px;font-weight:600;
+    background:var(--surface);color:var(--accent-deep);
+    border:1.5px solid var(--accent);border-radius:5px;
+    padding:9px 18px;cursor:pointer;
+  }
+  .btn-ghost:hover{background:var(--accent-tint);}
+  .btn-ghost.danger{color:#9a3b2f;border-color:#c98c83;}
+  .btn-ghost.danger:hover{background:#f6e9e7;}
+  .footer-note{
+    font-family:var(--sans);font-size:13px;color:var(--ink-faint);line-height:1.6;
+  }
+
+  /* ---------- responsive ---------- */
+  @media (max-width:560px){
+    body{font-size:17px;}
+    .site-header h1{font-size:26px;}
+    .wrap{padding:0 16px;}
+    .excerpt-body{padding:18px 18px 4px;}
+    .annotation{padding:20px 18px;}
+    .progress-label{display:none;}
+  }
+
+  /* ---------- print ---------- */
+  @media print{
+    body{background:#fff;font-size:12pt;}
+    .progress,.reveal-row,.site-footer .footer-actions,.howto .save-note{display:none !important;}
+    .annotation{display:block !important;animation:none;border-color:#bbb;}
+    .site-header{background:#fff;color:#000;border-bottom:2px solid #000;}
+    .site-header .kicker,.site-header .running-case{color:#333;}
+    .mode-tag{background:#000;}
+    textarea{border:1px solid #999;}
+    section{page-break-inside:avoid;}
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <div class="kicker">HPDM Capstone &middot; A Worked Case</div>
+    <h1>Diagnosing Failure Modes in the Final Report</h1>
+    <p class="running-case">Running case &mdash; <strong>Hollow Creek Botanicals</strong></p>
+  </div>
+</header>
+
+<nav class="progress" aria-label="Progress">
+  <div class="wrap progress-inner">
+    <span class="progress-label">Annotations opened</span>
+    <ol class="steps">
+      <li data-step="1"><a href="#excerpt-1" title="Excerpt 1">1</a></li>
+      <li data-step="2"><a href="#excerpt-2" title="Excerpt 2">2</a></li>
+      <li data-step="3"><a href="#excerpt-3" title="Excerpt 3">3</a></li>
+    </ol>
+    <span class="progress-count"><span id="count">0</span>&nbsp;/&nbsp;3</span>
+  </div>
+  <div class="progress-track"><div class="progress-bar" id="bar"></div></div>
+</nav>
+
+<main class="wrap">
+
+  <!-- ============ HOW TO USE ============ -->
+  <section>
+    <div class="howto">
+      <h3>How to use this material</h3>
+      <p>This is a self-guided diagnostic exercise. It contains three excerpts drawn from a single capstone final report, each a half-page section of an otherwise competent report carrying one dominant failure mode. The flaws are the kind that survive a skim and fail on inspection &mdash; which is exactly the kind worth training your eye to catch.</p>
+      <p>Work through the excerpts in order. For each one, <strong>write your diagnosis and its evidence before you reveal the annotation.</strong> Diagnosing the failure yourself is the point of the exercise; reading the annotation first collapses it into a vocabulary lesson.</p>
+      <p>A final report is not a body of analysis. It is an instrument whose function is to move a <em>specific</em> stakeholder from uncertainty to a decision they can <em>execute</em>. Every failure mode below is a specific way a report fails that function while still looking like a report. Hold that function in mind as you read.</p>
+      <p class="save-note">This is elective material. Nothing here is graded or submitted. Your notes save automatically in this browser for your own use &mdash; you can leave and return.</p>
+    </div>
+  </section>
+
+  <!-- ============ CASE BRIEFING ============ -->
+  <section>
+    <h2 class="section-title">Case Briefing</h2>
+    <div class="casefile">
+      <div class="casefile-head">Hollow Creek Botanicals</div>
+      <div class="casefile-body">
+        <div class="field">
+          <div class="flabel">Client</div>
+          <p>A five-year-old herbal products company operating from a leased commercial kitchen. Flagship product: a black elderberry (<em>Sambucus nigra</em>) immune syrup, sold as a dietary supplement, currently producing ~500 bottles/month and sold direct-to-consumer and through a handful of independent retailers.</p>
+        </div>
+        <div class="field">
+          <div class="flabel">Trigger</div>
+          <p>A regional natural-foods grocery chain (19 locations) has issued a purchase order that, at projected sell-through, requires sustained output of roughly <strong>5,000 bottles/month &mdash; a ~10&times; increase</strong> &mdash; with first delivery due in <strong>six months</strong>. The chain requires documented cGMP compliance (21 CFR Part 111) and batch-to-batch consistency specifications.</p>
+        </div>
+        <div class="field">
+          <div class="flabel">Stakeholder decision</div>
+          <p>How should Hollow Creek scale production to meet the order? Three options are on the table:</p>
+          <div class="options">
+            <div class="option">
+              <span class="otag">Option A &mdash; In-house build-out</span>
+              <div class="otext">Invest in larger cGMP-compliant production capacity and quality systems.</div>
+            </div>
+            <div class="option">
+              <span class="otag">Option B &mdash; Contract manufacturer</span>
+              <div class="otext">Transfer production to an established cGMP-certified contract manufacturer (co-packer).</div>
+            </div>
+            <div class="option">
+              <span class="otag">Option C &mdash; Hybrid</span>
+              <div class="otext">Retain in-house botanical extraction; outsource fill, finish, and bottling.</div>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <div class="flabel">Constraints</div>
+          <div class="constraints">
+            <span class="chip">~$70,000 capital</span>
+            <span class="chip">No in-house QA staff</span>
+            <span class="chip">Preserve formulation identity</span>
+          </div>
+        </div>
+        <div class="field">
+          <div class="flabel">Student assignment</div>
+          <p>Deliver a final report analyzing the three options and recommending a scaling path Hollow Creek can execute within its capital, timeline, and capability constraints.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ EXCERPT 1 ============ -->
+  <section class="excerpt-block" id="excerpt-1">
+    <div class="excerpt-head">
+      <span class="excerpt-num">Excerpt 1</span>
+      <span class="excerpt-from">From the report&rsquo;s Section 5: Recommendation</span>
+    </div>
+    <div class="excerpt-body">
+      <p>Hollow Creek should transfer manufacturing of its elderberry syrup to a contract manufacturer (Option B). This is the strongest path forward, and the company should begin sourcing a partner immediately.</p>
+      <p>Contract manufacturing is the lowest-risk option. An established contract manufacturer already holds cGMP certification, which means the regulatory burden is effectively eliminated and the six-month timeline becomes comfortably achievable. In-house scale-up, by contrast, would almost certainly overrun the timeline and expose the company to compliance risk it is not equipped to manage.</p>
+      <p>The cost case is equally clear. Outsourcing will reduce per-bottle production cost by roughly 30% once volume reaches 5,000 units per month, because contract manufacturers operate at a scale Hollow Creek cannot match. This margin improvement will more than offset the loss of direct control over production and will give the company the financial headroom it needs to fund the wholesale expansion.</p>
+      <p>Product quality will not suffer. Modern contract manufacturers are highly experienced with botanical syrups and can reproduce the formulation faithfully. The founder&rsquo;s concern about preserving the product&rsquo;s identity, while understandable, is not a material risk under this option.</p>
+      <p>Finally, contract manufacturing is the best fit for a company of Hollow Creek&rsquo;s size and stage. It frees the founder to focus on brand and sales &mdash; the activities that actually drive growth &mdash; rather than on production. For these reasons, Option B is the clear recommendation, and Options A and C should not be pursued.</p>
+    </div>
+    <div class="diagnose-prompt">
+      <strong>Diagnose before continuing.</strong><br />
+      Identify the primary failure mode in this excerpt. Cite the specific sentences that reveal it. What would this section need in order to be sound?
+    </div>
+    <div class="diagnose-form">
+      <label>Your diagnosis &mdash; name the primary failure mode and explain it
+        <textarea data-persist="e1-diagnosis" rows="3" placeholder="What is the dominant flaw, and why?"></textarea>
+      </label>
+      <label>Evidence &mdash; quote the specific sentences that reveal it
+        <textarea data-persist="e1-evidence" rows="3" placeholder="Point to the exact wording."></textarea>
+      </label>
+      <label>What would this section need in order to be sound?
+        <textarea data-persist="e1-fix" rows="3" placeholder="What is missing that would fix it?"></textarea>
+      </label>
+    </div>
+    <div class="reveal-row">
+      <span class="reveal-hint">Written your diagnosis? Then reveal the annotation.</span>
+      <button class="reveal-btn js-reveal" data-target="ann-1" data-step="1">Reveal the annotation</button>
+    </div>
+    <div class="annotation collapsed" id="ann-1">
+      <span class="mode-tag">Failure mode 4.1 &middot; Unsupported recommendation</span>
+      <div class="ann-block">
+        <h4>What it is</h4>
+        <p>The recommendation is the report&rsquo;s load-bearing claim: it converts analysis into a decision. A recommendation is <em>unsupported</em> when its key claims are asserted rather than derived &mdash; when the reader cannot trace each claim back to a piece of data, a cited source, or an explicit line of reasoning. Note carefully: the recommendation may be <em>correct</em>. Correctness is not the issue. The issue is that the reader has been given no basis to evaluate it, and therefore no basis to trust it or to challenge it.</p>
+      </div>
+      <div class="ann-block">
+        <h4>Diagnostic signature</h4>
+        <p>Confident modal language doing the work that evidence should do (&ldquo;the strongest path,&rdquo; &ldquo;lowest-risk,&rdquo; &ldquo;the clear recommendation&rdquo;). Quantified claims with no derivation and no source &mdash; the tell is a specific number that appears from nowhere. Conclusions not linked to any prior section of the report. Alternatives dismissed in a clause rather than defeated by comparison. Stakeholder constraints waved away (&ldquo;not a material risk&rdquo;) instead of analyzed.</p>
+      </div>
+      <div class="ann-block">
+        <h4>Why it costs the stakeholder</h4>
+        <p>A stakeholder cannot act on a claim they cannot verify &mdash; or rather, if they do act, they are absorbing a risk the report has hidden from them. An unsupported recommendation is also unfalsifiable: because no reasoning is exposed, no reasoning can be stress-tested, so an error in the recommendation survives all the way to execution. The report has not reduced the stakeholder&rsquo;s uncertainty; it has only relocated it and disguised it as confidence.</p>
+      </div>
+      <div class="ann-block">
+        <h4>In Excerpt 1</h4>
+        <p>Every load-bearing claim is an assertion. &ldquo;Lowest-risk option&rdquo; &mdash; asserted. &ldquo;Regulatory burden effectively eliminated&rdquo; &mdash; asserted (and, in fact, false: under 21 CFR Part 111 the brand owner retains responsibility for the finished product regardless of who manufactures it). &ldquo;Reduce per-bottle production cost by roughly 30%&rdquo; &mdash; a specific figure with no derivation, no contract-manufacturer quote, no comparison against current cost of goods. &ldquo;Product quality will not suffer&rdquo; &mdash; asserted, and it dismisses the founder&rsquo;s <em>explicitly stated</em> constraint about formulation identity rather than analyzing it. Options A and C are rejected in a single clause with no comparative analysis anywhere in the section.</p>
+      </div>
+      <div class="ann-block fix">
+        <h4>The fix</h4>
+        <p>Every claim in a recommendation must carry its support &mdash; inline, or by explicit cross-reference (&ldquo;as derived in Section 4.2&rdquo;). A quantified claim needs a visible derivation or a cited quote. Alternatives must be shown to be dominated, not asserted to be. A sound recommendation also states the conditions under which it would change &mdash; which is what makes it testable rather than merely confident.</p>
+      </div>
+      <div class="self-compare">
+        <h4>Compare with your own diagnosis</h4>
+        <p class="sc-sub">Reading is not the same as having diagnosed. How did your diagnosis hold up?</p>
+        <div class="radio-row">
+          <label><input type="radio" name="sc1" data-persist="sc1" value="clean" /> Caught it cleanly &mdash; named the mode and the evidence</label>
+          <label><input type="radio" name="sc1" data-persist="sc1" value="partial" /> Partially &mdash; right instinct, missed an aspect</label>
+          <label><input type="radio" name="sc1" data-persist="sc1" value="missed" /> Missed it, or named a different mode</label>
+        </div>
+        <label class="reflect">One thing your diagnosis got right or missed
+          <textarea data-persist="sc1-note" rows="2"></textarea>
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ EXCERPT 2 ============ -->
+  <section class="excerpt-block" id="excerpt-2">
+    <div class="excerpt-head">
+      <span class="excerpt-num">Excerpt 2</span>
+      <span class="excerpt-from">From the report&rsquo;s Section 3: Phytochemical Characterization of the Raw Material</span>
+    </div>
+    <div class="excerpt-body">
+      <p>The bioactivity of Hollow Creek&rsquo;s syrup derives primarily from the anthocyanin fraction of black elderberry (<em>Sambucus nigra</em>). Anthocyanins are water-soluble flavonoid pigments; in elderberry the dominant species are cyanidin-3-glucoside and cyanidin-3-sambubioside, which together account for the majority of total monomeric anthocyanin content.</p>
+      <p>To characterize the raw material, total anthocyanin content was reviewed across the literature and benchmarked against other commonly marketed &ldquo;superfruit&rdquo; berries. Expressed as cyanidin-3-glucoside equivalents per 100&nbsp;g fresh weight, black elderberry consistently reports among the highest values of any temperate berry:</p>
+      <table>
+        <caption>Total monomeric anthocyanins (mg / 100&nbsp;g fresh weight)</caption>
+        <thead><tr><th>Berry</th><th>mg / 100&nbsp;g FW</th></tr></thead>
+        <tbody>
+          <tr><td>Black elderberry</td><td>600&ndash;1,800</td></tr>
+          <tr><td>Blackcurrant</td><td>130&ndash;400</td></tr>
+          <tr><td>Blueberry</td><td>60&ndash;270</td></tr>
+          <tr><td>Blackberry</td><td>70&ndash;200</td></tr>
+          <tr><td>Strawberry</td><td>20&ndash;60</td></tr>
+        </tbody>
+      </table>
+      <p>Elderberry&rsquo;s antioxidant capacity is correspondingly high, and a substantial body of in-vitro work attributes its activity to scavenging of reactive oxygen species and modulation of inflammatory signaling. These mechanisms are the plausible basis for the long traditional use of elderberry in immune support, and they explain why the category has grown rapidly among consumers seeking evidence-aligned botanical products.</p>
+      <p>This profile confirms that elderberry is an exceptionally strong raw material for an immune-support syrup and that Hollow Creek&rsquo;s choice of botanical is well founded.</p>
+    </div>
+    <div class="diagnose-prompt">
+      <strong>Diagnose before continuing.</strong><br />
+      Identify the primary failure mode in this excerpt. The analysis itself is competent &mdash; so what is wrong with it?
+    </div>
+    <div class="diagnose-form">
+      <label>Your diagnosis &mdash; name the primary failure mode and explain it
+        <textarea data-persist="e2-diagnosis" rows="3" placeholder="The analysis is correct. So why does it fail?"></textarea>
+      </label>
+      <label>Evidence &mdash; quote the specific sentences that reveal it
+        <textarea data-persist="e2-evidence" rows="3"></textarea>
+      </label>
+      <div class="cf-block">
+        <p class="cf-q">Counterfactual test &mdash; if elderberry&rsquo;s anthocyanin range were 400&ndash;900 mg/100&nbsp;g instead of 600&ndash;1,800, would Option B&rsquo;s standing relative to Option A change?</p>
+        <div class="radio-row">
+          <label><input type="radio" name="cf2" data-persist="cf2" value="yes" /> Yes &mdash; it would change the recommendation</label>
+          <label><input type="radio" name="cf2" data-persist="cf2" value="no" /> No &mdash; the recommendation would be unaffected</label>
+        </div>
+        <label>What does your answer tell you about this section?
+          <textarea data-persist="e2-cf-note" rows="2"></textarea>
+        </label>
+      </div>
+    </div>
+    <div class="reveal-row">
+      <span class="reveal-hint">Written your diagnosis? Then reveal the annotation.</span>
+      <button class="reveal-btn js-reveal" data-target="ann-2" data-step="2">Reveal the annotation</button>
+    </div>
+    <div class="annotation collapsed" id="ann-2">
+      <span class="mode-tag">Failure mode 4.2 &middot; Decision-irrelevant analysis</span>
+      <div class="ann-block">
+        <h4>What it is</h4>
+        <p>Analysis earns its place in a report only by changing, supporting, or bounding the decision. <em>Decision-irrelevant analysis</em> is analysis that is competently executed but whose result does not bear on the choice the stakeholder must make. This is the most seductive failure mode in the set, because the work is genuine and often good. It does not fail on quality. It fails on relevance &mdash; and relevance is invisible to anyone grading effort rather than fit.</p>
+      </div>
+      <div class="ann-block">
+        <h4>Diagnostic signature</h4>
+        <p>The decisive test is counterfactual: <em>if this result were different, would the recommendation change?</em> If the answer is no, the analysis is decoupled from the decision. Secondary tells: analysis that re-establishes something already settled; benchmarking against options that are not under consideration; depth that tracks the author&rsquo;s interest rather than the decision&rsquo;s needs.</p>
+      </div>
+      <div class="ann-block">
+        <h4>Why it costs the stakeholder</h4>
+        <p>Decision-irrelevant analysis consumes the report&rsquo;s space, the author&rsquo;s effort, and the reader&rsquo;s attention while reducing decision uncertainty by zero. Worse, it manufactures false rigor: a report dense with real analysis <em>looks</em> diligent, so page count gets mistaken for decision support. The stakeholder reaches the end of a thorough document and still does not have the question they asked analyzed.</p>
+      </div>
+      <div class="ann-block">
+        <h4>In Excerpt 2</h4>
+        <p>The phytochemical characterization is accurate, well-organized, and correctly sourced in feel. But the stakeholder&rsquo;s decision is <em>make-versus-buy scaling</em>. Elderberry&rsquo;s anthocyanin content relative to blueberry does not inform extraction-batch sizing, contract-manufacturer selection, cGMP capability, or the six-month timeline. Apply the counterfactual test: if elderberry&rsquo;s anthocyanin range were 400&ndash;900 instead of 600&ndash;1,800, Option B would be no better or worse than Option A. The number does not touch the decision. Note what the section is actually doing &mdash; it is arguing that elderberry is a <em>good botanical choice</em>, a question nobody asked, since the company already has a product that sells. A <em>relevant</em> version of this section would do entirely different work: define the anthocyanin specification the scaled process must hold batch-to-batch, set raw-material acceptance criteria to absorb seasonal supply variability, and quantify the consistency tolerance the wholesale buyer&rsquo;s contract requires. The excerpt characterizes the <em>botanical</em>; the decision needed it to characterize the <em>manufacturing problem</em>.</p>
+      </div>
+      <div class="ann-block fix">
+        <h4>The fix</h4>
+        <p>Before including any analysis, state which decision input it produces. If it produces none, cut it or redirect it. For raw-material work specifically: tie it to specifications and acceptance criteria the scaled process must meet &mdash; not to category validation.</p>
+      </div>
+      <div class="self-compare">
+        <h4>Compare with your own diagnosis</h4>
+        <p class="sc-sub">The counterfactual answer is <em>no</em> &mdash; the number does not touch the decision. Did your diagnosis reach that?</p>
+        <div class="radio-row">
+          <label><input type="radio" name="sc2" data-persist="sc2" value="clean" /> Caught it cleanly &mdash; named the mode and the evidence</label>
+          <label><input type="radio" name="sc2" data-persist="sc2" value="partial" /> Partially &mdash; right instinct, missed an aspect</label>
+          <label><input type="radio" name="sc2" data-persist="sc2" value="missed" /> Missed it, or named a different mode</label>
+        </div>
+        <label class="reflect">One thing your diagnosis got right or missed
+          <textarea data-persist="sc2-note" rows="2"></textarea>
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ EXCERPT 3 ============ -->
+  <section class="excerpt-block" id="excerpt-3">
+    <div class="excerpt-head">
+      <span class="excerpt-num">Excerpt 3</span>
+      <span class="excerpt-from">From the report&rsquo;s Section 4: Production Scale-Up Plan</span>
+    </div>
+    <div class="excerpt-body">
+      <p>Meeting the wholesale order requires Hollow Creek to raise sustained output to approximately 5,000 bottles per month. The immediate production constraints are extraction-batch size, thermal-processing capacity, and bottling-line throughput, each of which must be addressed before the first delivery.</p>
+      <p>Beyond the immediate order, however, this expansion is an opportunity for Hollow Creek to reposition itself for long-term growth. The wholesale channel opens the door to a far broader retail strategy, and the company should use this moment to build a complete seasonal-wellness portfolio rather than a single syrup. A natural next step is an elderberry lozenge and a children&rsquo;s formulation, both of which would extend the brand into adjacent price points and shelf placements.</p>
+      <p>To support a multi-product line, Hollow Creek should also invest in a brand refresh. The current packaging reflects the company&rsquo;s farmers-market origins and will not compete effectively on a national grocery shelf; a redesigned identity system, with consistent labeling across SKUs, should be commissioned in parallel. A direct-to-consumer subscription program would further stabilize revenue between retail reorders, and a content-driven social presence would build the audience needed to sustain it.</p>
+      <p>Over a three-to-five-year horizon, these moves position Hollow Creek to pursue national distribution and, potentially, an outside capital raise to fund category expansion. The wholesale order, in this light, is best understood not as a production problem but as the first step in a company-wide growth strategy.</p>
+      <p>Returning to production: the larger extraction vessels and bottling line referenced above will need to be specified and installed within the six-month window.</p>
+    </div>
+    <div class="diagnose-prompt">
+      <strong>Diagnose before continuing.</strong><br />
+      Identify the primary failure mode in this excerpt. Track where the section&rsquo;s subject changes from one sentence to the next.
+    </div>
+    <div class="diagnose-form">
+      <label>Your diagnosis &mdash; name the primary failure mode and explain it
+        <textarea data-persist="e3-diagnosis" rows="3"></textarea>
+      </label>
+      <label>Where does the section first leave its assigned scope? Quote the phrase.
+        <textarea data-persist="e3-drift" rows="2" placeholder="Find the hinge."></textarea>
+      </label>
+      <label>Which of these recommendations can the stakeholder actually act on within the project&rsquo;s capital, timeline, and capability?
+        <textarea data-persist="e3-actionable" rows="3"></textarea>
+      </label>
+    </div>
+    <div class="reveal-row">
+      <span class="reveal-hint">Written your diagnosis? Then reveal the annotation.</span>
+      <button class="reveal-btn js-reveal" data-target="ann-3" data-step="3">Reveal the annotation</button>
+    </div>
+    <div class="annotation collapsed" id="ann-3">
+      <span class="mode-tag">Failure mode 4.3 &middot; Scope drift</span>
+      <div class="ann-block">
+        <h4>What it is</h4>
+        <p>Scope is the explicit boundary of the problem the report was commissioned to solve. <em>Scope drift</em> is the progressive, usually unannounced expansion of that boundary &mdash; the report begins answering the assigned question and ends answering a larger or different one. It is distinct from a deliberate, flagged scope expansion: drift is <em>unmanaged</em>. It is not justified, not bounded, and not agreed with the stakeholder. It simply happens, paragraph by paragraph.</p>
+      </div>
+      <div class="ann-block">
+        <h4>Diagnostic signature</h4>
+        <p>Track the subject sentence by sentence; the section title and the closing paragraph will describe different problems. Recommendations appear that the stakeholder did not ask for and cannot act on within the project&rsquo;s resources or timeframe. Watch for the hinge phrases that mark the drift point: &ldquo;beyond the immediate order,&rdquo; &ldquo;this is an opportunity to,&rdquo; &ldquo;in this light.&rdquo;</p>
+      </div>
+      <div class="ann-block">
+        <h4>Why it costs the stakeholder</h4>
+        <p>Drift dilutes the report&rsquo;s actual job and displaces the work that job required. It also converts a scoped, checkable deliverable into an unscoped one &mdash; a report that has drifted can no longer be evaluated against its brief, because it is no longer answering the brief.</p>
+      </div>
+      <div class="ann-block">
+        <h4>In Excerpt 3</h4>
+        <p>The section is titled &ldquo;Production Scale-Up Plan.&rdquo; The stakeholder needs exactly that: equipment specification, sequencing, throughput validation. The section opens correctly &mdash; extraction-batch size, bottling, cold-fill &mdash; and then drifts, across four paragraphs, through a seasonal-wellness portfolio, two new SKUs, a brand refresh, a subscription program, a social-content strategy, and a three-to-five-year capital-raise horizon, before a single token sentence returns to production. None of the drifted recommendations is executable within the project frame: the founder has $70,000, six months, and no QA staff; commissioning a rebrand and pursuing an outside raise are not actions available inside that constraint set, and they compete for attention with the work that is. Note the secondary consequence: because the section drifted, the scale-up plan it promised &mdash; the actual roadmap &mdash; was never written. (See 4.5.)</p>
+      </div>
+      <div class="ann-block fix">
+        <h4>The fix</h4>
+        <p>State the scope explicitly at the start of the report and hold to it. Genuinely adjacent opportunities, if worth raising at all, belong in a clearly labeled and bounded &ldquo;Out of scope / future considerations&rdquo; note &mdash; never interleaved with the core analysis, where they read as recommendations. Any real change to scope should be explicit and stakeholder-agreed, not absorbed silently.</p>
+      </div>
+      <div class="self-compare">
+        <h4>Compare with your own diagnosis</h4>
+        <p class="sc-sub">The drift hinge is &ldquo;Beyond the immediate order, however&hellip;&rdquo; Did you find it?</p>
+        <div class="radio-row">
+          <label><input type="radio" name="sc3" data-persist="sc3" value="clean" /> Caught it cleanly &mdash; named the mode and the evidence</label>
+          <label><input type="radio" name="sc3" data-persist="sc3" value="partial" /> Partially &mdash; right instinct, missed an aspect</label>
+          <label><input type="radio" name="sc3" data-persist="sc3" value="missed" /> Missed it, or named a different mode</label>
+        </div>
+        <label class="reflect">One thing your diagnosis got right or missed
+          <textarea data-persist="sc3-note" rows="2"></textarea>
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DESCRIBED MODES ============ -->
+  <div class="divider"><span class="dline">Two more failure modes &mdash; no excerpt to diagnose</span></div>
+
+  <section>
+    <p class="lede">Three of the five failure modes are demonstrated in the excerpts above. The two below are described rather than excerpted &mdash; they account for a large share of capstone reports that fail despite competent analysis. They cannot be diagnosed by feel; they must be diagnosed structurally.</p>
+
+    <div class="annotation" style="margin-top:22px;">
+      <span class="mode-tag">Failure mode 4.4 &middot; Model&ndash;solution mismatch</span>
+      <div class="ann-block">
+        <h4>What it is</h4>
+        <p>An analytical model is a simplified representation built to evaluate options. <em>Model&ndash;solution mismatch</em> occurs when the model used to reach the recommendation does not represent the option being recommended &mdash; its assumptions, variables, or structure do not hold for the recommended solution. The recommendation is then resting on a model of a different world than the one it recommends entering.</p>
+      </div>
+      <div class="ann-block">
+        <h4>How it appears in this case</h4>
+        <p>Suppose the report builds a per-bottle unit-cost model in which total cost scales linearly with volume. That model reasonably describes Option A &mdash; in-house variable production. But Option B&rsquo;s economics are driven by contract-manufacturer minimum order quantities, per-run setup and changeover charges, one-time tech-transfer and reformulation costs, and the margin paid to the co-packer &mdash; none of which a linear per-unit model contains. If the report recommends Option B <em>on the strength of that model</em>, the model and the solution are mismatched, and the headline cost number is describing a cost structure that does not exist for the chosen option. A second form: a deterministic, point-estimate cost comparison cannot support a recommendation justified by the words &ldquo;lowest risk&rdquo; &mdash; a deterministic model has no representation of variance, so any risk claim built on it is unmodeled.</p>
+      </div>
+      <div class="ann-block">
+        <h4>Diagnostic signature</h4>
+        <p>Identify the model&rsquo;s assumptions explicitly, then check each against the recommended option. Tells: the recommendation is justified on a dimension the model does not contain (risk, variance, fixed cost, regulatory exposure); the model&rsquo;s units or structure fit the <em>rejected</em> option better than the chosen one; sensitivity analysis is reported on variables the decision is not actually sensitive to.</p>
+      </div>
+      <div class="ann-block">
+        <h4>Why it costs the stakeholder</h4>
+        <p>The recommendation silently inherits every blind spot of the model. Costs the model never represented &mdash; a co-packer&rsquo;s MOQ forcing overproduction of a perishable syrup, a reformulation demanded to fit the co-packer&rsquo;s stability process &mdash; do not disappear; they surface in execution, after the decision is committed and capital is spent. The report&rsquo;s apparent quantification delivers false confidence precisely where confidence is least earned.</p>
+      </div>
+      <div class="ann-block fix">
+        <h4>The fix</h4>
+        <p>Define the candidate solutions first, then choose or build a model whose structure spans all of them. State the model&rsquo;s assumptions explicitly and verify each one holds for the recommended option specifically. If the recommendation rests on risk, the model must represent variance. Match the model to the decision &mdash; never trim the decision to fit a convenient model.</p>
+      </div>
+    </div>
+
+    <div class="annotation" style="margin-top:18px;">
+      <span class="mode-tag">Failure mode 4.5 &middot; Lack of a roadmap for future progress</span>
+      <div class="ann-block">
+        <h4>What it is</h4>
+        <p>A final report&rsquo;s terminal function is to leave the stakeholder <em>able to act</em>. A recommendation states <em>what</em> to do; a roadmap states <em>how to begin</em>, <em>in what order</em>, <em>by when</em>, and <em>how to know it is working</em>. Its absence leaves the stakeholder holding a conclusion with no execution path &mdash; a report that is, possibly, correct and entirely inert.</p>
+      </div>
+      <div class="ann-block">
+        <h4>Diagnostic signature</h4>
+        <p>The report ends at the recommendation. There are no sequenced first steps, no milestones tied to the binding constraint (here, the six-month delivery date), no owners, no decision points or contingency triggers (&ldquo;if no contract-manufacturer partner is signed by month two, then&hellip;&rdquo;), and no metrics that would tell the stakeholder whether the scaled process is meeting the buyer&rsquo;s consistency specification. The reader finishes the report and does not know what to do on Monday.</p>
+      </div>
+      <div class="ann-block">
+        <h4>Why it costs the stakeholder</h4>
+        <p>A resource-constrained small manufacturer cannot convert a recommendation into action unaided &mdash; that conversion <em>is</em> the value the report was commissioned to add. Without sequencing, the founder cannot tell which step gates the timeline. Without contingency triggers, a stalled co-packer search is discovered too late to recover six months. Without metrics, &ldquo;batch-to-batch consistency&rdquo; stays an aspiration instead of a checked, instrumented specification. The decision can be entirely right and still fail in execution.</p>
+      </div>
+      <div class="ann-block">
+        <h4>Relation to Excerpt 3</h4>
+        <p>The report had a section &mdash; &ldquo;Production Scale-Up Plan&rdquo; &mdash; that was the natural home of the roadmap, and scope drift consumed it. This coupling is common: drift displaces the roadmap. The two modes are nonetheless distinct. Scope drift is answering questions that were not asked; lack of a roadmap is failing to equip the stakeholder to execute the answer to the question that <em>was</em> asked. A report can commit either one without the other.</p>
+      </div>
+      <div class="ann-block fix">
+        <h4>The fix</h4>
+        <p>End the report with an actual roadmap: sequenced actions tied to the binding constraint, milestones with dates, explicit decision points and contingency triggers, and the metrics that will confirm the scaled process is working. The test to apply: <em>Could the founder act on this Monday &mdash; and would they know, within a month, whether it is working?</em></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SELF REVIEW ============ -->
+  <section>
+    <h2 class="section-title">Self-Review</h2>
+    <p class="lede">Five questions for your own draft. Before submitting your report, run it against the same five tests. A report that passes all five is not necessarily right &mdash; but it is <em>evaluable</em>, <em>executable</em>, and <em>honest about its own basis</em>.</p>
+
+    <div class="review-item">
+      <div class="ri-head">
+        <input type="checkbox" class="ri-check" data-persist="rev1" />
+        <div>
+          <span class="ri-num">1.</span>
+          <span class="ri-q"><b>Recommendation.</b> Can a reader trace every load-bearing claim &mdash; especially every number &mdash; back to data, a source, or stated reasoning?</span>
+        </div>
+      </div>
+      <textarea data-persist="rev1-note" rows="2" placeholder="Where does your draft stand on this?"></textarea>
+    </div>
+    <div class="review-item">
+      <div class="ri-head">
+        <input type="checkbox" class="ri-check" data-persist="rev2" />
+        <div>
+          <span class="ri-num">2.</span>
+          <span class="ri-q"><b>Analysis.</b> For each analysis section: if its result were different, would the recommendation change? If not, why is it in the report?</span>
+        </div>
+      </div>
+      <textarea data-persist="rev2-note" rows="2"></textarea>
+    </div>
+    <div class="review-item">
+      <div class="ri-head">
+        <input type="checkbox" class="ri-check" data-persist="rev3" />
+        <div>
+          <span class="ri-num">3.</span>
+          <span class="ri-q"><b>Scope.</b> Does the last paragraph of each section address the same problem as its title and the assignment brief?</span>
+        </div>
+      </div>
+      <textarea data-persist="rev3-note" rows="2"></textarea>
+    </div>
+    <div class="review-item">
+      <div class="ri-head">
+        <input type="checkbox" class="ri-check" data-persist="rev4" />
+        <div>
+          <span class="ri-num">4.</span>
+          <span class="ri-q"><b>Model.</b> Do the assumptions of the model hold for the option you are recommending &mdash; not just for the options you are rejecting?</span>
+        </div>
+      </div>
+      <textarea data-persist="rev4-note" rows="2"></textarea>
+    </div>
+    <div class="review-item">
+      <div class="ri-head">
+        <input type="checkbox" class="ri-check" data-persist="rev5" />
+        <div>
+          <span class="ri-num">5.</span>
+          <span class="ri-q"><b>Roadmap.</b> Could the stakeholder act on the report on Monday, and know within a month whether it is working?</span>
+        </div>
+      </div>
+      <textarea data-persist="rev5-note" rows="2"></textarea>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-actions">
+      <button class="btn-ghost" id="printBtn">Print / save as PDF</button>
+      <button class="btn-ghost danger" id="clearBtn">Clear my saved notes</button>
+    </div>
+    <p class="footer-note">
+      HPDM Capstone &mdash; Diagnosing Failure Modes in the Final Report. Elective diagnostic exercise; not graded or submitted.<br />
+      Your notes are stored only in this browser on this device. Printing or saving as PDF includes every annotation and everything you have written.
+    </p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var NS = "hcb-fmwc:";
+
+  /* ----- persist textareas ----- */
+  var areas = document.querySelectorAll("textarea[data-persist]");
+  for(var i=0;i<areas.length;i++){
+    (function(el){
+      var key = NS + el.getAttribute("data-persist");
+      var saved = localStorage.getItem(key);
+      if(saved !== null) el.value = saved;
+      el.addEventListener("input", function(){
+        localStorage.setItem(key, el.value);
+      });
+    })(areas[i]);
+  }
+
+  /* ----- persist radios ----- */
+  var radios = document.querySelectorAll("input[type=radio][data-persist]");
+  for(var r=0;r<radios.length;r++){
+    (function(el){
+      var key = NS + el.getAttribute("data-persist");
+      if(localStorage.getItem(key) === el.value) el.checked = true;
+      el.addEventListener("change", function(){
+        if(el.checked) localStorage.setItem(key, el.value);
+      });
+    })(radios[r]);
+  }
+
+  /* ----- persist checkboxes ----- */
+  var checks = document.querySelectorAll("input[type=checkbox][data-persist]");
+  for(var c=0;c<checks.length;c++){
+    (function(el){
+      var key = NS + el.getAttribute("data-persist");
+      if(localStorage.getItem(key) === "1") el.checked = true;
+      el.addEventListener("change", function(){
+        localStorage.setItem(key, el.checked ? "1" : "0");
+      });
+    })(checks[c]);
+  }
+
+  /* ----- reveal / hide annotations ----- */
+  var opened = {};
+  var buttons = document.querySelectorAll(".js-reveal");
+  for(var b=0;b<buttons.length;b++){
+    (function(btn){
+      var target = document.getElementById(btn.getAttribute("data-target"));
+      var step = btn.getAttribute("data-step");
+      btn.addEventListener("click", function(){
+        if(target.classList.contains("collapsed")){
+          target.classList.remove("collapsed");
+          btn.textContent = "Hide the annotation";
+          btn.classList.add("is-open");
+          opened[step] = true;
+        } else {
+          target.classList.add("collapsed");
+          btn.textContent = "Reveal the annotation";
+          btn.classList.remove("is-open");
+        }
+        updateProgress();
+      });
+    })(buttons[b]);
+  }
+
+  function updateProgress(){
+    var n = 0, k;
+    for(k in opened){ if(opened[k]) n++; }
+    document.getElementById("count").textContent = n;
+    document.getElementById("bar").style.width = (n/3*100) + "%";
+    var steps = document.querySelectorAll(".steps li");
+    for(var s=0;s<steps.length;s++){
+      var st = steps[s].getAttribute("data-step");
+      if(opened[st]) steps[s].classList.add("done");
+      else steps[s].classList.remove("done");
+    }
+  }
+
+  /* ----- print ----- */
+  document.getElementById("printBtn").addEventListener("click", function(){
+    window.print();
+  });
+
+  /* ----- clear ----- */
+  document.getElementById("clearBtn").addEventListener("click", function(){
+    if(!confirm("Clear all your saved notes on this device? This cannot be undone.")) return;
+    var keys = [];
+    for(var j=0;j<localStorage.length;j++){
+      var key = localStorage.key(j);
+      if(key && key.indexOf(NS) === 0) keys.push(key);
+    }
+    for(var m=0;m<keys.length;m++){ localStorage.removeItem(keys[m]); }
+    location.reload();
+  });
+})();
+</script>
+
+</body>
+</html>
