@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Signal & Causality Scaffold — HRB-641 Safety of Botanical Medicine</title>
+<style>
+  :root {
+    --bg: #fafaf9;
+    --surface: #ffffff;
+    --border: #d4d4d4;
+    --rule: #e2e8f0;
+    --accent: #2c5282;
+    --accent-soft: #ebf3fa;
+    --warn-soft: #fef9ed;
+    --warn-rule: #d6a649;
+    --bad-soft: #fdf2f2;
+    --bad-rule: #c14545;
+    --good-soft: #ecf6ee;
+    --good-rule: #3a8c4d;
+    --text: #1a202c;
+    --muted: #5a6578;
+    --code-bg: #f1f3f5;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+    padding: 2.5rem 1.25rem 4rem;
+  }
+  .container { max-width: 820px; margin: 0 auto; }
+
+  header { margin-bottom: 2.5rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--rule); }
+  header .eyebrow {
+    font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 0.5rem;
+  }
+  header h1 { font-size: 1.7rem; font-weight: 600; line-height: 1.25; margin-bottom: 0.5rem; }
+  header .lede { color: var(--muted); font-size: 0.95rem; max-width: 62ch; }
+
+  h2 {
+    font-size: 1.1rem; font-weight: 600; margin: 2.75rem 0 0.75rem;
+    padding-bottom: 0.35rem; border-bottom: 1px solid var(--rule);
+  }
+  h3 {
+    font-size: 0.98rem; font-weight: 600; margin: 1.5rem 0 0.5rem;
+  }
+  p { margin-bottom: 0.9rem; }
+  a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(44, 82, 130, 0.25); }
+  a:hover { border-bottom-color: var(--accent); }
+  code {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    background: var(--code-bg); padding: 1px 5px; border-radius: 3px; font-size: 0.85em;
+  }
+
+  .intro {
+    background: var(--accent-soft); border-left: 3px solid var(--accent);
+    padding: 1rem 1.1rem; margin: 1.5rem 0 0; font-size: 0.92rem;
+  }
+  .intro strong { color: var(--accent); }
+  .intro p + p { margin-top: 0.6rem; }
+
+  .toc { background: var(--accent-soft); border-radius: 5px; padding: 1rem 1.2rem; font-size: 0.88rem; margin: 2rem 0; }
+  .toc-title { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem; font-weight: 600; }
+  .toc ul { list-style: none; padding-left: 0; }
+  .toc li { padding: 0.2rem 0; }
+  .toc li.indent { padding-left: 1.2rem; font-size: 0.85rem; }
+  .toc .num { color: var(--muted); margin-right: 0.5rem; font-variant-numeric: tabular-nums; }
+
+  .concept {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 5px; padding: 1.1rem 1.3rem; margin-bottom: 1rem;
+  }
+  .concept .c-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.35rem; }
+  .concept h3 { margin-top: 0; margin-bottom: 0.55rem; font-size: 1rem; }
+  .concept p { font-size: 0.92rem; }
+
+  .stage {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 5px; padding: 1.25rem 1.4rem; margin-bottom: 1rem;
+  }
+  .stage-num {
+    display: inline-block; font-size: 0.72rem; font-weight: 700;
+    letter-spacing: 0.06em; color: var(--accent); margin-bottom: 0.3rem;
+  }
+  .stage-title { font-size: 1.05rem; font-weight: 600; margin-bottom: 0.75rem; }
+  .stage > p { font-size: 0.92rem; }
+  .stage dl { display: grid; grid-template-columns: 110px 1fr; gap: 0.4rem 1rem; font-size: 0.9rem; margin-top: 0.75rem; }
+  .stage dt { font-weight: 600; color: var(--muted); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em; padding-top: 0.15rem; }
+  .stage dd { color: var(--text); }
+  .stage dd em { color: var(--muted); font-style: italic; }
+  .failure {
+    background: var(--warn-soft); border-left: 2px solid var(--warn-rule);
+    padding: 0.55rem 0.8rem; margin-top: 0.85rem; font-size: 0.85rem; color: #6b4a14;
+  }
+  .failure strong { color: #5a3d0d; }
+
+  .resource-group { margin-top: 1.25rem; }
+  .resource-group h3 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin: 0 0 0.6rem; }
+  .resource-grid { display: grid; gap: 0.8rem; }
+  .resource {
+    border: 1px solid var(--border); border-radius: 5px;
+    padding: 0.85rem 1rem; background: var(--surface);
+  }
+  .resource .r-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin-bottom: 0.3rem; }
+  .resource .r-name { font-weight: 600; font-size: 0.95rem; }
+  .resource .r-type { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; }
+  .resource .r-desc { font-size: 0.87rem; color: var(--text); margin-bottom: 0.35rem; }
+  .resource .r-bias { font-size: 0.81rem; color: var(--muted); font-style: italic; }
+  .resource .r-url { font-size: 0.77rem; word-break: break-all; margin-top: 0.4rem; }
+
+  .checklist { background: var(--surface); border: 1px solid var(--border); border-radius: 5px; padding: 1.25rem 1.4rem; }
+  .checklist ol { margin-left: 1.1rem; }
+  .checklist li { margin-bottom: 0.5rem; font-size: 0.9rem; }
+
+  .antipattern-grid { display: grid; gap: 0.7rem; }
+  .antipattern {
+    border-left: 3px solid var(--bad-rule); background: var(--bad-soft);
+    padding: 0.7rem 0.95rem; border-radius: 0 4px 4px 0;
+  }
+  .antipattern .ap-bad { font-weight: 600; font-size: 0.88rem; color: #7a2828; margin-bottom: 0.25rem; }
+  .antipattern .ap-instead { font-size: 0.85rem; color: var(--text); }
+  .antipattern .ap-instead strong { color: var(--good-rule); }
+
+  .hygiene-grid { display: grid; gap: 0.7rem; }
+  .hygiene {
+    border-left: 3px solid var(--good-rule); background: var(--good-soft);
+    padding: 0.7rem 0.95rem; border-radius: 0 4px 4px 0;
+    font-size: 0.88rem;
+  }
+  .hygiene strong { color: #2c6e3d; }
+  .hygiene code { background: rgba(255,255,255,0.7); }
+
+  footer { margin-top: 3rem; padding-top: 1.25rem; border-top: 1px solid var(--rule); color: var(--muted); font-size: 0.82rem; }
+  footer p { margin-bottom: 0.4rem; }
+
+  @media print {
+    body { padding: 0.5in; background: white; }
+    .stage, .resource, .checklist, .concept, .antipattern, .hygiene { break-inside: avoid; }
+    a { color: inherit; border-bottom: none; }
+    .toc { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="eyebrow">HRB-641 · Safety of Botanical Medicine · Working Resource</div>
+  <h1>Signal &amp; Causality Scaffold</h1>
+  <p class="lede">A workflow for the problem this course keeps coming back to: telling real harm signals apart from false ones, in a poorly regulated marketplace of chemically heterogeneous products, where causality is rarely clean.</p>
+</header>
+
+<div class="intro">
+  <p>Paracelsus, around 1530: <em>"All things are poison and nothing is without poison. Solely the dose determines that a thing is not a poison."</em> Every plant in this course sits somewhere on a continuum from sub-therapeutic to therapeutic to toxic, including the ones with a 2,000-year reputation for gentleness. Your job over the trimester is to figure out where a given plant, prepared a given way, taken by a given person, sits on that continuum.</p>
+  <p><strong>This page is a scaffold for that reasoning.</strong> It takes positions on workflow, on source quality, and on the failure modes that recur in this material. If you are new to the way this course thinks about safety, use it as an onramp. Otherwise treat it as a reference.</p>
+</div>
+
+<div class="toc">
+  <div class="toc-title">Contents</div>
+  <ul>
+    <li><a href="#frame">The conceptual frame</a></li>
+    <li class="indent">The therapeutic window</li>
+    <li class="indent">Divergence from traditional use</li>
+    <li class="indent">Bias in both directions</li>
+    <li><a href="#workflow">The eight-stage workflow</a></li>
+    <li class="indent"><span class="num">1.</span> Classify the plant</li>
+    <li class="indent"><span class="num">2.</span> Locate the product on the divergence axis</li>
+    <li class="indent"><span class="num">3.</span> Start at the curated narrative</li>
+    <li class="indent"><span class="num">4.</span> Triangulate across surveillance databases</li>
+    <li class="indent"><span class="num">5.</span> Characterize the harm pattern</li>
+    <li class="indent"><span class="num">6.</span> Account for host-side modifiers</li>
+    <li class="indent"><span class="num">7.</span> Separate the causal pathways</li>
+    <li class="indent"><span class="num">8.</span> State causality confidence (in both directions)</li>
+    <li><a href="#resources">Resources, with their biases</a></li>
+    <li><a href="#hygiene">Source-quality hygiene</a></li>
+    <li><a href="#antipatterns">Common anti-patterns</a></li>
+    <li><a href="#preflight">Pre-flight checklist</a></li>
+  </ul>
+</div>
+
+<h2 id="frame">The conceptual frame</h2>
+
+<p>Three ideas do most of the work in this course. Internalize them before you reach for any database.</p>
+
+<div class="concept">
+  <div class="c-label">Concept 1</div>
+  <h3>The therapeutic window is the master concept</h3>
+  <p>Treat every plant as a range. Below some dose it does nothing. Within some band it does the therapeutic thing. Above that band it injures. How wide the band is, and where it sits relative to what consumers actually take, depends on the plant, the preparation, the route, and the person. Digitalis has a famously narrow window. Comfrey's window is wide for topical use and shrinks to nothing for chronic oral use. Two beetroot extracts on the same shelf can vary tenfold in nitric oxide content, which moves the window. Your work in a safety analysis is to describe that window. Verdicts are not the deliverable.</p>
+</div>
+
+<div class="concept">
+  <div class="c-label">Concept 2</div>
+  <h3>"How is this diverging from traditional use?"</h3>
+  <p>Keep this question in your mouth for the rest of the trimester. Traditional use establishes a baseline of empirical safety at one specific preparation, at one dose, in one population. A modern product that looks like the same plant on the label may diverge on any of those axes: supercritical CO<sub>2</sub> extraction instead of water decoction, an isolated single constituent instead of whole plant, ten-fold concentration ratios, capsules instead of tea, co-administration with pharmaceuticals, or use in populations the tradition never targeted. If the divergence is large enough, the historical safety record stops applying. "Used safely for a thousand years" is a claim about a particular preparation. It is not a claim about a molecule.</p>
+</div>
+
+<div class="concept">
+  <div class="c-label">Concept 3</div>
+  <h3>Bias runs in both directions</h3>
+  <p>The error to avoid runs in two directions. You can blame a safe herb for harm it did not cause. You can also dismiss a real harm signal because the herb has a friendly reputation. Both produce unsafe practice. Under-reaction means a vulnerable patient gets hurt by an interaction you did not catch. Over-correction means an effective therapy gets thrown out, or a marketplace signal gets pinned on the wrong substance. When you work a case, run the inference both ways. Then check which direction your priors are pulling you.</p>
+</div>
+
+<h2 id="workflow">The eight-stage workflow</h2>
+
+<p>An ordered sequence for taking a plant, or a reported adverse event involving a plant, and reasoning toward a defensible conclusion. Skip stages at your peril. They are ordered so that each one sets up the next.</p>
+
+<div class="stage" id="s1">
+  <div class="stage-num">STAGE 1</div>
+  <div class="stage-title">Classify the plant before you search it</div>
+  <p>Before you open a database, decide what kind of toxicological object you are looking at. Search strategy follows from that classification. Run the wrong query against the wrong database and you get a confident answer that happens to be wrong.</p>
+  <dl>
+    <dt>Question</dt>
+    <dd>Is this a forensic plant (acute, often deliberate, high-dose), a marketplace plant (chronic, often hidden, low-dose), or both?</dd>
+    <dt>Move</dt>
+    <dd>Check whether the plant is sold as a dietary supplement in the US. If it is not, the post-market surveillance databases will be sparse by design. Read that absence as informative, not damning. If it is, the surveillance databases are your primary source. Many plants live in both worlds (aconite, foxglove, kava) and you have to reason about each context separately.</dd>
+    <dt>Reach for</dt>
+    <dd>NIH ODS Dietary Supplement Label Database; a quick PubMed scan to gauge whether the literature is forensic, ethnobotanical, or pharmacological.</dd>
+  </dl>
+  <div class="failure"><strong>Failure mode this protects against:</strong> Asking CAERS about hemlock. The database has nothing on it because no one sells hemlock capsules. That is a category mismatch, not a safety signal.</div>
+</div>
+
+<div class="stage" id="s2">
+  <div class="stage-num">STAGE 2</div>
+  <div class="stage-title">Locate the product on the divergence-from-tradition axis</div>
+  <p>You are not really evaluating "this plant." You are evaluating a particular product, made a particular way, at a particular concentration. The further that product sits from how the plant has historically been used, the less the traditional safety record protects you.</p>
+  <dl>
+    <dt>Question</dt>
+    <dd>How does the product in question diverge from the traditional preparation on which its safety reputation rests?</dd>
+    <dt>Move</dt>
+    <dd>Catalog the divergences along five axes: <em>extraction method</em> (water/ethanol/supercritical CO<sub>2</sub>/acid), <em>concentration ratio</em> (whole plant vs. 10:1 vs. standardized extract), <em>isolation</em> (whole-plant matrix vs. single constituent), <em>form and route</em> (tea vs. capsule vs. tincture vs. topical), <em>population and co-administration</em> (used alongside what other drugs, in whom). Each departure narrows what the traditional record can tell you about safety.</dd>
+    <dt>Reach for</dt>
+    <dd>Manufacturer label and certificate of analysis if available; AHPA monographs; American Botanical Council HerbalGram and the ABC Botanical Adulterants Prevention Program.</dd>
+  </dl>
+  <div class="failure"><strong>Failure mode this protects against:</strong> Defending a hyper-concentrated, isolated-constituent supplement with "this plant has been used safely for centuries." The historical claim is about a preparation that may have almost nothing in common with what is in the bottle.</div>
+</div>
+
+<div class="stage" id="s3">
+  <div class="stage-num">STAGE 3</div>
+  <div class="stage-title">Start at the curated narrative</div>
+  <p>If a synthesis already exists, read it first. Raw surveillance data is easy to misread without framing. For hepatotoxicity questions, LiverTox is the best place to start. For broader safety questions, the ABC and AHPA monographs are the equivalents.</p>
+  <dl>
+    <dt>Question</dt>
+    <dd>What do experts who have already done the synthesis say is known, suspected, and unresolved?</dd>
+    <dt>Move</dt>
+    <dd>Open LiverTox. If a monograph exists, read its likelihood category, mechanism summary, and reference list before you touch CAERS or FAERS. Use it to set your priors. Then check whether AHPA or ABC has a safety monograph that covers your plant.</dd>
+    <dt>Reach for</dt>
+    <dd>LiverTox (NIH Bookshelf); AHPA Botanical Safety Handbook; ABC HerbClip / HerbalGram.</dd>
+  </dl>
+  <div class="failure"><strong>Failure mode this protects against:</strong> Drawing conclusions from a handful of raw adverse-event reports without knowing that the field has already adjudicated the question.</div>
+</div>
+
+<div class="stage" id="s4">
+  <div class="stage-num">STAGE 4</div>
+  <div class="stage-title">Triangulate across surveillance databases</div>
+  <p>No single database gives you the answer. Each has its own denominator and its own selection bias. Your job is to read the same plant through several of them and pay attention to where they line up and where they don't.</p>
+  <dl>
+    <dt>Question</dt>
+    <dd>What does the post-market signal look like, and what is the denominator under that numerator?</dd>
+    <dt>Move</dt>
+    <dd>Pull the plant through CAERS, FAERS, and the most recent NPDS Annual Report in sequence. Note the selection bias of each. Reconcile differences instead of picking the most alarming number. Always pair a numerator with an estimate of the denominator. A count of adverse events without an estimate of how many people are exposed cannot be interpreted.</dd>
+    <dt>Reach for</dt>
+    <dd>FDA CAERS public dashboard; FDA FAERS public dashboard; AAPCC NPDS Annual Report (PDF).</dd>
+  </dl>
+  <div class="failure"><strong>Failure mode this protects against:</strong> Reporting a numerator without a denominator ("23,000 ER visits!") or treating absence of reports as evidence of safety.</div>
+</div>
+
+<div class="stage" id="s5">
+  <div class="stage-num">STAGE 5</div>
+  <div class="stage-title">Characterize the harm pattern</div>
+  <p>Direct hepatotoxins produce a dose-dependent injury with a recognizable pattern. A clinician can name the toxidrome. Idiosyncratic injury is a different animal: rare, unpredictable, dependent on the host, and often without any classical toxidrome at all. The forensic-monograph "symptoms" framing fits the first category. It badly misrepresents the second.</p>
+  <dl>
+    <dt>Question</dt>
+    <dd>Is the harm dose-predictable across exposed individuals, or rare and host-dependent? Where does the therapeutic window sit relative to typical consumer dosing?</dd>
+    <dt>Move</dt>
+    <dd>In LiverTox and Avigan §13, look for the words "direct" or "intrinsic" vs. "idiosyncratic." Pyrrolizidine alkaloids → sinusoidal obstruction syndrome (direct, dose-dependent). Kava → idiosyncratic. Green tea catechins (EGCG) → idiosyncratic at high exposures. Treat these as different epistemic objects and write about them differently.</dd>
+    <dt>Reach for</dt>
+    <dd>LiverTox monograph; Avigan §13; DILIN publications; pharmacopoeial monographs for dose ranges.</dd>
+  </dl>
+  <div class="failure"><strong>Failure mode this protects against:</strong> Writing a tidy symptom list for a plant whose actual harm pattern is "rare, delayed, and only appears in 1 in 10,000 users for reasons we don't understand."</div>
+</div>
+
+<div class="stage" id="s6">
+  <div class="stage-num">STAGE 6</div>
+  <div class="stage-title">Account for host-side modifiers</div>
+  <p>The therapeutic window belongs to the plant-plus-person, not to the plant alone. Liver and kidney function set clearance. Genotype affects metabolism (CYP polymorphisms, slow vs. fast acetylators). Concomitant drugs compete for the same enzymes. Age, pregnancy, and chronic disease shift the whole curve. A dose that is unremarkable in a healthy 30-year-old can be dangerous in a 75-year-old on five medications with a 50% reduction in eGFR.</p>
+  <dl>
+    <dt>Question</dt>
+    <dd>For whom, under what conditions, would the therapeutic window for this plant collapse or shift dangerously?</dd>
+    <dt>Move</dt>
+    <dd>Enumerate the host-side modifiers that matter for this plant's primary clearance pathway and mechanism. If the plant is hepatically cleared, who has impaired hepatic clearance? If it is renally cleared, who has impaired renal function? If it interacts with CYP3A4 substrates, what common medications does that put it in conflict with? Translate the answers into populations who should not take it, or should take it at reduced dose.</dd>
+    <dt>Reach for</dt>
+    <dd>NIH NCCIH herbal monographs; Natural Medicines Database; primary pharmacology literature on the plant's principal constituent.</dd>
+  </dl>
+  <div class="failure"><strong>Failure mode this protects against:</strong> Treating "safe" as a property of the molecule when it is really a property of the molecule plus the host who takes it. You will miss the populations for whom the window is narrow or absent.</div>
+</div>
+
+<div class="stage" id="s7">
+  <div class="stage-num">STAGE 7</div>
+  <div class="stage-title">Separate the causal pathways</div>
+  <p>When a botanical product is implicated in harm, four causally distinct things might be true. Each one calls for a different response and a different investigative move. Conflating them is probably the most common error in this field. Once you start looking for it, you see it everywhere.</p>
+  <dl>
+    <dt>Question</dt>
+    <dd>Was the labeled botanical responsible, or was the cause something else in the bottle that did not belong there?</dd>
+    <dt>Move</dt>
+    <dd>Walk the four pathways:
+      <em>Labeled ingredient</em> — the plant itself, at the stated dose and form, caused the harm.
+      <em>Adulteration</em> — intentional addition of an undeclared active (often pharmaceutical: sildenafil in "natural" male enhancement, sibutramine in weight-loss, anabolic steroids in bodybuilding).
+      <em>Contamination</em> — unintentional introduction during cultivation or manufacture (pesticides, heavy metals, mycotoxins, microbial).
+      <em>Cultivation-stage cross-contamination</em> — another plant mixed in at harvest or processing (the Datura-in-spinach incident; Aristolochia substituted for Stephania in TCM weight-loss products that destroyed kidneys in Belgium in the 1990s).
+      For your chosen plant or case, ask which of these is doing the causal work, and whether any published harm cases were later traced to one of the others.</dd>
+    <dt>Reach for</dt>
+    <dd>Avigan §13.2; FDA tainted-products list; FDA enforcement / warning letters; ABC Botanical Adulterants Prevention Program reports.</dd>
+  </dl>
+  <div class="failure"><strong>Failure mode this protects against:</strong> Blaming a plant for liver injury that was actually caused by an undeclared steroid spike. Or missing a real botanical signal because it was wrongly pinned on a contaminant.</div>
+</div>
+
+<div class="stage" id="s8">
+  <div class="stage-num">STAGE 8</div>
+  <div class="stage-title">State causality confidence — in both directions</div>
+  <p>The literature has explicit vocabulary for confidence in a causal link. Use it. Then check your reasoning against both failure modes: are you over-stating causality, and are you under-stating it?</p>
+  <dl>
+    <dt>Question</dt>
+    <dd>How confident is the published evidence that this plant, at the doses people actually take, in the populations who actually take it, causes the harm in question? And: are you letting the plant's reputation suppress a signal that the evidence actually supports?</dd>
+    <dt>Move</dt>
+    <dd>Look for RUCAM scores in case reports, DILIN adjudication categories (definite, highly likely, probable, possible, unlikely), and the dechallenge/rechallenge pattern. If you cannot find such adjudication, say so. The absence is itself a finding. Then re-read your draft from the opposite direction: if you found yourself dismissing a signal, was it because the evidence was weak, or because the plant has a friendly reputation? Adjust accordingly. John's mental model for adverse-event reports is "mystery in reverse" — you have the outcome and you are reconstructing the cause. Ask: <em>What was the form and dose? Is the proposed causal mechanism plausible? Is there toxicologic data to substantiate the claim?</em></dd>
+    <dt>Reach for</dt>
+    <dd>DILIN publications; RUCAM scoring guides; LiverTox likelihood category.</dd>
+  </dl>
+  <div class="failure"><strong>Failure mode this protects against:</strong> Writing "this plant causes X" when the literature supports only "this plant has been temporally associated with X in n published cases, none rated higher than 'probable.'" Or writing "this plant is safe" when the evidence really supports "this plant has a real but rare hepatotoxic signal that has not yet been formally adjudicated."</div>
+</div>
+
+<h2 id="resources">Resources, with their biases</h2>
+
+<p>Every resource here has selection bias. If you do not know what the bias is, you will end up confidently wrong about whatever the database tells you.</p>
+
+<div class="resource-group">
+  <h3>Curated narrative references — start here</h3>
+  <div class="resource-grid">
+
+    <div class="resource">
+      <div class="r-head">
+        <div class="r-name">LiverTox</div>
+        <div class="r-type">Curated narrative · hepatotoxicity</div>
+      </div>
+      <div class="r-desc">NIH-maintained encyclopedia of drug- and supplement-induced liver injury. Each monograph has a likelihood score, a mechanism summary, and an adjudicated reference list. Start here for any plant with a hepatotoxicity question.</div>
+      <div class="r-bias">Bias: conservative; only includes agents with enough literature to support a monograph; lags new signals by years.</div>
+      <div class="r-url"><a href="https://www.ncbi.nlm.nih.gov/books/NBK547852/" target="_blank" rel="noopener">https://www.ncbi.nlm.nih.gov/books/NBK547852/</a></div>
+    </div>
+
+    <div class="resource">
+      <div class="r-head">
+        <div class="r-name">AHPA Botanical Safety Handbook</div>
+        <div class="r-type">Curated reference · general safety</div>
+      </div>
+      <div class="r-desc">American Herbal Products Association reference assigning safety class and interaction class to several hundred commonly used botanicals. The trade-association equivalent of LiverTox for the broader safety question.</div>
+      <div class="r-bias">Bias: industry-adjacent; rates "commonly used" botanicals more thoroughly than rare ones; periodic rather than continuous update cycle.</div>
+      <div class="r-url"><a href="https://www.ahpa.org/botanical-safety-handbook" target="_blank" rel="noopener">https://www.ahpa.org/botanical-safety-handbook</a></div>
+    </div>
+
+    <div class="resource">
+      <div class="r-head">
+        <div class="r-name">American Botanical Council</div>
+        <div class="r-type">Curated reference · evidence + adulterants</div>
+      </div>
+      <div class="r-desc">HerbalGram, HerbClip, and the Botanical Adulterants Prevention Program. Strong on identification and adulteration; useful entry point when you suspect a product mismatch.</div>
+      <div class="r-bias">Bias: organizational positions reflect a particular community of practice; coverage uneven across plants.</div>
+      <div class="r-url"><a href="https://www.herbalgram.org/" target="_blank" rel="noopener">https://www.herbalgram.org/</a></div>
+    </div>
+
+    <div class="resource">
+      <div class="r-head">
+        <div class="r-name">NIH NCCIH Herbs at a Glance</div>
+        <div class="r-type">Curated reference · concise</div>
+      </div>
+      <div class="r-desc">National Center for Complementary and Integrative Health summaries. Short and conservative. Useful as a sanity check on what your other sources are telling you.</div>
+      <div class="r-bias">Bias: deliberately cautious; sometimes lags primary literature.</div>
+      <div class="r-url"><a href="https://www.nccih.nih.gov/health/herbsataglance" target="_blank" rel="noopener">https://www.nccih.nih.gov/health/herbsataglance</a></div>
+    </div>
+
+  </div>
+</div>
+
+<div class="resource-group">
+  <h3>Surveillance databases — the post-market signal</h3>
+  <div class="resource-grid">
+
+    <div class="resource">
+      <div class="r-head">
+        <div class="r-name">FDA CAERS Public Dashboard</div>
+        <div class="r-type">Supplement surveillance</div>
+      </div>
+      <div class="r-desc">CFSAN Adverse Event Reporting System. Mandatory reporting from supplement manufacturers within 15 business days of a serious event; voluntary reports from consumers and clinicians.</div>
+      <div class="r-bias">Bias: substantial underreporting; reports are unverified; product identification is often incomplete; dataset includes everything from food to cosmetics.</div>
+      <div class="r-url"><a href="https://www.fda.gov/food/compliance-enforcement-food/cfsan-adverse-event-reporting-system-caers" target="_blank" rel="noopener">CAERS at fda.gov</a></div>
+    </div>
+
+    <div class="resource">
+      <div class="r-head">
+        <div class="r-name">FDA FAERS Public Dashboard</div>
+        <div class="r-type">Drug surveillance</div>
+      </div>
+      <div class="r-desc">FDA Adverse Event Reporting System for drugs and therapeutic biologics. Supplements appear here mainly when reported alongside drugs (interactions, suspected adulteration with pharmaceuticals).</div>
+      <div class="r-bias">Bias: drug-centric; supplements typically appear as suspected concomitant agents rather than primary; coding inconsistencies.</div>
+      <div class="r-url"><a href="https://www.fda.gov/drugs/questions-and-answers-fdas-adverse-event-reporting-system-faers/fda-adverse-event-reporting-system-faers-public-dashboard" target="_blank" rel="noopener">FAERS Public Dashboard</a></div>
+    </div>
+
+    <div class="resource">
+      <div class="r-head">
+        <div class="r-name">AAPCC NPDS Annual Report</div>
+        <div class="r-type">Poison center calls</div>
+      </div>
+      <div class="r-desc">National Poison Data System annual report from the American Association of Poison Control Centers. About 3 million human exposure calls per year, indexed by substance category, including botanical exposures.</div>
+      <div class="r-bias">Bias: heavily skewed toward acute exposures, pediatric ingestions, and substances people recognize as dangerous; chronic supplement use largely invisible.</div>
+      <div class="r-url"><a href="https://aapcc.org/annual-reports" target="_blank" rel="noopener">https://aapcc.org/annual-reports</a></div>
+    </div>
+
+    <div class="resource">
+      <div class="r-head">
+        <div class="r-name">DILIN — Drug-Induced Liver Injury Network</div>
+        <div class="r-type">Prospective causality</div>
+      </div>
+      <div class="r-desc">NIDDK-funded prospective registry of liver injury cases with formal causality adjudication. As close to a gold standard for hepatotoxicity causality as anything available in the US.</div>
+      <div class="r-bias">Bias: small N for any given agent; cases are referred, so selection favors severe and diagnostically interesting injuries.</div>
+      <div class="r-url"><a href="https://dilin.org/" target="_blank" rel="noopener">https://dilin.org/</a></div>
+    </div>
+
+  </div>
+</div>
+
+<div class="resource-group">
+  <h3>Marketplace, adulteration, and identity</h3>
+  <div class="resource-grid">
+
+    <div class="resource">
+      <div class="r-head">
+        <div class="r-name">NIH ODS Dietary Supplement Label Database</div>
+        <div class="r-type">Marketplace inventory</div>
+      </div>
+      <div class="r-desc">Office of Dietary Supplements database of label content from products sold in the US. Use to confirm whether your plant is actually sold as a supplement, in what doses, in what combinations.</div>
+      <div class="r-bias">Bias: labels do not always reflect contents (this is the whole adulteration problem); coverage is partial.</div>
+      <div class="r-url"><a href="https://dsld.od.nih.gov/" target="_blank" rel="noopener">https://dsld.od.nih.gov/</a></div>
+    </div>
+
+    <div class="resource">
+      <div class="r-head">
+        <div class="r-name">FDA Tainted Products Database</div>
+        <div class="r-type">Adulteration enforcement</div>
+      </div>
+      <div class="r-desc">FDA's list of dietary supplements found to be adulterated with undeclared pharmaceutical ingredients. Concentrated in sexual enhancement, weight loss, and bodybuilding categories.</div>
+      <div class="r-bias">Bias: only what FDA has tested and confirmed; adulteration goes undetected for years.</div>
+      <div class="r-url"><a href="https://www.accessdata.fda.gov/scripts/sda/sdNavigation.cfm?sd=tainted_supplements_cder" target="_blank" rel="noopener">FDA Tainted Supplements (CDER)</a></div>
+    </div>
+
+    <div class="resource">
+      <div class="r-head">
+        <div class="r-name">USP Dietary Supplement Verification</div>
+        <div class="r-type">Voluntary certification</div>
+      </div>
+      <div class="r-desc">US Pharmacopeia voluntary verification program for supplement manufacturers. Useful as one indicator (not a guarantee) of identity, content, and contaminant testing.</div>
+      <div class="r-bias">Bias: voluntary, so absence of verification means nothing in particular; only covers products whose makers chose to participate.</div>
+      <div class="r-url"><a href="https://www.quality-supplements.org/" target="_blank" rel="noopener">https://www.quality-supplements.org/</a></div>
+    </div>
+
+    <div class="resource">
+      <div class="r-head">
+        <div class="r-name">Kew Plants of the World Online (PowO)</div>
+        <div class="r-type">Taxonomic identity</div>
+      </div>
+      <div class="r-desc">The taxonomic authority. Use it to anchor exactly which species you are talking about. Do not substitute Wikipedia or a general Kew landing page. Search format: <code>https://powo.science.kew.org/results?q=Aconitum%20napellus</code>.</div>
+      <div class="r-bias">Bias: taxonomy itself is a moving target; some accepted names shift as molecular phylogenies update.</div>
+      <div class="r-url"><a href="https://powo.science.kew.org/" target="_blank" rel="noopener">https://powo.science.kew.org/</a></div>
+    </div>
+
+  </div>
+</div>
+
+<div class="resource-group">
+  <h3>Literature search</h3>
+  <div class="resource-grid">
+
+    <div class="resource">
+      <div class="r-head">
+        <div class="r-name">PubMed</div>
+        <div class="r-type">Primary literature</div>
+      </div>
+      <div class="r-desc">Use a structured search rather than free browsing. A useful template: <code>("plant common name" OR "Latin binomial") AND (hepatotoxicity OR "adverse event" OR "case report" OR poisoning OR "drug interaction")</code>. Limit to the last 10 years for current signal; remove the limit for historical context.</div>
+      <div class="r-bias">Bias: publication bias toward severe, novel, and publishable cases; null findings rarely published.</div>
+      <div class="r-url"><a href="https://pubmed.ncbi.nlm.nih.gov/" target="_blank" rel="noopener">https://pubmed.ncbi.nlm.nih.gov/</a></div>
+    </div>
+
+    <div class="resource">
+      <div class="r-head">
+        <div class="r-name">Google Scholar</div>
+        <div class="r-type">Broad literature</div>
+      </div>
+      <div class="r-desc">Wider net than PubMed (book chapters, theses, non-MEDLINE journals) at the cost of more noise. Useful for the ethnobotanical and traditional-medicine literature that PubMed under-indexes.</div>
+      <div class="r-bias">Bias: opaque ranking; cannot reproduce searches reliably; includes low-quality and predatory journal output.</div>
+      <div class="r-url"><a href="https://scholar.google.com/" target="_blank" rel="noopener">https://scholar.google.com/</a></div>
+    </div>
+
+  </div>
+</div>
+
+<h2 id="hygiene">Source-quality hygiene</h2>
+
+<p>Six rules for the references in your written work. The point is for whoever reads your paper later (a clinician, a regulator, the version of you who has forgotten this in a year) to be able to retrace any factual claim to its primary source in one click.</p>
+
+<div class="hygiene-grid">
+
+  <div class="hygiene">
+    <strong>Use modern sources for chemistry claims.</strong> Constituent profiles, mechanisms, dose-response data, and interaction risk should cite work from the last 20 to 30 years. Plant chemistry has been characterized in much finer detail since HPLC, mass spectrometry, and LC-MS/MS became routine.
+  </div>
+
+  <div class="hygiene">
+    <strong>Grieve, Felter &amp; Lloyd, and "A Modern Herbal" deserve respect.</strong> They do not deserve to be cited for chemistry. They are historical sources, recording what biomedicine knew at the time they were written. They cannot speak to current supplement formulations, modern extraction methods, or co-administration with contemporary pharmaceuticals. Cite them for traditional use and historical context. For chemical or safety claims, find a modern source.
+  </div>
+
+  <div class="hygiene">
+    <strong>DOI over URL for journal articles.</strong> DOIs are permanent. URLs rot. Format: <code>https://doi.org/10.xxxx/xxxxxx</code>. If a journal article has a DOI (almost all do), use it. The publisher's URL is acceptable only as a fallback.
+  </div>
+
+  <div class="hygiene">
+    <strong>PowO results URL for taxonomic identity.</strong> Anchor the species. Use the search-results URL format: <code>https://powo.science.kew.org/results?q=Genus%20species</code> rather than a general Kew page or Wikipedia.
+  </div>
+
+  <div class="hygiene">
+    <strong>Cite the underlying study, not the news article about it.</strong> A Phys.org or NYT story is a useful pointer to find the primary literature, but the citation belongs to the peer-reviewed paper the story was reporting on.
+  </div>
+
+  <div class="hygiene">
+    <strong>Date everything correctly.</strong> A hypertext copy of a 1931 book is still a 1931 source. The date matters for safety claims because the marketplace, the products, and the standards of evidence have all changed.
+  </div>
+
+</div>
+
+<h2 id="antipatterns">Common anti-patterns</h2>
+
+<p>Patterns that recur across submissions, with the corrective move. Read these as a checklist of things to avoid before you submit.</p>
+
+<div class="antipattern-grid">
+
+  <div class="antipattern">
+    <div class="ap-bad">"Used safely for 2,000 years" applied to a hyper-concentrated extract.</div>
+    <div class="ap-instead"><strong>Instead:</strong> ask Stage 2's question. Name the traditional preparation, then catalog how the modern product diverges from it. If the divergence is substantial, the historical record does not transfer.</div>
+  </div>
+
+  <div class="antipattern">
+    <div class="ap-bad">Adverse event numerator with no denominator.</div>
+    <div class="ap-instead"><strong>Instead:</strong> always pair "n cases reported" with "out of an estimated n users per year." If the denominator cannot be estimated, say so. A raw count is not a risk.</div>
+  </div>
+
+  <div class="antipattern">
+    <div class="ap-bad">Blaming the labeled plant for harm that may be from an adulterant or contaminant.</div>
+    <div class="ap-instead"><strong>Instead:</strong> walk Stage 7's four pathways before attributing causation. If the case did not include product testing, hold causation provisionally.</div>
+  </div>
+
+  <div class="antipattern">
+    <div class="ap-bad">Treating "no signal in CAERS" as evidence of safety.</div>
+    <div class="ap-instead"><strong>Instead:</strong> remember that CAERS under-reports by a large factor and that many botanicals are not sold as supplements at all. Read absence of signal against the database's selection bias.</div>
+  </div>
+
+  <div class="antipattern">
+    <div class="ap-bad">Citing Grieve, Felter &amp; Lloyd, or "A Modern Herbal" for chemistry, mechanism, or interaction claims.</div>
+    <div class="ap-instead"><strong>Instead:</strong> use them for traditional use and history only. Modern sources for modern claims.</div>
+  </div>
+
+  <div class="antipattern">
+    <div class="ap-bad">Linking to a publisher URL instead of a DOI.</div>
+    <div class="ap-instead"><strong>Instead:</strong> use <code>https://doi.org/10.xxxx/xxxxxx</code>. The DOI is permanent. The publisher URL might not be there next year.</div>
+  </div>
+
+  <div class="antipattern">
+    <div class="ap-bad">Asserting "this plant is safe" or "this plant is toxic" without specifying for whom, at what dose, in what preparation.</div>
+    <div class="ap-instead"><strong>Instead:</strong> frame every safety statement as a conditional. Stage 6 forces this by enumerating the host-side modifiers.</div>
+  </div>
+
+  <div class="antipattern">
+    <div class="ap-bad">Stating a causal claim with more confidence than the literature supports.</div>
+    <div class="ap-instead"><strong>Instead:</strong> use the literature's own vocabulary. "Temporally associated in n published cases" is not the same as "causes." Match your claim to the strongest published adjudication you can find.</div>
+  </div>
+
+  <div class="antipattern">
+    <div class="ap-bad">Dismissing a real signal because the plant has a friendly reputation.</div>
+    <div class="ap-instead"><strong>Instead:</strong> run Stage 8's reverse check. If you found yourself ignoring a signal, ask whether the evidence is actually weak or whether your priors are doing the work.</div>
+  </div>
+
+</div>
+
+<h2 id="preflight">Pre-flight checklist</h2>
+
+<p>Before you submit, you should be able to answer each of these for your chosen plant and product in one or two sentences:</p>
+
+<div class="checklist">
+  <ol>
+    <li>What class of toxicological object is this plant — forensic, marketplace, or both? What evidence places it there?</li>
+    <li>What product, specifically? How does its preparation diverge from the traditional one on the five axes (extraction, concentration, isolation, form/route, population)?</li>
+    <li>Does LiverTox have a monograph for it? AHPA? ABC? If yes, what likelihood or safety class? If no, what does that absence tell you?</li>
+    <li>What is the post-market signal in CAERS, FAERS, and NPDS, and what is the denominator each number sits on top of?</li>
+    <li>Is the harm direct (dose-dependent, predictable toxidrome) or idiosyncratic (rare, host-dependent, no classical toxidrome)? Where does the therapeutic window sit relative to typical consumer dosing?</li>
+    <li>Which host populations face a collapsed or shifted therapeutic window, by organ function, genotype, comorbidity, or co-medication?</li>
+    <li>For the published cases of harm: are they attributable to the labeled plant, an adulterant, a contaminant, or cultivation-stage cross-contamination?</li>
+    <li>What is the highest causality confidence the literature actually supports? Does your write-up match that, exceed it, or under-state it? Have you checked your reasoning in both directions of bias?</li>
+    <li>Are all chemistry and mechanism citations from modern primary literature? Do journal articles have DOIs? Does the species resolve to a PowO results URL?</li>
+  </ol>
+</div>
+
+<footer>
+  <p>HRB-641 Safety of Botanical Medicine · Working resource, Spring 2026.</p>
+  <p>Cite the underlying sources, not this page. This is a scaffold for your reasoning, not a primary reference.</p>
+</footer>
+
+</div>
+</body>
+</html>
