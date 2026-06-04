@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Barrier &amp; Breath — Physiology Comprehension Lab</title>
+<style>
+  :root{
+    --bg:#0f1714; --panel:#16201c; --panel2:#1d2a24; --ink:#e9f1ec; --muted:#9db5a8;
+    --line:#2c3d34; --accent:#7fd1a6; --accent2:#5fb3d9; --warm:#e6b873; --rose:#e08a8a;
+    --good:#6ddc9b; --bad:#e58b8b; --radius:16px; --shadow:0 6px 24px rgba(0,0,0,.35);
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:radial-gradient(1200px 600px at 80% -10%,#1b2a23 0,var(--bg) 60%);
+    color:var(--ink);font-family:var(--font);line-height:1.5;-webkit-font-smoothing:antialiased}
+  header{padding:28px 22px 10px;max-width:1080px;margin:0 auto}
+  h1{margin:0;font-size:clamp(24px,4vw,34px);letter-spacing:-.02em}
+  h1 .leaf{color:var(--accent)}
+  .sub{color:var(--muted);margin:6px 0 0;font-size:15px;max-width:700px}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 22px 80px}
+  .tabs{display:flex;gap:8px;margin:22px 0 24px;flex-wrap:wrap}
+  .tab{background:var(--panel);border:1px solid var(--line);color:var(--muted);
+    padding:11px 18px;border-radius:999px;cursor:pointer;font-size:15px;font-weight:600;
+    transition:.18s;display:flex;align-items:center;gap:8px;font-family:inherit}
+  .tab:hover{color:var(--ink);border-color:var(--accent)}
+  .tab.active{background:var(--accent);color:#06150d;border-color:var(--accent)}
+  .tab .ico{font-size:17px}
+  section.view{display:none;animation:fade .25s ease}
+  section.view.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .lead{color:var(--muted);font-size:15px;margin:-6px 0 20px;max-width:760px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  @media(max-width:840px){.grid2{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:18px;box-shadow:var(--shadow)}
+  .card h3{margin:0 0 4px;font-size:17px}
+  .card .hint{color:var(--muted);font-size:13px;margin:0 0 12px}
+  /* explore chips */
+  .chiprow{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{background:var(--panel2);border:1px solid var(--line);color:var(--ink);padding:9px 14px;
+    border-radius:999px;cursor:pointer;font-size:14px;font-weight:600;transition:.15s;font-family:inherit}
+  .chip:hover{border-color:var(--accent);transform:translateY(-1px)}
+  .chip.sel{background:var(--accent);color:#06150d;border-color:var(--accent)}
+  .answer{background:var(--panel2);border:1px solid var(--line);border-left:4px solid var(--accent);
+    border-radius:12px;padding:16px;margin-top:18px;min-height:120px}
+  .answer .q{font-weight:700;color:var(--accent);font-size:15px;margin:0 0 8px}
+  .answer p{margin:0 0 10px;font-size:14.5px}
+  .answer .empty{color:var(--muted);font-style:italic}
+  .herb{background:rgba(127,209,166,.09);border:1px dashed rgba(127,209,166,.4);
+    border-radius:10px;padding:11px 13px;margin-top:10px;font-size:13.5px;color:#cfeede}
+  .herb b{color:var(--accent)}
+  /* mechanisms */
+  .sim{margin-bottom:20px}
+  .slider-row{display:flex;align-items:center;gap:14px;margin:12px 0 6px;flex-wrap:wrap}
+  input[type=range]{flex:1;min-width:160px;accent-color:var(--accent);height:6px}
+  .readout{font-variant-numeric:tabular-nums;font-weight:700;min-width:62px;text-align:right}
+  .badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700}
+  .tag{font-size:12px;color:var(--muted)}
+  .pill-toggle{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+  .pill{background:var(--panel2);border:1px solid var(--line);color:var(--muted);padding:9px 14px;
+    border-radius:999px;cursor:pointer;font-size:14px;font-weight:600;transition:.15s;font-family:inherit}
+  .pill:hover{color:var(--ink)}
+  .pill.right{background:var(--good);color:#06150d;border-color:var(--good)}
+  .pill.wrong{background:var(--bad);color:#1a0606;border-color:var(--bad)}
+  .feedback{font-size:14px;margin-top:10px;min-height:22px}
+  .feedback.ok{color:var(--good)}.feedback.no{color:var(--bad)}
+  .vq{display:flex;gap:10px;justify-content:center;align-items:flex-end;margin:8px 0;height:150px}
+  .vqbar{width:64px;border-radius:8px 8px 0 0;transition:height .3s, background .3s;align-self:flex-end}
+  .vqcap{text-align:center;font-size:12px;color:var(--muted);margin-top:6px}
+  svg{width:100%;height:auto;display:block}
+  .lbl{font:600 11px var(--font);fill:var(--ink)}.lbl.s{font-size:10px;fill:var(--muted)}
+  /* self-test */
+  .deck{max-width:720px}
+  .qnum{font-size:13px;color:var(--muted);margin-bottom:6px}
+  .qtext{font-size:18px;font-weight:700;margin:0 0 14px;line-height:1.35}
+  textarea{width:100%;min-height:96px;background:var(--panel2);border:1px solid var(--line);
+    color:var(--ink);border-radius:11px;padding:12px;font-family:inherit;font-size:14.5px;resize:vertical}
+  textarea:focus{outline:none;border-color:var(--accent)}
+  .conf-row{display:flex;align-items:center;gap:10px;margin:12px 0;flex-wrap:wrap}
+  .conf-row .tag{width:auto}
+  .model{margin-top:14px;padding:14px;border-radius:11px;background:rgba(95,179,217,.1);
+    border:1px solid rgba(95,179,217,.35);font-size:14.5px;display:none}
+  .model.show{display:block}
+  .model .mh{font-weight:700;color:var(--accent2);margin:0 0 8px}
+  .grade-row{display:none;gap:8px;margin-top:14px;flex-wrap:wrap;align-items:center}
+  .grade-row.show{display:flex}
+  .navrow{display:flex;justify-content:space-between;align-items:center;margin-top:18px;gap:10px;flex-wrap:wrap}
+  .btn{background:var(--accent);color:#06150d;border:none;padding:11px 20px;border-radius:999px;
+    font-weight:700;cursor:pointer;font-size:14px;font-family:inherit;transition:.15s}
+  .btn:hover{filter:brightness(1.08)}
+  .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--muted)}
+  .btn:disabled{opacity:.4;cursor:default}
+  .progress{font-size:13px;color:var(--muted)}
+  .scoreline{font-size:13px;color:var(--muted)}
+  .summary{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+  .summary h3{margin-top:0}
+  .stat{display:flex;gap:14px;flex-wrap:wrap;margin:14px 0}
+  .stat .box{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px 18px;flex:1;min-width:130px}
+  .stat .n{font-size:26px;font-weight:800}
+  .stat .l{font-size:12px;color:var(--muted)}
+  .warnpile{background:rgba(229,139,139,.12);border:1px solid rgba(229,139,139,.4);border-radius:12px;padding:14px;margin-top:8px}
+  .warnpile li{margin:6px 0;font-size:14px}
+  /* clinic */
+  .scn{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:20px;box-shadow:var(--shadow)}
+  .scn .case{background:var(--panel2);border-radius:12px;padding:14px 16px;margin:0 0 16px;
+    border-left:4px solid var(--warm);font-size:15px}
+  .scn .case b{color:var(--warm)}
+  .opt{display:block;width:100%;text-align:left;background:var(--panel2);border:1px solid var(--line);
+    color:var(--ink);padding:13px 15px;border-radius:11px;margin:8px 0;cursor:pointer;font-size:14.5px;
+    transition:.15s;font-family:inherit}
+  .opt:hover{border-color:var(--accent);transform:translateX(3px)}
+  .opt.right{background:rgba(109,220,155,.16);border-color:var(--good)}
+  .opt.wrong{background:rgba(229,139,139,.14);border-color:var(--bad)}
+  .opt:disabled{cursor:default;opacity:.9}
+  .explain{margin-top:14px;padding:14px;border-radius:11px;background:rgba(95,179,217,.1);
+    border:1px solid rgba(95,179,217,.35);font-size:14px;display:none}
+  .explain.show{display:block}
+  code{background:var(--panel2);padding:1px 6px;border-radius:5px;font-size:13px}
+</style>
+</head>
+<body>
+<header>
+  <h1><span class="leaf">&#127807;</span> Barrier &amp; Breath</h1>
+  <p class="sub">A comprehension lab for the skin &amp; respiratory system, built around the week&rsquo;s review questions. For herbalism &amp; nutrition students &mdash; every concept links back to the clinic.</p>
+</header>
+
+<div class="wrap">
+  <div class="tabs" role="tablist">
+    <button class="tab active" data-view="explore"><span class="ico">&#128270;</span>Explore</button>
+    <button class="tab" data-view="selftest"><span class="ico">&#129504;</span>Self-Test</button>
+    <button class="tab" data-view="mechanisms"><span class="ico">&#9881;&#65039;</span>Mechanisms</button>
+    <button class="tab" data-view="clinic"><span class="ico">&#127807;</span>In the Clinic</button>
+  </div>
+
+  <!-- ================= EXPLORE (text-based) ================= -->
+  <section class="view active" id="explore">
+    <p class="lead">Tap any term. Each one answers a review question and shows how it shows up in herbal &amp; nutrition practice. Work through them in any order.</p>
+    <div class="grid2">
+      <div class="card">
+        <h3>Skin &amp; Body Membranes</h3>
+        <p class="hint">Integumentary system &mdash; Ch.&nbsp;4</p>
+        <div class="chiprow" id="chipsSkin"></div>
+      </div>
+      <div class="card">
+        <h3>Respiratory System</h3>
+        <p class="hint">Airways &amp; gas exchange &mdash; Ch.&nbsp;5</p>
+        <div class="chiprow" id="chipsResp"></div>
+      </div>
+    </div>
+    <div class="answer" id="exAnswer">
+      <p class="q">Pick a term above</p>
+      <p class="empty">Each reveals the answer to one review question, plus the clinical tie-in.</p>
+    </div>
+  </section>
+
+  <!-- ================= SELF-TEST ================= -->
+  <section class="view" id="selftest">
+    <p class="lead">Answer in your own words, rate how sure you are, <em>then</em> reveal the model answer and grade yourself. The point isn&rsquo;t the score &mdash; it&rsquo;s catching what you were <strong>confident but wrong</strong> about.</p>
+    <div class="deck card" id="deckCard">
+      <div class="qnum" id="stProgress"></div>
+      <p class="qtext" id="stQ"></p>
+      <textarea id="stAnswer" placeholder="Type your answer from memory&hellip;"></textarea>
+      <div class="conf-row">
+        <span class="tag">How sure are you?</span>
+        <div class="pill-toggle" id="confPills" style="margin:0">
+          <button class="pill" data-conf="low">Guessing</button>
+          <button class="pill" data-conf="med">Fairly sure</button>
+          <button class="pill" data-conf="high">Confident</button>
+        </div>
+      </div>
+      <button class="btn" id="revealBtn">Reveal model answer</button>
+      <div class="model" id="stModel"></div>
+      <div class="grade-row" id="gradeRow">
+        <span class="tag">Self-grade:</span>
+        <button class="pill" data-grade="got">&#10003; Got it</button>
+        <button class="pill" data-grade="partial">~ Partial</button>
+        <button class="pill" data-grade="missed">&#10007; Missed it</button>
+      </div>
+      <div class="navrow">
+        <button class="btn ghost" id="stPrev">&larr; Back</button>
+        <span class="scoreline" id="stScore"></span>
+        <button class="btn" id="stNext">Next &rarr;</button>
+      </div>
+    </div>
+    <div class="summary" id="stSummary" style="display:none"></div>
+  </section>
+
+  <!-- ================= MECHANISMS ================= -->
+  <section class="view" id="mechanisms">
+    <p class="lead">The questions people miss are about <em>relationships</em>, not definitions. Move the controls and watch the cause&ndash;effect.</p>
+
+    <div class="card sim">
+      <h3>1. Pressure &harr; Volume &mdash; why air moves at all</h3>
+      <p class="hint">Drag the diaphragm. Boyle&rsquo;s law: at constant temperature P &times; V is constant, so pressure and volume are inversely related. The diaphragm and intercostal muscles change thoracic volume; the lungs are passive.</p>
+      <div class="slider-row">
+        <span class="tag">Diaphragm</span>
+        <input type="range" id="diaph" min="0" max="100" value="20">
+        <span class="readout" id="diaphState">relaxed</span>
+      </div>
+      <svg viewBox="0 0 360 150" aria-label="lung volume">
+        <rect x="40" y="14" width="280" height="110" rx="10" fill="none" stroke="var(--line)" stroke-width="2"/>
+        <ellipse id="lungL" cx="130" cy="64" rx="40" ry="34" fill="#7fd1a6" opacity=".8"/>
+        <ellipse id="lungR" cx="230" cy="64" rx="40" ry="34" fill="#7fd1a6" opacity=".8"/>
+        <path id="dome" d="M40 116 Q180 96 320 116" stroke="var(--warm)" stroke-width="6" fill="none"/>
+        <text class="lbl s" x="180" y="140" text-anchor="middle">diaphragm</text>
+      </svg>
+      <div class="slider-row">
+        <span class="badge" id="volBadge" style="background:#234a36;color:var(--accent)">Volume &mdash;</span>
+        <span class="badge" id="presBadge" style="background:#3a2330;color:var(--rose)">Pressure &mdash;</span>
+        <span class="badge" id="flowBadge" style="background:#1d3a4a;color:var(--accent2)">Airflow &mdash;</span>
+      </div>
+      <div class="herb"><b>&#127807; Clinic:</b> This is why a slow, diaphragmatic breath recruits more volume change than shallow chest breathing &mdash; the foundation under every breathing-practice recommendation.</div>
+    </div>
+
+    <div class="card sim">
+      <h3>2. CO&#8322; &harr; blood pH &mdash; the acid you exhale</h3>
+      <p class="hint">Carbonic anhydrase turns CO&#8322; + H&#8322;O into carbonic acid, which dissociates into bicarbonate + H&#8314;. More CO&#8322; &rarr; more H&#8314; &rarr; lower pH.</p>
+      <div class="slider-row">
+        <span class="tag">Blood CO&#8322;</span>
+        <input type="range" id="co2" min="0" max="100" value="40">
+        <span class="readout" id="co2val">normal</span>
+      </div>
+      <div class="slider-row">
+        <span class="tag">Reaction</span>
+        <span style="font-size:14px">CO&#8322; + H&#8322;O &#8652; H&#8322;CO&#8323; &#8652; HCO&#8323;&#8315; + H&#8314;</span>
+      </div>
+      <div class="slider-row">
+        <span class="badge" id="phBadge">pH 7.40</span>
+        <span class="tag" id="phWord">balanced</span>
+      </div>
+      <div class="herb"><b>&#127807; Clinic:</b> A client over-breathing from anxiety blows off CO&#8322;, pH climbs (alkalosis) &mdash; tingling, lightheadedness. A slow exhale lets CO&#8322; rise and pH return. Dietary acid load is buffered by this same bicarbonate system.</div>
+    </div>
+
+    <div class="card sim">
+      <h3>3. What actually tells you to breathe?</h3>
+      <p class="hint">Most people guess oxygen. The dominant drive is rising CO&#8322; (sensed as H&#8314; by central chemoreceptors). Pick the strongest stimulus:</p>
+      <div class="pill-toggle" id="chemoPills">
+        <button class="pill" data-c="o2">Low O&#8322;</button>
+        <button class="pill" data-c="co2">High CO&#8322;</button>
+        <button class="pill" data-c="glu">Low glucose</button>
+        <button class="pill" data-c="temp">Body temperature</button>
+      </div>
+      <div class="feedback" id="chemoFb"></div>
+    </div>
+
+    <div class="card sim">
+      <h3>4. Ventilation &harr; Perfusion (V/Q)</h3>
+      <p class="hint">Ventilation = air reaching alveoli. Perfusion = blood reaching the capillaries around them. Gas exchange needs <em>both</em>. Set each and see what limits exchange.</p>
+      <div class="slider-row"><span class="tag" style="width:70px">Ventilation</span><input type="range" id="vent" min="5" max="100" value="80"><span class="readout" id="ventR">80</span></div>
+      <div class="slider-row"><span class="tag" style="width:70px">Perfusion</span><input type="range" id="perf" min="5" max="100" value="80"><span class="readout" id="perfR">80</span></div>
+      <div class="vq">
+        <div style="align-self:flex-end"><div class="vqbar" id="vbar" style="background:var(--accent)"></div><div class="vqcap">V</div></div>
+        <div style="align-self:flex-end"><div class="vqbar" id="pbar" style="background:var(--rose)"></div><div class="vqcap">Q</div></div>
+        <div style="align-self:flex-end"><div class="vqbar" id="ebar" style="background:var(--accent2)"></div><div class="vqcap">Exchange</div></div>
+      </div>
+      <p class="feedback" id="vqMsg" style="text-align:center"></p>
+      <div class="herb"><b>&#127807; Clinic:</b> Healthy lungs but poor circulation (or vice versa) both cap oxygenation. It&rsquo;s why &ldquo;support the lungs&rdquo; and &ldquo;support circulation&rdquo; are paired goals, not separate ones.</div>
+    </div>
+  </section>
+
+  <!-- ================= CLINIC ================= -->
+  <section class="view" id="clinic">
+    <p class="lead">A client walks in. Reason from the physiology &mdash; each scenario maps onto the week&rsquo;s review concepts.</p>
+    <div class="scn">
+      <div class="progress" id="scnProgress"></div>
+      <div class="case" id="scnCase"></div>
+      <div id="scnOpts"></div>
+      <div class="explain" id="scnExplain"></div>
+      <div class="navrow">
+        <button class="btn ghost" id="prevScn">&larr; Back</button>
+        <span class="scoreline" id="scnScore"></span>
+        <button class="btn" id="nextScn">Next &rarr;</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+/* ---------------- SHARED Q&A BANK ---------------- */
+/* group: 'skin' | 'resp' ; used by Explore chips. model used by Self-Test. */
+const bank = [
+  {id:"membranes", group:"skin", chip:"3 epithelial membranes",
+   q:"What are the three types of epithelial membrane (and why are they organs)?",
+   model:"Cutaneous (the skin), mucous (lines tracts open to the outside &mdash; respiratory, digestive), and serous (lines closed body cavities). Each counts as an organ because it&rsquo;s an epithelial sheet bound to a connective-tissue layer &mdash; several tissue types working together for one function.",
+   a:["<b>Three types:</b> cutaneous (the skin), mucous (lining tracts open to the outside, e.g. respiratory and digestive), and serous (lining closed body cavities).",
+      "<b>Why they&rsquo;re organs:</b> each is an epithelial sheet bound to a connective-tissue layer &mdash; several tissue types working together for one function, which is the definition of an organ."],
+   herb:"Mucous membranes are the working surface for most respiratory and digestive herbs &mdash; demulcents soothe them, and inflamed mucosa is where many clinical complaints actually live."},
+  {id:"serous", group:"skin", chip:"Visceral vs parietal",
+   q:"Explain the difference between the visceral and parietal layers of a serous membrane.",
+   model:"The visceral layer hugs the organ itself; the parietal layer lines the cavity wall. Serous fluid between them reduces friction &mdash; e.g. the pleura around the lungs.",
+   a:["A serous membrane folds into two continuous layers. The <b>visceral</b> layer wraps the organ; the <b>parietal</b> layer lines the cavity wall. Between them, serous fluid reduces friction as organs move (e.g. the pleurae around the lungs)."],
+   herb:"Pleural friction-free movement is what lets the lungs follow the chest wall during breathing &mdash; the mechanical basis for the pressure&ndash;volume mechanics."},
+  {id:"epidermis", group:"skin", chip:"Epidermis vs dermis",
+   q:"What is the difference between the epidermis and the dermis?",
+   model:"Epidermis = superficial, keratinised stratified squamous epithelium, avascular, the barrier. Dermis = deeper connective tissue, well vascularised, with collagen/elastin, nerves, glands and follicles &mdash; structure, supply and sensation.",
+   a:["The <b>epidermis</b> is the superficial layer: keratinised stratified squamous epithelium, <b>avascular</b>, built for barrier &mdash; mostly keratinocytes plus melanocytes and immune Langerhans cells.",
+      "The <b>dermis</b> below is living connective tissue: <b>well vascularised</b>, with collagen and elastin, nerves, glands and hair follicles. Epidermis = barrier; dermis = structure, supply and sensation."],
+   herb:"Because the epidermis is avascular, topical actives must cross it to reach the vascular dermis for systemic absorption &mdash; central to how transdermal herbal applications work. Collagen/elastin in the dermis depend on vitamin C and minerals like silica (horsetail, nettle)."},
+  {id:"corneum", group:"skin", chip:"The skin barrier",
+   q:"What makes the stratum corneum an effective barrier?",
+   model:"15&ndash;30 layers of dead, keratin-filled cells cemented with glycolipids: waterproof, blocks microbes, prevents water loss. Replaced about every 4 weeks.",
+   a:["The <b>stratum corneum</b> is the outermost epidermal layer &mdash; 15&ndash;30 sheets of dead, keratin-filled cells cemented with glycolipids. It waterproofs the body, blocks microbes and stops water loss, and is fully replaced about every 4 weeks."],
+   herb:"This lipid-rich, dead barrier is why lipophilic salves and infused oils penetrate while watery infusions sit on top. Stripping it with harsh surfactants leaves skin reactive and dry."},
+  {id:"sebaceous", group:"skin", chip:"Sebaceous glands",
+   q:"What is the role of the sebaceous glands?",
+   model:"Oil glands (mostly into follicles) secreting sebum: lubricates and waterproofs skin/hair, keeps the corneum pliable, slows water loss, and is mildly antibacterial. Hormone-driven, so inactive before puberty.",
+   a:["<b>Sebaceous glands</b> are oil glands, mostly opening into hair follicles. They secrete <b>sebum</b> &mdash; a lipid mix that lubricates and waterproofs skin and hair, keeps the dead corneum pliable, slows water loss, and is mildly <b>antibacterial</b> (its fatty acids). Hormone-driven, so largely inactive before puberty."],
+   herb:"Over-stripping sebum backfires &mdash; the barrier compensates. This is the rationale behind oil cleansing and using occlusive herbal oils to mimic, not remove, sebum."},
+  {id:"apocrine", group:"skin", chip:"Apocrine &amp; body odour",
+   q:"Explain how the apocrine glands contribute to body odour.",
+   model:"Apocrine glands (armpits, groin) empty into follicles and secrete organic compounds. The secretion is nearly odourless; odour appears when skin bacteria decompose those compounds.",
+   a:["<b>Apocrine sweat glands</b> sit in hairy regions, deep in the dermis, emptying into hair follicles. Their sweat contains water, salts <b>and organic compounds</b>. The secretion itself is nearly odourless &mdash; odour appears when <b>skin bacteria decompose those organic compounds</b>. Release is under nervous and hormonal control."],
+   herb:"Natural deodorant strategy follows directly: target the <b>bacteria</b> (antimicrobial herbs like sage), not the sweat. Aluminium antiperspirants instead plug the duct. Diet alters the organic load secreted."},
+  {id:"conducting", group:"resp", chip:"Conducting vs respiratory zone",
+   q:"What&rsquo;s the difference between the conducting zone and the respiratory zone?",
+   model:"Conducting zone (nose &rarr; terminal bronchioles) moves, warms, humidifies and cleans air &mdash; no gas exchange. Respiratory zone (respiratory bronchioles, ducts, alveoli) is where gas exchange happens.",
+   a:["The <b>conducting zone</b> (nose, pharynx, larynx, trachea, bronchi, bronchioles to terminal bronchioles) moves, warms, humidifies and cleans air &mdash; <b>no gas exchange</b>. Its mucous membrane and cilia trap debris and pathogens.",
+      "The <b>respiratory zone</b> (respiratory bronchioles, alveolar ducts, alveoli) is where actual <b>gas exchange</b> occurs across the respiratory membrane."],
+   herb:"Conducting-zone mucosa is the target of expectorants (thin/mobilise mucus) and demulcents. Cilia + mucus form the &lsquo;mucociliary escalator&rsquo; you support in a productive cough."},
+  {id:"bronchi", group:"resp", chip:"Bronchiole vs bronchus",
+   q:"What&rsquo;s the difference between a bronchiole and a bronchus?",
+   model:"Bronchi are larger and held open by cartilage rings, so they can&rsquo;t narrow much. Bronchioles (~1 mm) have no cartilage &mdash; smooth-muscle walls that contract/relax to change airway diameter.",
+   a:["<b>Bronchi</b> are larger airways from the trachea, held open by <b>rings of cartilage</b>, lined with mucus-producing ciliated epithelium &mdash; they can&rsquo;t narrow much.",
+      "<b>Bronchioles</b> (~1 mm) branch from tertiary bronchi, have <b>no cartilage</b>, and their <b>smooth-muscle walls contract or relax to change airway diameter</b> and regulate airflow."],
+   herb:"Because bronchiole calibre is muscular, it&rsquo;s where airflow is dynamically controlled &mdash; the site of wheeze in asthma and the target of bronchodilating actions (traditional use of lobelia/ephedra)."},
+  {id:"surfactant", group:"resp", chip:"Surfactant",
+   q:"Why is surfactant important?",
+   model:"Secreted by type II alveolar cells, it reduces surface tension in the alveoli. Without it, surface tension would collapse the moist alveolar walls and make each breath far harder.",
+   a:["<b>Pulmonary surfactant</b> (phospholipids + proteins) is secreted by <b>type II alveolar cells</b> and <b>reduces surface tension</b> inside the alveoli. Without it, surface tension would pull the moist alveolar walls together and collapse them, and far more effort would be needed to re-inflate the lungs each breath."],
+   herb:"This is why premature infants (insufficient surfactant) struggle to breathe, and conceptually why steam and demulcent moisture ease the work of breathing on irritated airways."},
+  {id:"muscles", group:"resp", chip:"Muscles of breathing",
+   q:"Which muscles are directly involved in breathing?",
+   model:"The diaphragm and the intercostal muscles (between the ribs). Their contraction/relaxation drives the pressure changes; the lungs themselves are passive.",
+   a:["The <b>diaphragm</b> (dome-shaped muscle at the base of the thoracic cavity) and the <b>intercostal muscles</b> between the ribs. Their contraction and relaxation create the pressure changes that move air. The lungs themselves are <b>passive</b> &mdash; they follow the chest wall via the adhesive pleural fluid."],
+   herb:"Diaphragmatic engagement is exactly what breath-focused practices train &mdash; recruiting the primary muscle rather than accessory chest movement."},
+  {id:"pressure", group:"resp", chip:"Pressure &amp; volume",
+   q:"What is the relationship between pressure and volume in the lungs?",
+   model:"Inverse (Boyle&rsquo;s law). At constant temperature, increasing thoracic volume drops pressure below atmospheric so air flows in; decreasing volume raises pressure so air flows out.",
+   a:["They are <b>inversely related</b> (Boyle&rsquo;s law): at constant temperature, P &times; V is constant. When the diaphragm/intercostals increase thoracic <b>volume</b>, intrapulmonary <b>pressure drops</b> below atmospheric and air rushes <b>in</b>. When volume decreases, pressure rises and air is pushed <b>out</b>."],
+   herb:"See the Mechanisms tab to manipulate this directly."},
+  {id:"chemo", group:"resp", chip:"Chemoreceptor driver",
+   q:"What is the most important factor that tells chemoreceptors to increase breathing rate?",
+   model:"Rising blood CO&#8322; (not O&#8322;). CO&#8322; raises H&#8314; / lowers pH, and central chemoreceptors respond by driving the medulla to increase rate and depth. Low O&#8322; only drives breathing at very low levels.",
+   a:["<b>Rising blood CO&#8322;</b> &mdash; not oxygen. CO&#8322; crosses into the brain, raises H&#8314; (lowers pH), and <b>central chemoreceptors</b> push the medulla to increase rate and depth. Oxygen only becomes a driver when it falls very low (~60 mmHg), via peripheral chemoreceptors."],
+   herb:"This is why breath-retention practices work on CO&#8322; tolerance, and why anxious over-breathing (low CO&#8322;) produces its own symptoms."},
+  {id:"vq", group:"resp", chip:"Ventilation &amp; perfusion",
+   q:"Define ventilation and perfusion.",
+   model:"Ventilation = air reaching the alveoli. Perfusion = blood flow reaching the capillaries around the alveoli. Efficient gas exchange needs both matched.",
+   a:["<b>Ventilation</b> is the amount of air reaching the alveoli. <b>Perfusion</b> is the blood flow reaching the pulmonary capillaries surrounding those alveoli. Gas exchange is efficient only when the two are <b>matched</b> &mdash; air and blood arriving at the same place."],
+   herb:"Lung support and circulatory support are paired goals &mdash; either one, alone, caps oxygen delivery (try the V/Q sim)."},
+  {id:"intext", group:"resp", chip:"Internal vs external respiration",
+   q:"What is the difference between internal respiration and external respiration?",
+   model:"External respiration = gas exchange with the outside environment, in the alveoli (O&#8322; in, CO&#8322; out). Internal respiration = gas exchange with the internal environment, at the tissues (O&#8322; to cells, CO&#8322; in). Both are simple diffusion.",
+   a:["<b>External respiration</b> = gas exchange with the outside environment, in the <b>alveoli of the lungs</b> (O&#8322; into blood, CO&#8322; out).",
+      "<b>Internal respiration</b> = gas exchange with the internal environment, at the <b>tissues</b> (O&#8322; out to cells, CO&#8322; into blood). Both are simple diffusion down pressure gradients &mdash; no energy required."],
+   herb:"&lsquo;Getting oxygen to the tissues&rsquo; is internal respiration &mdash; it depends on circulation and haemoglobin as much as on the lungs."},
+  {id:"hemoglobin", group:"resp", chip:"Oxygen carrier",
+   q:"Which molecule binds oxygen within red blood cells?",
+   model:"Haemoglobin. Most blood oxygen is carried bound to haemoglobin; only a little is dissolved in plasma. Lower pH promotes release at the tissues (Bohr effect).",
+   a:["<b>Haemoglobin</b>. The large majority of blood oxygen travels bound to haemoglobin inside red blood cells; only a small fraction is dissolved in plasma. A lower (more acidic) pH promotes O&#8322; release at the tissues &mdash; the <b>Bohr effect</b>."],
+   herb:"Haemoglobin is iron-based, so oxygen-carrying capacity is a nutrition question: iron status, B&#8321;&#8322;/folate for red-cell production, vitamin C for iron absorption. Fatigue + pallor often points here."},
+  {id:"co2ph", group:"resp", chip:"CO&#8322; &amp; blood pH",
+   q:"How does carbon dioxide cause the pH of the blood to decrease?",
+   model:"Carbonic anhydrase combines CO&#8322; + H&#8322;O into carbonic acid (H&#8322;CO&#8323;), which dissociates into bicarbonate (HCO&#8323;&#8315;) and H&#8314;. More CO&#8322; means more H&#8314;, which lowers pH.",
+   a:["CO&#8322; entering red blood cells is combined with water by <b>carbonic anhydrase</b> to form carbonic acid (H&#8322;CO&#8323;), which dissociates into bicarbonate (HCO&#8323;&#8315;) and <b>hydrogen ions (H&#8314;)</b>. More CO&#8322; means more H&#8314; produced &mdash; and more H&#8314; <b>lowers the pH</b> (more acidic)."],
+   herb:"The same bicarbonate buffer system handles dietary and metabolic acid loads &mdash; the physiological backdrop to &lsquo;acid&ndash;alkaline&rsquo; conversations in nutrition."}
+];
+
+/* ---------------- EXPLORE ---------------- */
+const exAnswer=document.getElementById('exAnswer');
+function buildChips(){
+  const skin=document.getElementById('chipsSkin'), resp=document.getElementById('chipsResp');
+  bank.forEach(item=>{
+    const b=document.createElement('button');
+    b.className='chip';b.innerHTML=item.chip;b.dataset.id=item.id;
+    b.addEventListener('click',()=>{
+      document.querySelectorAll('.chip').forEach(c=>c.classList.remove('sel'));
+      b.classList.add('sel');
+      exAnswer.innerHTML='<p class="q">'+item.q+'</p>'+item.a.map(p=>'<p>'+p+'</p>').join('')+
+        '<div class="herb"><b>&#127807; In the clinic:</b> '+item.herb+'</div>';
+    });
+    (item.group==='skin'?skin:resp).appendChild(b);
+  });
+}
+buildChips();
+
+/* ---------------- TABS ---------------- */
+document.querySelectorAll('.tab').forEach(t=>{
+  t.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById(t.dataset.view).classList.add('active');
+  });
+});
+
+/* ---------------- SELF-TEST ---------------- */
+let di=0;
+const state=bank.map(()=>({conf:null,grade:null,revealed:false}));
+const stQ=document.getElementById('stQ'),stAnswer=document.getElementById('stAnswer'),
+  stModel=document.getElementById('stModel'),stProgress=document.getElementById('stProgress'),
+  gradeRow=document.getElementById('gradeRow'),revealBtn=document.getElementById('revealBtn'),
+  stScore=document.getElementById('stScore');
+const answerText=bank.map(()=>"");
+function renderDeck(){
+  document.getElementById('stSummary').style.display='none';
+  document.getElementById('deckCard').style.display='block';
+  const it=bank[di], s=state[di];
+  stProgress.textContent='Question '+(di+1)+' of '+bank.length;
+  stQ.innerHTML=it.q;
+  stAnswer.value=answerText[di];
+  // confidence pills
+  document.querySelectorAll('#confPills .pill').forEach(p=>{
+    p.classList.toggle('right', s.conf===p.dataset.conf);
+  });
+  // model + grade visibility
+  if(s.revealed){
+    stModel.innerHTML='<p class="mh">Model answer</p>'+it.model;
+    stModel.classList.add('show');gradeRow.classList.add('show');
+  } else {stModel.classList.remove('show');gradeRow.classList.remove('show');}
+  document.querySelectorAll('#gradeRow .pill').forEach(p=>{
+    p.classList.remove('right','wrong');
+    if(s.grade===p.dataset.grade)p.classList.add(p.dataset.grade==='missed'?'wrong':'right');
+  });
+  document.getElementById('stPrev').disabled=di===0;
+  document.getElementById('stNext').textContent = di===bank.length-1?'See results':'Next →';
+  updateStScore();
+}
+function updateStScore(){
+  const graded=state.filter(s=>s.grade).length;
+  stScore.textContent=graded+' / '+bank.length+' graded';
+}
+stAnswer.addEventListener('input',()=>{answerText[di]=stAnswer.value;});
+document.querySelectorAll('#confPills .pill').forEach(p=>{
+  p.addEventListener('click',()=>{state[di].conf=p.dataset.conf;renderDeck();});
+});
+revealBtn.addEventListener('click',()=>{state[di].revealed=true;renderDeck();});
+document.querySelectorAll('#gradeRow .pill').forEach(p=>{
+  p.addEventListener('click',()=>{state[di].grade=p.dataset.grade;renderDeck();});
+});
+document.getElementById('stPrev').addEventListener('click',()=>{if(di>0){di--;renderDeck();}});
+document.getElementById('stNext').addEventListener('click',()=>{
+  if(di<bank.length-1){di++;renderDeck();}else{showSummary();}
+});
+function showSummary(){
+  document.getElementById('deckCard').style.display='none';
+  const got=state.filter(s=>s.grade==='got').length;
+  const partial=state.filter(s=>s.grade==='partial').length;
+  const missed=state.filter(s=>s.grade==='missed').length;
+  const danger=state.map((s,i)=>({s,i})).filter(x=>x.s.conf==='high'&&(x.s.grade==='missed'||x.s.grade==='partial'));
+  let html='<h3>Your results</h3>'+
+    '<div class="stat">'+
+    '<div class="box"><div class="n" style="color:var(--good)">'+got+'</div><div class="l">Got it</div></div>'+
+    '<div class="box"><div class="n" style="color:var(--warm)">'+partial+'</div><div class="l">Partial</div></div>'+
+    '<div class="box"><div class="n" style="color:var(--bad)">'+missed+'</div><div class="l">Missed</div></div>'+
+    '</div>';
+  if(danger.length){
+    html+='<p style="font-size:14.5px;margin:14px 0 6px"><b>Confident but wrong</b> &mdash; review these first. You felt sure but the answer didn&rsquo;t hold up; that&rsquo;s where exam points quietly leak:</p>'+
+      '<div class="warnpile"><ul style="margin:0;padding-left:18px">'+
+      danger.map(x=>'<li>'+bank[x.i].q+'</li>').join('')+'</ul></div>';
+  } else {
+    html+='<p style="font-size:14.5px;margin-top:14px">No &ldquo;confident but wrong&rdquo; items &mdash; your confidence is well calibrated to what you actually know.</p>';
+  }
+  html+='<div class="navrow"><button class="btn ghost" id="restartDeck">&larr; Review again</button><span></span><button class="btn" id="resetDeck">Start over</button></div>';
+  const sum=document.getElementById('stSummary');sum.innerHTML=html;sum.style.display='block';
+  document.getElementById('restartDeck').addEventListener('click',()=>{di=0;renderDeck();});
+  document.getElementById('resetDeck').addEventListener('click',()=>{
+    state.forEach(s=>{s.conf=null;s.grade=null;s.revealed=false;});
+    answerText.fill("");di=0;renderDeck();
+  });
+}
+renderDeck();
+
+/* ---------------- MECHANISM 1: Boyle ---------------- */
+const diaph=document.getElementById('diaph');
+function updateBoyle(){
+  const v=+diaph.value;
+  document.getElementById('diaphState').textContent=v<25?'relaxed':v<70?'contracting':'contracted (flat)';
+  const y=116+(v*0.18);
+  document.getElementById('dome').setAttribute('d',`M40 ${y} Q180 ${y-22+(v*0.12)} 320 ${y}`);
+  const ry=30+v*0.22, rx=38+v*0.12;
+  ['lungL','lungR'].forEach(id=>{const e=document.getElementById(id);e.setAttribute('ry',ry);e.setAttribute('rx',rx);});
+  document.getElementById('volBadge').innerHTML='Volume '+(v>50?'&#8593; up':'&#8595; down');
+  document.getElementById('presBadge').innerHTML='Pressure '+(v>50?'&#8595; below atmosphere':'&#8593; above atmosphere');
+  document.getElementById('flowBadge').innerHTML='Airflow: '+(v>50?'air rushes IN (inhale)':'air pushed OUT (exhale)');
+}
+diaph.addEventListener('input',updateBoyle);updateBoyle();
+
+/* ---------------- MECHANISM 2: CO2 -> pH ---------------- */
+const co2=document.getElementById('co2');
+function updateCO2(){
+  const c=+co2.value;
+  document.getElementById('co2val').textContent=c<30?'low':c<55?'normal':c<78?'high':'very high';
+  const ph=(7.55-(c/100)*0.40).toFixed(2);
+  const b=document.getElementById('phBadge');b.textContent='pH '+ph;
+  const w=document.getElementById('phWord');
+  if(ph>7.45){b.style.background='#1d3a4a';b.style.color='var(--accent2)';w.textContent='alkalosis (too little CO₂)';}
+  else if(ph<7.35){b.style.background='#3a2330';b.style.color='var(--rose)';w.textContent='acidosis (CO₂ build-up → more H⁺)';}
+  else{b.style.background='#234a36';b.style.color='var(--accent)';w.textContent='balanced';}
+}
+co2.addEventListener('input',updateCO2);updateCO2();
+
+/* ---------------- MECHANISM 3: chemoreceptor ---------------- */
+document.querySelectorAll('#chemoPills .pill').forEach(p=>{
+  p.addEventListener('click',()=>{
+    document.querySelectorAll('#chemoPills .pill').forEach(x=>x.classList.remove('right','wrong'));
+    const fb=document.getElementById('chemoFb');
+    if(p.dataset.c==='co2'){
+      p.classList.add('right');fb.className='feedback ok';
+      fb.innerHTML='Correct. Rising <b>CO₂</b> is the dominant drive: it crosses into the brain, raises H⁺ (lowers pH), and central chemoreceptors push the medulla to breathe harder. O₂ only drives breathing when it drops very low (~60&nbsp;mmHg).';
+    } else {
+      p.classList.add('wrong');fb.className='feedback no';
+      const why={o2:'Low O₂ <i>does</i> stimulate breathing, but only as a backup at very low levels &mdash; not the primary driver.',glu:'Glucose isn&rsquo;t sensed by respiratory chemoreceptors.',temp:'Temperature and emotion modulate rate via the hypothalamus, but aren&rsquo;t the main chemical stimulus.'};
+      fb.innerHTML='Not the strongest. '+why[p.dataset.c]+' The dominant stimulus is <b>rising CO₂</b>.';
+    }
+  });
+});
+
+/* ---------------- MECHANISM 4: V/Q ---------------- */
+const vent=document.getElementById('vent'),perf=document.getElementById('perf');
+function updateVQ(){
+  const v=+vent.value,p=+perf.value;
+  document.getElementById('ventR').textContent=v;document.getElementById('perfR').textContent=p;
+  const ex=Math.min(v,p);
+  document.getElementById('vbar').style.height=(v*1.2)+'px';
+  document.getElementById('pbar').style.height=(p*1.2)+'px';
+  document.getElementById('ebar').style.height=(ex*1.2)+'px';
+  const m=document.getElementById('vqMsg');
+  if(Math.abs(v-p)<15)m.innerHTML='Well matched &mdash; exchange runs near its ceiling.';
+  else if(v>p)m.innerHTML='Air is reaching alveoli, but <b>blood flow (perfusion) is the bottleneck</b> &mdash; ventilation is wasted.';
+  else m.innerHTML='Plenty of blood flow, but <b>ventilation is the bottleneck</b> &mdash; that blood leaves under-oxygenated.';
+}
+vent.addEventListener('input',updateVQ);perf.addEventListener('input',updateVQ);updateVQ();
+
+/* ---------------- CLINIC SCENARIOS ---------------- */
+const scenarios=[
+ {case:"A client has <b>chronic dry, cracked, flaky skin</b> that stings with most lotions. They ask why their watery herbal toner &lsquo;does nothing&rsquo; but an oil-based balm helps.",
+  opts:[{t:"The watery toner can&rsquo;t cross the avascular, lipid-rich barrier; the oil-based balm matches the stratum corneum&rsquo;s chemistry and restores it.",ok:true},
+   {t:"The toner is too dilute; a stronger water-based one would absorb fine.",ok:false},
+   {t:"Lotions work in the dermis directly, bypassing the epidermis.",ok:false}],
+  why:"The <b>stratum corneum</b> is dead, keratin- and glycolipid-rich, and the epidermis is avascular. Lipophilic preparations integrate with that barrier and reduce water loss; watery products sit on top. <i>Review Qs: epidermis vs dermis; sebaceous gland role.</i>"},
+ {case:"A client wants a <b>natural deodorant</b> and assumes the goal is to &lsquo;stop the sweat&rsquo;.",
+  opts:[{t:"Apocrine sweat is nearly odourless; bacteria break down its organic compounds. An antimicrobial (e.g. sage) targets the bacteria, not the sweat.",ok:true},
+   {t:"Body odour comes directly from eccrine sweat, so you must block all sweating.",ok:false},
+   {t:"Odour is sebum oxidising, so a degreasing wash is the only fix.",ok:false}],
+  why:"<b>Apocrine glands</b> secrete organic compounds into follicle regions; odour is produced when <b>skin bacteria decompose them</b>. Antiperspirants instead plug the duct with aluminium. <i>Review Q: apocrine glands &amp; body odour.</i>"},
+ {case:"A client with a <b>wet, productive cough</b> asks whether to take a drying herb to &lsquo;stop the mucus&rsquo; or something else.",
+  opts:[{t:"The mucus + cilia of the conducting zone clear debris; support that escalator with an expectorant to mobilise it, rather than suppressing it.",ok:true},
+   {t:"Mucus is always pathological &mdash; dry it up completely as fast as possible.",ok:false},
+   {t:"A productive cough means surfactant failure in the alveoli; target the respiratory zone.",ok:false}],
+  why:"Mucus and cilia in the <b>conducting zone</b> trap and remove pathogens &mdash; the mucociliary escalator. Surfactant is a respiratory-zone issue, unrelated here. <i>Review Qs: conducting vs respiratory zone; surfactant.</i>"},
+ {case:"A client gets <b>lightheaded and tingly</b> during anxious episodes of fast, shallow breathing and asks what&rsquo;s happening.",
+  opts:[{t:"Over-breathing blows off CO₂, raising blood pH (alkalosis); a slow exhale lets CO₂ and pH normalise.",ok:true},
+   {t:"They&rsquo;re not getting enough oxygen; they should breathe even faster.",ok:false},
+   {t:"Low glucose is triggering the chemoreceptors to over-fire.",ok:false}],
+  why:"Excess ventilation lowers CO₂, so less carbonic acid forms and <b>pH rises</b> &mdash; respiratory alkalosis. The drive to breathe is CO₂-based, not O₂-based. <i>Review Qs: CO₂ &amp; pH; chemoreceptor drive; pressure&ndash;volume.</i>"},
+ {case:"A long-term <b>vegan client reports fatigue, pallor and breathlessness on exertion</b>, despite &lsquo;good lungs&rsquo;.",
+  opts:[{t:"Oxygen delivery depends on haemoglobin, not just ventilation; low iron/B₁₂ status limits O₂ carriage &mdash; investigate nutrition.",ok:true},
+   {t:"The lungs must be failing at gas exchange; focus only on respiratory herbs.",ok:false},
+   {t:"Surfactant deficiency in an adult is the most likely cause.",ok:false}],
+  why:"Most oxygen is carried <b>bound to haemoglobin</b>. With normal lungs, fatigue + pallor points to oxygen-carrying capacity &mdash; iron / B₁₂ / folate (and vitamin C for absorption). <i>Review Qs: haemoglobin; internal vs external respiration.</i>"},
+ {case:"A client with <b>thinning hair and brittle, slow-growing nails</b> after a period of crash dieting asks if it&rsquo;s permanent.",
+  opts:[{t:"Hair and nails grow from mitotically active matrix cells that need nutrient supply; dietary stress shifts follicles toward shedding, but the matrix can recover.",ok:true},
+   {t:"Hair and nails are living tissue damaged directly by the diet and cannot regrow.",ok:false},
+   {t:"This is purely cosmetic and unrelated to physiology.",ok:false}],
+  why:"Hair and nails are dead keratin produced by <b>dividing basal/matrix cells</b> fed by the dermal blood supply. Hair cycles through anagen (growth), catagen and telogen (rest); dietary or hormonal stress pushes follicles to shed, but the matrix resumes with restored nutrition. <i>Ch.4 accessory structures.</i>"},
+ {case:"An <b>older client who rarely goes outdoors</b> reports bone aches and is worried about fractures.",
+  opts:[{t:"Skin synthesises vitamin D from a cholesterol derivative under UV; without sun, low vitamin D impairs calcium absorption and weakens bone &mdash; assess intake/supplementation.",ok:true},
+   {t:"Bone pain can&rsquo;t relate to skin; only dairy intake matters.",ok:false},
+   {t:"Vitamin D is made in the liver from food, so sun exposure is irrelevant.",ok:false}],
+  why:"The <b>epidermis</b> synthesises vitamin D₃ from a cholesterol derivative when exposed to UV; the liver and kidney then activate it. Vitamin D is required for <b>calcium absorption</b> &mdash; deficiency causes rickets (children) or osteomalacia (adults). <i>Ch.4 functions of the integument.</i>"},
+ {case:"A <b>long-term smoker</b> notices a worse morning cough and more mucus, and asks why it&rsquo;s &lsquo;getting harder to clear&rsquo;.",
+  opts:[{t:"Smoke impairs the cilia that drive the mucociliary escalator, so trapped mucus and debris accumulate and must be cleared by coughing instead.",ok:true},
+   {t:"Smoking increases surfactant, which floods the airways with fluid.",ok:false},
+   {t:"The bronchi lose their cartilage and collapse, producing mucus.",ok:false}],
+  why:"The <b>conducting zone</b>&rsquo;s ciliated, mucus-producing epithelium normally sweeps debris upward. Impair the cilia and that clearance fails, so material accumulates and a cough takes over. <i>Review Q: conducting zone function.</i>"},
+ {case:"A client doing <b>daily aggressive exfoliation</b> now has red, stinging, easily irritated skin and asks why &lsquo;deep cleaning&rsquo; backfired.",
+  opts:[{t:"They&rsquo;re removing the stratum corneum faster than its ~4-week turnover can replace it, stripping the barrier and exposing tender layers.",ok:true},
+   {t:"Exfoliation can&rsquo;t harm skin because those cells are already dead.",ok:false},
+   {t:"The dermis is being scrubbed away, which is normal.",ok:false}],
+  why:"The <b>stratum corneum</b> is replaced over about 4 weeks. Over-exfoliating outpaces that renewal, removing the protective dead/glycolipid barrier and exposing more delicate underlying layers &mdash; hence redness and reactivity. <i>Review Q: epidermis/skin barrier.</i>"},
+ {case:"A client reports <b>fingertips and nose turning white and numb in the cold</b>, recovering when warm, and asks what&rsquo;s going on.",
+  opts:[{t:"Dermal arterioles constrict in the cold to conserve core heat, reducing blood flow to extremities &mdash; hence the whitish, cold tips.",ok:true},
+   {t:"The skin is freezing solid each time, which is frostbite.",ok:false},
+   {t:"Sweat glands are over-active, cooling the fingers.",ok:false}],
+  why:"In cold, the integument&rsquo;s <b>arterioles constrict</b> (sympathetic control) to minimise heat loss, especially in digits and the nose &mdash; flow drops and skin pales. It conserves core temperature; true freezing would be frostbite. <i>Ch.4 thermoregulation.</i>"}
+];
+let si=0,answered=[],correct=0;
+const scnCase=document.getElementById('scnCase'),scnOpts=document.getElementById('scnOpts'),
+  scnExplain=document.getElementById('scnExplain'),scnProg=document.getElementById('scnProgress'),
+  scnScore=document.getElementById('scnScore');
+function renderScn(){
+  const s=scenarios[si];
+  scnProg.textContent='Scenario '+(si+1)+' of '+scenarios.length;
+  scnCase.innerHTML='<b>Client:</b> '+s.case;
+  scnOpts.innerHTML='';scnExplain.classList.remove('show');
+  s.opts.forEach((o,i)=>{
+    const b=document.createElement('button');b.className='opt';b.innerHTML=o.t;
+    if(answered[si]!==undefined){b.disabled=true;if(o.ok)b.classList.add('right');if(i===answered[si]&&!o.ok)b.classList.add('wrong');}
+    b.addEventListener('click',()=>{
+      if(answered[si]!==undefined)return;
+      answered[si]=i;if(o.ok)correct++;
+      renderScn();
+      scnExplain.innerHTML='<b>'+(o.ok?'✓ Right.':'✗ Reconsider.')+'</b> '+s.why;
+      scnExplain.classList.add('show');updateScnScore();
+    });
+    scnOpts.appendChild(b);
+  });
+  if(answered[si]!==undefined){
+    scnExplain.innerHTML='<b>'+(s.opts[answered[si]].ok?'✓ Right.':'✗ Reconsider.')+'</b> '+s.why;
+    scnExplain.classList.add('show');
+  }
+  document.getElementById('prevScn').disabled=si===0;
+  document.getElementById('nextScn').disabled=si===scenarios.length-1;
+  updateScnScore();
+}
+function updateScnScore(){scnScore.textContent='Score: '+correct+' / '+answered.filter(x=>x!==undefined).length+' answered';}
+document.getElementById('nextScn').addEventListener('click',()=>{if(si<scenarios.length-1){si++;renderScn();}});
+document.getElementById('prevScn').addEventListener('click',()=>{if(si>0){si--;renderScn();}});
+renderScn();
+</script>
+</body>
+</html>
