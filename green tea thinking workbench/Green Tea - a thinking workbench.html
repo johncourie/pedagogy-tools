@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Safety Tuesday, Week 6: Green Tea | HRB-641</title>
+<meta name="description" content="Optional Safety Tuesday workbench for Week 6 (Green Tea) of HRB-641 Safety of Botanical Medicine. Eight interactive modules for building the reasoning the week asks for, without writing the essay for you.">
+<style>
+  :root {
+    --bg: #fafaf9; --surface: #ffffff; --surface-2: #f4f4f2;
+    --border: #d4d4d4; --rule: #e2e8f0;
+    --accent: #2c5282; --accent-2: #1d3a5f; --accent-soft: #ebf3fa;
+    --warn-soft: #fef9ed; --warn-rule: #d6a649; --warn-ink: #6b4a14;
+    --bad-soft: #fdf2f2; --bad-rule: #c14545; --bad-ink: #7c2222;
+    --good-soft: #ecf6ee; --good-rule: #3a8c4d; --good-ink: #1f5b2c;
+    --text: #1a202c; --muted: #5a6578; --code-bg: #f1f3f5;
+    --shadow: 0 1px 2px rgba(0,0,0,0.05), 0 2px 8px rgba(0,0,0,0.04);
+    --focus: #1a64c4;
+  }
+  html[data-theme="dark"] {
+    --bg: #14171c; --surface: #1c2027; --surface-2: #232831;
+    --border: #353b45; --rule: #2b313a;
+    --accent: #7fb3e8; --accent-2: #a9cdf2; --accent-soft: #1d2733;
+    --warn-soft: #2c2616; --warn-rule: #d6a649; --warn-ink: #e8cd92;
+    --bad-soft: #2e1b1b; --bad-rule: #e07a7a; --bad-ink: #f0b4b4;
+    --good-soft: #16271b; --good-rule: #5fb874; --good-ink: #a7e0b6;
+    --text: #e6e9ee; --muted: #9aa6b6; --code-bg: #232831;
+    --shadow: 0 1px 2px rgba(0,0,0,0.4), 0 2px 10px rgba(0,0,0,0.3);
+    --focus: #7fb3e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.55;
+    padding: 0 1.1rem 5rem; -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 860px; margin: 0 auto; }
+
+  /* ---- skip link ---- */
+  .skip-link {
+    position: absolute; left: 0.5rem; top: -3rem; z-index: 50;
+    background: var(--accent); color: #fff; padding: 0.5rem 0.9rem;
+    border-radius: 5px; font-size: 0.85rem; transition: top 0.15s ease;
+  }
+  .skip-link:focus-visible { top: 0.5rem; }
+
+  /* ---- header ---- */
+  header.page { padding: 2.4rem 0 1.1rem; border-bottom: 1px solid var(--rule); margin-bottom: 1.4rem; }
+  .topline { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
+  .eyebrow { font-size: 0.7rem; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
+  header.page h1 { font-size: 1.7rem; font-weight: 650; line-height: 1.2; letter-spacing: -0.01em; }
+  header.page .lede { color: var(--muted); font-size: 0.96rem; max-width: 64ch; margin-top: 0.6rem; }
+  .pledge { font-size: 0.84rem; color: var(--warn-ink); background: var(--warn-soft); border-left: 3px solid var(--warn-rule);
+    padding: 0.6rem 0.85rem; border-radius: 0 5px 5px 0; margin-top: 1rem; max-width: 70ch; }
+  .pledge strong { color: var(--warn-ink); }
+
+  /* ---- theme toggle ---- */
+  .theme-toggle {
+    flex: none; display: inline-flex; align-items: center; gap: 0.4rem;
+    background: var(--surface); color: var(--text); border: 1px solid var(--border);
+    border-radius: 999px; padding: 0.4rem 0.7rem; font-size: 0.78rem; cursor: pointer; box-shadow: var(--shadow);
+  }
+  .theme-toggle:hover { border-color: var(--accent); }
+  .theme-toggle svg { width: 15px; height: 15px; }
+
+  /* ---- tabs ---- */
+  .tabs-wrap { position: sticky; top: 0; z-index: 20; background: var(--bg); padding: 0.5rem 0 0.4rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--rule); }
+  [role="tablist"] { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  [role="tab"] {
+    appearance: none; background: var(--surface); color: var(--muted);
+    border: 1px solid var(--border); border-radius: 7px; padding: 0.42rem 0.7rem;
+    font-size: 0.82rem; font-weight: 550; cursor: pointer; display: inline-flex; align-items: baseline; gap: 0.4rem;
+    font-family: inherit; line-height: 1.2;
+  }
+  [role="tab"] .tnum { font-size: 0.68rem; font-variant-numeric: tabular-nums; color: var(--muted); opacity: 0.8; }
+  [role="tab"]:hover { border-color: var(--accent); color: var(--text); }
+  [role="tab"][aria-selected="true"] { background: var(--accent); color: #fff; border-color: var(--accent); }
+  [role="tab"][aria-selected="true"] .tnum { color: rgba(255,255,255,0.85); }
+
+  /* ---- panels ---- */
+  [role="tabpanel"] { animation: fade 0.25s ease; }
+  [role="tabpanel"]:focus { outline: none; }
+  @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    [role="tabpanel"] { animation: none; }
+  }
+  .panel-head { margin-bottom: 0.4rem; }
+  .panel-head .eyebrow { margin-bottom: 0.35rem; }
+  h2.panel-title { font-size: 1.34rem; font-weight: 640; letter-spacing: -0.01em; line-height: 1.25; }
+  .panel-sub { color: var(--muted); font-size: 0.95rem; margin: 0.55rem 0 1.3rem; max-width: 68ch; }
+  h3 { font-size: 1.02rem; font-weight: 620; margin: 1.9rem 0 0.6rem; }
+  h4 { font-size: 0.9rem; font-weight: 640; margin: 1.1rem 0 0.4rem; }
+  p { margin-bottom: 0.85rem; }
+  .panel-body p, .panel-body li { font-size: 0.93rem; }
+  ul, ol { margin: 0 0 0.9rem 1.2rem; }
+  li { margin-bottom: 0.4rem; }
+  a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; text-decoration-thickness: 1px; }
+  a:hover { color: var(--accent-2); }
+  code { font-family: ui-monospace, 'SF Mono', Menlo, monospace; background: var(--code-bg); padding: 1px 5px; border-radius: 3px; font-size: 0.85em; }
+  strong { font-weight: 640; }
+  hr.soft { border: 0; border-top: 1px solid var(--rule); margin: 1.6rem 0; }
+
+  /* ---- callouts ---- */
+  .callout { border-radius: 0 6px 6px 0; padding: 0.85rem 1rem; margin: 1rem 0; font-size: 0.9rem; border-left: 3px solid var(--accent); background: var(--accent-soft); }
+  .callout.warn { border-color: var(--warn-rule); background: var(--warn-soft); color: var(--warn-ink); }
+  .callout.bad { border-color: var(--bad-rule); background: var(--bad-soft); color: var(--bad-ink); }
+  .callout.good { border-color: var(--good-rule); background: var(--good-soft); color: var(--good-ink); }
+  .callout .clabel { display: block; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.07em; font-weight: 700; margin-bottom: 0.3rem; }
+
+  /* ---- cards / grid ---- */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1.05rem 1.2rem; box-shadow: var(--shadow); margin-bottom: 0.9rem; }
+  .grid { display: grid; gap: 0.8rem; }
+  @media (min-width: 620px) { .grid.cols-2 { grid-template-columns: 1fr 1fr; } .grid.cols-3 { grid-template-columns: repeat(3,1fr); } }
+
+  /* ---- buttons ---- */
+  .btn { appearance: none; font-family: inherit; font-size: 0.85rem; font-weight: 560; cursor: pointer;
+    border-radius: 6px; padding: 0.5rem 0.85rem; border: 1px solid var(--border); background: var(--surface); color: var(--text); }
+  .btn:hover { border-color: var(--accent); }
+  .btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .btn-primary:hover { background: var(--accent-2); }
+  .btn-sm { font-size: 0.78rem; padding: 0.35rem 0.6rem; }
+  .btn-ghost { background: transparent; }
+  .btn-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.6rem 0; }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* ---- feedback ---- */
+  .fb { font-size: 0.86rem; padding: 0.6rem 0.8rem; border-radius: 6px; margin-top: 0.6rem; border-left: 3px solid var(--muted); background: var(--surface-2); }
+  .fb.ok { border-color: var(--good-rule); background: var(--good-soft); color: var(--good-ink); }
+  .fb.no { border-color: var(--bad-rule); background: var(--bad-soft); color: var(--bad-ink); }
+  .fb.info { border-color: var(--accent); background: var(--accent-soft); }
+  .fb[hidden] { display: none; }
+
+  /* ---- sorter (tab1) ---- */
+  .sortcard { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 0.9rem 1rem; margin-bottom: 0.7rem; box-shadow: var(--shadow); }
+  .sortcard .scase { font-size: 0.92rem; margin-bottom: 0.55rem; }
+  .sortcard .scase b { color: var(--accent-2); }
+  .optset { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+  .opt { appearance: none; font-family: inherit; font-size: 0.78rem; cursor: pointer; border: 1px solid var(--border);
+    background: var(--surface-2); color: var(--text); border-radius: 999px; padding: 0.3rem 0.66rem; }
+  .opt:hover { border-color: var(--accent); }
+  .opt[aria-pressed="true"] { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .opt.correct { background: var(--good-soft); border-color: var(--good-rule); color: var(--good-ink); }
+  .opt.wrong { background: var(--bad-soft); border-color: var(--bad-rule); color: var(--bad-ink); }
+
+  /* ---- therapeutic window viz ---- */
+  .tw { display: grid; gap: 1rem; align-items: start; }
+  @media (min-width: 620px) { .tw { grid-template-columns: 1.3fr 1fr; } }
+  .tw-svg { width: 100%; height: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; }
+  .legend { list-style: none; margin: 0; padding: 0; font-size: 0.82rem; }
+  .legend li { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.45rem; }
+  .swatch { width: 14px; height: 3px; border-radius: 2px; flex: none; }
+
+  /* ---- range controls (tab4) ---- */
+  .control { margin-bottom: 1rem; }
+  .control label { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 560; margin-bottom: 0.3rem; }
+  .control .val { color: var(--accent); font-variant-numeric: tabular-nums; }
+  input[type="range"] { width: 100%; accent-color: var(--accent); height: 1.6rem; }
+  .seg { display: inline-flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .seg button { appearance: none; font-family: inherit; font-size: 0.8rem; padding: 0.4rem 0.7rem; border: 0; background: var(--surface); color: var(--text); cursor: pointer; }
+  .seg button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+  .readout { background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.1rem; }
+  .bar-track { height: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; overflow: hidden; margin: 0.3rem 0 0.2rem; }
+  .bar-fill { height: 100%; width: 0%; background: var(--accent); border-radius: 999px; transition: width 0.3s ease, background 0.3s ease; }
+  @media (prefers-reduced-motion: reduce) { .bar-fill { transition: none; } }
+  .big-num { font-size: 1.5rem; font-weight: 680; font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+
+  /* ---- deck / flashcards (tab6) ---- */
+  .deckbar { display: flex; align-items: center; justify-content: space-between; gap: 0.8rem; margin-bottom: 0.7rem; font-size: 0.82rem; color: var(--muted); }
+  .pill { display: inline-block; background: var(--surface-2); border: 1px solid var(--border); border-radius: 999px; padding: 0.18rem 0.6rem; font-size: 0.76rem; font-variant-numeric: tabular-nums; }
+  .choices { display: grid; gap: 0.45rem; margin-top: 0.7rem; }
+  .choice { text-align: left; appearance: none; font-family: inherit; font-size: 0.85rem; cursor: pointer;
+    border: 1px solid var(--border); background: var(--surface); color: var(--text); border-radius: 7px; padding: 0.6rem 0.8rem; }
+  .choice:hover { border-color: var(--accent); }
+  .choice.correct { background: var(--good-soft); border-color: var(--good-rule); color: var(--good-ink); }
+  .choice.wrong { background: var(--bad-soft); border-color: var(--bad-rule); color: var(--bad-ink); }
+  .choice:disabled { cursor: default; }
+
+  /* ---- bins (tab7) ---- */
+  .tokens { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.6rem 0 1rem; }
+  .token { appearance: none; font-family: inherit; font-size: 0.83rem; cursor: pointer; border: 1px solid var(--border);
+    background: var(--surface); color: var(--text); border-radius: 7px; padding: 0.5rem 0.7rem; max-width: 100%; text-align: left; box-shadow: var(--shadow); }
+  .token[aria-pressed="true"] { border-color: var(--accent); outline: 2px solid var(--accent); }
+  .token.done { opacity: 0.45; text-decoration: line-through; cursor: default; }
+  .bins { display: grid; gap: 0.7rem; }
+  @media (min-width: 620px) { .bins { grid-template-columns: repeat(3, 1fr); } }
+  .bin { border: 1.5px dashed var(--border); border-radius: 9px; padding: 0.8rem; min-height: 110px; background: var(--surface-2); cursor: pointer; }
+  .bin h4 { margin: 0 0 0.5rem; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+  .bin.armed { border-color: var(--accent); background: var(--accent-soft); }
+  .bin .chip { display: block; font-size: 0.8rem; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 0.35rem 0.5rem; margin-bottom: 0.35rem; }
+  .bin .chip.ok { border-left: 3px solid var(--good-rule); }
+  .bin .chip.no { border-left: 3px solid var(--bad-rule); }
+
+  /* ---- arc map (tab5) ---- */
+  .arc { display: flex; gap: 0.5rem; margin: 0.4rem 0 1.1rem; }
+  .node { flex: 1; appearance: none; font-family: inherit; cursor: pointer; text-align: center;
+    border: 1px solid var(--border); background: var(--surface); color: var(--text); border-radius: 9px; padding: 0.8rem 0.5rem; position: relative; box-shadow: var(--shadow); }
+  .node:hover { border-color: var(--accent); }
+  .node[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+  .node .nwk { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+  .node .nsub { font-weight: 640; font-size: 0.95rem; margin-top: 0.15rem; }
+  .node .nrole { font-size: 0.74rem; color: var(--muted); margin-top: 0.2rem; }
+  .node .here { display: inline-block; margin-top: 0.35rem; font-size: 0.64rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #fff; background: var(--accent); border-radius: 999px; padding: 0.1rem 0.45rem; }
+  .arc-detail dl { display: grid; grid-template-columns: 150px 1fr; gap: 0.45rem 1rem; font-size: 0.88rem; }
+  .arc-detail dt { font-weight: 600; color: var(--muted); font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.04em; padding-top: 0.1rem; }
+
+  /* ---- tag method (tab2) ---- */
+  .passage { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 0.4rem 0.4rem; box-shadow: var(--shadow); }
+  .sent { display: block; width: 100%; text-align: left; font: inherit; font-size: 0.92rem; color: var(--text);
+    background: transparent; border: 0; border-radius: 6px; padding: 0.45rem 0.55rem; cursor: pointer; line-height: 1.5; }
+  .sent:hover { background: var(--surface-2); }
+  .sent[aria-expanded="true"] { background: var(--accent-soft); }
+  .sent .tagbadge { font-size: 0.66rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; padding: 0.05rem 0.4rem; border-radius: 999px; margin-left: 0.35rem; vertical-align: middle; }
+  .tag-claim { background: #e6d8f5; color: #5a2d82; }
+  .tag-evidence { background: var(--good-soft); color: var(--good-ink); }
+  .tag-assumption { background: var(--warn-soft); color: var(--warn-ink); }
+  html[data-theme="dark"] .tag-claim { background: #3a2a4d; color: #d8b9f2; }
+  .tagrow { display: flex; flex-wrap: wrap; gap: 0.35rem; padding: 0 0.55rem 0.5rem; }
+  .qstem { font-size: 0.86rem; }
+  .qstem li { margin-bottom: 0.5rem; }
+
+  /* ---- confidence (tab3) ---- */
+  .quad { width: 100%; height: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; }
+  textarea, input[type="text"] { width: 100%; font: inherit; font-size: 0.9rem; color: var(--text); background: var(--surface);
+    border: 1px solid var(--border); border-radius: 7px; padding: 0.55rem 0.7rem; resize: vertical; }
+  textarea:focus, input[type="text"]:focus { outline: none; border-color: var(--accent); }
+
+  /* ---- fork (tab8) ---- */
+  .fork { display: grid; gap: 0.8rem; }
+  @media (min-width: 620px) { .fork { grid-template-columns: 1fr 1fr; } }
+  .fork .col { border-radius: 9px; padding: 0.9rem 1rem; border: 1px solid var(--border); }
+  .fork .col.bad { background: var(--bad-soft); border-color: var(--bad-rule); }
+  .fork .col.good { background: var(--good-soft); border-color: var(--good-rule); }
+  .fork .col h4 { margin-top: 0; }
+  .fork .ex { font-size: 0.84rem; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 0.5rem 0.65rem; margin: 0.5rem 0; font-style: italic; }
+  .checklist { list-style: none; margin-left: 0; }
+  .checklist li { display: flex; gap: 0.55rem; align-items: flex-start; margin-bottom: 0.55rem; font-size: 0.9rem; }
+  .checklist input { margin-top: 0.25rem; width: 1rem; height: 1rem; accent-color: var(--accent); flex: none; }
+
+  table.matrix { width: 100%; border-collapse: collapse; font-size: 0.83rem; margin: 0.6rem 0 1rem; }
+  table.matrix caption { text-align: left; font-size: 0.78rem; color: var(--muted); margin-bottom: 0.4rem; }
+  table.matrix th, table.matrix td { border: 1px solid var(--border); padding: 0.45rem 0.6rem; text-align: left; vertical-align: top; }
+  table.matrix thead th { background: var(--surface-2); font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.04em; }
+
+  /* ---- focus + footer ---- */
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
+  footer.page { margin-top: 3rem; padding-top: 1.2rem; border-top: 1px solid var(--rule); font-size: 0.8rem; color: var(--muted); }
+  footer.page p { margin-bottom: 0.5rem; }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to content</a>
+<div class="container">
+
+  <header class="page">
+    <div class="topline">
+      <div>
+        <div class="eyebrow">HRB-641 · Safety of Botanical Medicine · Safety Tuesday</div>
+        <h1>Week 6, Green Tea: a thinking workbench</h1>
+      </div>
+      <button type="button" class="theme-toggle" id="themeBtn" aria-pressed="false" aria-label="Switch to dark theme">
+        <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <span id="themeLabel">Dark</span>
+      </button>
+    </div>
+    <p class="lede">Eight optional modules for the week Dr. Gurley's lecture and the &ldquo;Overcoming Bias&rdquo; assignment land in. Each one drills a <em>reasoning move</em> the week needs (sorting mechanisms, interrogating a text, calibrating a verdict) on practice material, not on your graded work.</p>
+    <p class="pledge"><strong>What this is not.</strong> Nothing here answers the three discussion questions, touches the HerbalGram article, or drafts your essay. Every example uses a stand-in substance or illustrative numbers. The point is to make the <em>method</em> repeatable so the green-tea verdict stays yours.</p>
+  </header>
+
+  <div class="tabs-wrap">
+    <div role="tablist" aria-label="Safety Tuesday modules">
+      <button role="tab" id="tab-1" aria-controls="panel-1" aria-selected="true" tabindex="0"><span class="tnum">01</span> Using AI</button>
+      <button role="tab" id="tab-2" aria-controls="panel-2" aria-selected="false"  tabindex="-1"><span class="tnum">02</span> Two Kinds of Unsafe</button>
+      <button role="tab" id="tab-3" aria-controls="panel-3" aria-selected="false" tabindex="-1"><span class="tnum">03</span> Interrogation Gym</button>
+      <button role="tab" id="tab-4" aria-controls="panel-4" aria-selected="false" tabindex="-1"><span class="tnum">04</span> Confidence Dial</button>
+      <button role="tab" id="tab-5" aria-controls="panel-5" aria-selected="false" tabindex="-1"><span class="tnum">05</span> Dose &ne; Dose</button>
+      <button role="tab" id="tab-6" aria-controls="panel-6" aria-selected="false" tabindex="-1"><span class="tnum">06</span> Bias Deck</button>
+      <button role="tab" id="tab-7" aria-controls="panel-7" aria-selected="false" tabindex="-1"><span class="tnum">07</span> Real vs Reported</button>
+      <button role="tab" id="tab-8" aria-controls="panel-8" aria-selected="false" tabindex="-1"><span class="tnum">08</span> The Arc Map</button>
+    </div>
+  </div>
+
+  <main id="main-content">
+<section role="tabpanel" id="panel-1" aria-labelledby="tab-1" tabindex="0">
+  <div class="panel-head">
+    <p class="eyebrow">Module 01 · Using AI this week</p>
+    <h2 class="panel-title">Using AI for This Week</h2>
+  </div>
+  <p class="panel-sub">AI can do this assignment for you, or it can sharpen the judgment the assignment exists to build. Same tool, same chat, opposite outcomes. The whole difference is how you stage the contact. This module shows the staging that helps you.</p>
+
+  <div class="panel-body">
+    <div class="callout">
+      <span class="clabel">The one move</span>
+      Use AI to build your <strong>criterion</strong>, your sense of what a good answer must contain and how it can fail, not to <strong>deliver the answer</strong>. Criterion-formation leaves the thinking with you and gives you an instrument to judge with. Answer-delivery hands you a product and quietly retires your judgment.
+    </div>
+
+    <h3>The fork, on this week's tasks</h3>
+    <p>Pick a task. The left staging is the easy one and the one to avoid; the right staging is the work.</p>
+    <div class="seg" role="group" aria-label="Choose a task" id="forkTasks" style="margin-bottom:0.8rem;flex-wrap:wrap">
+      <button type="button" data-k="0" aria-pressed="true">The 3 questions</button>
+      <button type="button" data-k="1" aria-pressed="false">Find references</button>
+      <button type="button" data-k="2" aria-pressed="false">Check my draft</button>
+      <button type="button" data-k="3" aria-pressed="false">Understand a mechanism</button>
+    </div>
+    <div class="fork">
+      <div class="col bad">
+        <h4>✗ Answer-delivery</h4>
+        <p class="ex" id="forkBadEx"></p>
+        <p style="font-size:0.84rem;margin:0" id="forkBadWhy"></p>
+      </div>
+      <div class="col good">
+        <h4>✓ Criterion-formation</h4>
+        <p class="ex" id="forkGoodEx"></p>
+        <p style="font-size:0.84rem;margin:0" id="forkGoodWhy"></p>
+      </div>
+    </div>
+
+    <div class="callout bad">
+      <span class="clabel">Why the fluent answer is the trap</span>
+      A wrong, clumsy answer is safe, it trips your sense that something's off, and you fix it. The dangerous output is the <strong>fluent, mostly-correct</strong> one you have no instrument to audit. It reads as competence and leaves no trace of the error. And the easy path is the default: the model emits, you accept, both expend less effort. Helping yourself means pushing <em>against</em> that gradient on purpose.
+    </div>
+
+    <h3>Self-audit: which side am I on?</h3>
+    <p>Tick what's true of how you're using AI right now. The point of the boxes is that the good ones all anchor your standard to something outside the model.</p>
+    <div class="card">
+      <ul class="checklist" id="aiAudit">
+        <li><label><input type="checkbox"> I did the thinking first and used AI to test it, not to produce it.</label></li>
+        <li><label><input type="checkbox"> My standard for &ldquo;good&rdquo; comes from outside the model, the lecture, primary sources, the rubric, a person.</label></li>
+        <li><label><input type="checkbox"> I asked it <em>not</em> to give me the answer at least once.</label></li>
+        <li><label><input type="checkbox"> I can state how I'd catch it if the output were wrong.</label></li>
+        <li><label><input type="checkbox"> I checked the specifics, claims, citations, numbers, against a real source.</label></li>
+      </ul>
+      <div class="readout" aria-live="polite">
+        <p class="big-num" id="auditVerd" style="font-size:1.1rem">Answer-delivery</p>
+        <p id="auditBody" style="font-size:0.85rem;color:var(--muted);margin:0">Nothing ticked yet. As it stands, you're accepting fluency on trust.</p>
+      </div>
+    </div>
+
+    <h3>Mind the seam: your field runs on more than one standard</h3>
+    <p>The hard question is rarely &ldquo;is this output good?&rdquo; It's &ldquo;<em>which standard governs here?</em>&rdquo; A model blends frameworks into one confident voice and is least trustworthy exactly where they meet.</p>
+    <div class="card">
+      <p class="ex" style="font-style:normal">&ldquo;Green tea is safe, it's been used for centuries, <em>and</em> clinical pharmacokinetic studies show low interaction risk for most drugs.&rdquo;</p>
+      <button class="btn btn-sm" type="button" id="seamBtn" aria-expanded="false" aria-controls="seamReveal">Reveal the seam</button>
+      <div id="seamReveal" hidden style="margin-top:0.7rem">
+        <p style="font-size:0.86rem;margin:0">Two different standards are spliced together. &ldquo;Used for centuries&rdquo; is a <strong>traditional-use</strong> claim; &ldquo;PK studies show low interaction risk&rdquo; is a <strong>pharmacological-evidence</strong> claim. Neither validates the other, long use doesn't establish PK safety, and a PK study doesn't speak to a constitutional or whole-system tradition. A model will hand you one smooth verdict that hides the join. Your job is to split them and judge each on its own terms.</p>
+      </div>
+    </div>
+
+    <div class="grid cols-2" style="margin-top:1rem">
+      <div class="callout warn" style="margin:0">
+        <span class="clabel">Record your model</span>
+        What you get is your skill times the model's capability, you can't read one without fixing the other. Note which model and tier you used (the way a stats course pins R or SPSS). The same prompt on a weaker tier is a different experiment.
+      </div>
+      <div class="callout warn" style="margin:0">
+        <span class="clabel">If you feel you have no taste yet</span>
+        That's the reason to do this now, not an excuse to outsource. You have no habits to protect, so this is where an <em>explicit</em> criterion gets installed, and a criterion you can state out loud beats accreted expert intuition, because you can actually carry it forward.
+      </div>
+    </div>
+
+    <div class="callout good">
+      <span class="clabel">What now counts as proof you learned</span>
+      An essay used to prove competence because producing it <em>required</em> competence. AI can sever that link. So shift what you treat as evidence of your own learning: citations you can explain on demand, a verdict that ships with its falsifier (Module 04), the bias you can name (Module 06), the seam you can point to. If you can defend it without the chat open, it's yours.
+    </div>
+  </div>
+</section>
+<script>
+(function () {
+  var FORK = [
+    { bad:'&ldquo;Answer these three questions about green tea safety: [paste].&rdquo;',
+      badWhy:'You get a fluent essay you had no part in and can’t audit. Your judgment never switched on.',
+      good:'&ldquo;I’m answering these myself. First: what must a strong answer to each contain, and how do students usually get each one wrong? Don’t answer them.&rdquo;',
+      goodWhy:'Builds your rubric for the task and leaves every word of the answer yours to write and defend.' },
+    { bad:'&ldquo;Give me three sources showing green tea is (or isn’t) hepatotoxic.&rdquo;',
+      badWhy:'Sources may be fabricated, outdated, or cherry-picked, and you have no way to tell strong from weak.',
+      good:'&ldquo;What kinds of studies would actually settle the hepatotoxicity question, and how would I tell a strong one from a weak one? I’ll find and appraise them in the databases myself.&rdquo;',
+      goodWhy:'Builds search and appraisal criteria you then anchor against real, verifiable sources.' },
+    { bad:'&ldquo;Rewrite this paragraph so it reads better.&rdquo;',
+      badWhy:'Fluency rises while your reasoning goes unexamined, and you can’t see what it changed in your argument.',
+      good:'&ldquo;Interrogate this paragraph the way I’d interrogate a source: where is my claim unsupported, where did I assume, what’s missing? Don’t rewrite it.&rdquo;',
+      goodWhy:'Turns the model into a critic that strengthens your judgment instead of replacing your prose.' },
+    { bad:'&ldquo;Explain why green tea reduces nadolol’s effect.&rdquo;',
+      badWhy:'You accept a clean explanation on faith, with no check that it’s right.',
+      good:'&ldquo;Explain the nadolol mechanism, then give two plausible-but-wrong versions and tell me how I’d distinguish them against Dr. Gurley’s lecture.&rdquo;',
+      goodWhy:'Forces the answer to terminate on ground truth (the lecture) and builds your discrimination.' }
+  ];
+  var tasks = document.getElementById('forkTasks');
+  var bEx = document.getElementById('forkBadEx'), bWhy = document.getElementById('forkBadWhy');
+  var gEx = document.getElementById('forkGoodEx'), gWhy = document.getElementById('forkGoodWhy');
+  function renderFork(k) {
+    bEx.innerHTML = FORK[k].bad; bWhy.textContent = FORK[k].badWhy;
+    gEx.innerHTML = FORK[k].good; gWhy.textContent = FORK[k].goodWhy;
+  }
+  tasks.addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    tasks.querySelectorAll('button').forEach(function(x){ x.setAttribute('aria-pressed','false'); });
+    b.setAttribute('aria-pressed','true'); renderFork(+b.getAttribute('data-k'));
+  });
+  renderFork(0);
+
+  // self-audit
+  var boxes = document.querySelectorAll('#aiAudit input');
+  var verd = document.getElementById('auditVerd'), body = document.getElementById('auditBody');
+  function audit() {
+    var n = 0; boxes.forEach(function(c){ if (c.checked) n++; });
+    if (n <= 2) { verd.textContent='Answer-delivery'; verd.style.color='var(--bad-rule)';
+      body.textContent = n === 0 ? 'Nothing ticked yet. As it stands, you’re accepting fluency on trust.' : 'Still mostly accepting output. Re-stage the contact toward your own criterion.'; }
+    else if (n <= 4) { verd.textContent='Mixed'; verd.style.color='var(--warn-rule)';
+      body.textContent='Partway there. The missing boxes are where the model’s output is still unaudited.'; }
+    else { verd.textContent='Criterion-formation'; verd.style.color='var(--good-rule)';
+      body.textContent='Every check anchors your standard outside the model. This is the use that builds you.'; }
+  }
+  boxes.forEach(function(c){ c.addEventListener('change', audit); });
+  audit();
+
+  // seam disclosure
+  var sb = document.getElementById('seamBtn'), sr = document.getElementById('seamReveal');
+  sb.addEventListener('click', function () {
+    var open = sb.getAttribute('aria-expanded') === 'true';
+    sb.setAttribute('aria-expanded', open ? 'false' : 'true');
+    sr.hidden = open; sb.textContent = open ? 'Reveal the seam' : 'Hide';
+  });
+})();
+</script>
+<section role="tabpanel" id="panel-2" aria-labelledby="tab-2" tabindex="0" hidden>
+  <div class="panel-head">
+    <p class="eyebrow">Module 02 · Establishing context</p>
+    <h2 class="panel-title">Two Kinds of Unsafe</h2>
+  </div>
+  <p class="panel-sub">Dr. Gurley spends the lecture on one kind of danger; your essay's third question asks about a different kind. If you don't separate them, you'll answer the liver question with drug-interaction evidence. This module pulls the two axes apart.</p>
+
+  <div class="panel-body">
+    <div class="callout">
+      <span class="clabel">The fork</span>
+      A botanical can be &ldquo;unsafe&rdquo; in two unrelated ways. It can change what a <em>co-administered drug</em> does. That is an <strong>interaction</strong>, where the drug is the victim. Or it can <strong>damage the host directly</strong>, with no drug involved at all. That is <strong>intrinsic toxicity</strong>. The two need different evidence and different arguments.
+    </div>
+
+    <h3>Sort the cases</h3>
+    <p>Each card is a real example from the lecture (plus two from the &ldquo;other mechanisms&rdquo; aside). Pick the mechanism. You'll get the reasoning either way.</p>
+
+    <div id="sorter">
+      <div class="sortcard" data-answer="ind" data-explain="St. John's wort's hyperforin switches on the PXR receptor, which makes MORE CYP3A4 and P-glycoprotein. More enzyme means cyclosporine is cleared faster, levels go sub-therapeutic, and the graft is rejected. The plant never touched the organ, it changed what the drug did.">
+        <p class="scase"><b>Case 1.</b> A transplant patient on cyclosporine starts St. John's wort. Her drug levels crash and she rejects the graft.</p>
+        <div class="optset" role="group" aria-label="Classify case 1"></div>
+        <p class="fb" hidden></p>
+      </div>
+
+      <div class="sortcard" data-answer="inh" data-explain="Goldenseal's berberine and hydrastine are mechanism-based ('suicide') inhibitors of CYP3A4 and CYP2D6. Less enzyme activity means the substrate drug isn't broken down, it lingers and climbs toward toxicity. (This is the Civil War quinine trick: less quinine needed because its metabolism was blocked.)">
+        <p class="scase"><b>Case 2.</b> Goldenseal is co-taken with a CYP3A4 substrate. The drug clears more slowly and its blood levels climb.</p>
+        <div class="optset" role="group" aria-label="Classify case 2"></div>
+        <p class="fb" hidden></p>
+      </div>
+
+      <div class="sortcard" data-answer="inh" data-explain="Piperine inhibits CYP3A4, so nevirapine isn't metabolized as fast and its AUC rises, the same logic as goldenseal. Inhibiting a metabolizing enzyme means MORE drug stays around.">
+        <p class="scase"><b>Case 3.</b> Black pepper extract (piperine) is added to nevirapine. The drug's exposure (AUC) jumps sharply.</p>
+        <div class="optset" role="group" aria-label="Classify case 3"></div>
+        <p class="fb" hidden></p>
+      </div>
+
+      <div class="sortcard" data-answer="upt" data-explain="Green tea catechins (EGCG) block the OATP uptake transporters in the gut wall. Nadolol depends on those pumps to get IN, so blocking them means LESS drug absorbed and lost blood-pressure control. This is 'inhibition' too, but the outcome is the OPPOSITE of cases 2 and 3, because an uptake pump was hit, not a metabolizing enzyme.">
+        <p class="scase"><b>Case 4.</b> Green tea is taken with the beta-blocker nadolol. Nadolol is poorly absorbed and blood-pressure control is lost. <em>(This is the lecture's actual green-tea example.)</em></p>
+        <div class="optset" role="group" aria-label="Classify case 4"></div>
+        <p class="fb" hidden></p>
+      </div>
+
+      <div class="sortcard" data-answer="pd" data-explain="Ginkgo has its own mild anticoagulant action. Stacked on warfarin, the two effects ADD, no enzyme or transporter needed. Two pharmacological effects pointing the same direction is a pharmacodynamic interaction.">
+        <p class="scase"><b>Case 5.</b> Ginkgo is taken alongside warfarin. Bleeding risk rises, but neither drug's blood level has changed.</p>
+        <div class="optset" role="group" aria-label="Classify case 5"></div>
+        <p class="fb" hidden></p>
+      </div>
+
+      <div class="sortcard" data-answer="tox" data-explain="No co-medication is mentioned. A concentrated catechin bolus taken fasted is associated with hepatocellular injury, the substance harming the host directly. THIS is the axis your essay's Question 3 lives on, and it is not what the nadolol story (Case 4) is about.">
+        <p class="scase"><b>Case 6.</b> Someone takes a concentrated green-tea catechin weight-loss capsule on an empty stomach and develops liver injury. No other medication is involved.</p>
+        <div class="optset" role="group" aria-label="Classify case 6"></div>
+        <p class="fb" hidden></p>
+      </div>
+    </div>
+
+    <div class="callout good" id="sorterWrap" hidden>
+      <span class="clabel">Why this matters for your week</span>
+      Cases 1&ndash;5 are all <strong>interactions</strong>, where the drug is the victim. Case 6 is <strong>intrinsic toxicity</strong>. The lecture's green-tea segment is <strong>Case 4</strong> (an interaction with nadolol). But your discussion and essay Question 3, &ldquo;evidence for green tea being hepatotoxic, and which preparation is riskier,&rdquo; is <strong>Case 6</strong>. Reasoning from the nadolol example to the liver question is a category error. And notice Cases 3 vs 4: both are &ldquo;inhibition&rdquo; with opposite outcomes, because one hits a metabolizing enzyme and the other an uptake pump.
+    </div>
+
+    <h3>The therapeutic window, for the interaction cases</h3>
+    <p>For interactions that change blood levels (Cases 1&ndash;3), the stakes are visible on one picture: the band a drug has to stay inside to work without harming.</p>
+
+    <div class="tw">
+      <svg class="tw-svg" viewBox="0 0 400 240" role="img" aria-labelledby="twTitle twDesc">
+        <title id="twTitle">Drug concentration over time versus the therapeutic window</title>
+        <desc id="twDesc">A concentration-time curve sits between a minimum effective concentration line and a maximum safe concentration line. Induction pushes the curve below the effective line; inhibition pushes it above the safe line.</desc>
+        <!-- therapeutic band -->
+        <rect x="44" y="65" width="344" height="81" fill="var(--good-soft)"></rect>
+        <line x1="44" y1="65" x2="388" y2="65" stroke="var(--bad-rule)" stroke-width="1" stroke-dasharray="4 3"></line>
+        <line x1="44" y1="146" x2="388" y2="146" stroke="var(--warn-rule)" stroke-width="1" stroke-dasharray="4 3"></line>
+        <!-- axes -->
+        <line x1="44" y1="200" x2="388" y2="200" stroke="var(--border)" stroke-width="1"></line>
+        <line x1="44" y1="20" x2="44" y2="200" stroke="var(--border)" stroke-width="1"></line>
+        <text x="46" y="60" font-size="9" fill="var(--bad-rule)">Max safe (toxic above)</text>
+        <text x="46" y="142" font-size="9" fill="var(--warn-ink)">Min effective (useless below)</text>
+        <text x="200" y="216" font-size="9" fill="var(--muted)" text-anchor="middle">time &rarr;</text>
+        <text x="14" y="115" font-size="9" fill="var(--muted)" transform="rotate(-90 14 115)" text-anchor="middle">drug level &rarr;</text>
+        <polyline id="twNormal" fill="none" stroke="var(--accent)" stroke-width="2.5" points="44,200 80,137 120,106 150,101 200,119 260,142 320,160 388,173"></polyline>
+        <polyline id="twInduce" fill="none" stroke="var(--warn-rule)" stroke-width="2.5" points="44,200 80,173 120,160 150,159 200,166 260,175 320,182 388,187" style="display:none"></polyline>
+        <polyline id="twInhibit" fill="none" stroke="var(--bad-rule)" stroke-width="2.5" points="44,200 80,92 120,42 150,33 200,52 260,87 320,119 388,139" style="display:none"></polyline>
+      </svg>
+
+      <div>
+        <div class="seg" role="group" aria-label="Choose scenario">
+          <button type="button" id="twBtnN" aria-pressed="true">Normal</button>
+          <button type="button" id="twBtnD" aria-pressed="false">Induction</button>
+          <button type="button" id="twBtnI" aria-pressed="false">Inhibition</button>
+        </div>
+        <ul class="legend" style="margin-top:0.8rem">
+          <li><span class="swatch" style="background:var(--accent)"></span> <span id="twText"><strong>Normal dosing:</strong> the peak sits inside the band, effective and safe.</span></li>
+        </ul>
+        <p style="font-size:0.8rem;color:var(--muted);margin-top:0.6rem">Text equivalent: induction (more enzyme/transporter made) clears the drug faster, so the curve sinks below the minimum-effective line, the drug stops working. Inhibition (less enzyme activity) lets the drug accumulate, so the curve rises above the maximum-safe line, the drug turns toxic.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+(function () {
+  var OPTS = [
+    ['pd','PD interaction'],
+    ['ind','PK · induction (drug ↓)'],
+    ['inh','PK · enzyme inhibition (drug ↑)'],
+    ['upt','PK · uptake blocked (drug ↓)'],
+    ['tox','Intrinsic toxicity (no drug)']
+  ];
+  var cards = document.querySelectorAll('#sorter .sortcard');
+  var solved = 0;
+  cards.forEach(function (card) {
+    var set = card.querySelector('.optset');
+    var fb = card.querySelector('.fb');
+    var answer = card.getAttribute('data-answer');
+    var explain = card.getAttribute('data-explain');
+    OPTS.forEach(function (o) {
+      var b = document.createElement('button');
+      b.className = 'opt'; b.type = 'button'; b.textContent = o[1];
+      b.setAttribute('data-k', o[0]); b.setAttribute('aria-pressed', 'false');
+      set.appendChild(b);
+    });
+    set.addEventListener('click', function (e) {
+      var b = e.target.closest('.opt'); if (!b || card.dataset.done) return;
+      var k = b.getAttribute('data-k');
+      if (k === answer) {
+        b.classList.add('correct'); b.setAttribute('aria-pressed', 'true');
+        fb.className = 'fb ok'; fb.textContent = '✓ ' + explain; fb.hidden = false;
+        card.dataset.done = '1';
+        set.querySelectorAll('.opt').forEach(function (x) { x.disabled = true; });
+        solved++;
+        if (solved === cards.length) document.getElementById('sorterWrap').hidden = false;
+      } else {
+        b.classList.add('wrong');
+        fb.className = 'fb no'; fb.textContent = 'Not quite, try again. Hint: ask first whether any drug is even involved, then whether an enzyme or a transporter is hit, then which direction the drug level moves.'; fb.hidden = false;
+      }
+    });
+  });
+
+  // therapeutic window toggle
+  var N = document.getElementById('twNormal'), D = document.getElementById('twInduce'), I = document.getElementById('twInhibit');
+  var bN = document.getElementById('twBtnN'), bD = document.getElementById('twBtnD'), bI = document.getElementById('twBtnI');
+  var txt = document.getElementById('twText');
+  function show(which) {
+    [[bN,N],[bD,D],[bI,I]].forEach(function (p) { p[0].setAttribute('aria-pressed','false'); });
+    D.style.display = 'none'; I.style.display = 'none'; N.setAttribute('stroke-width','1.2'); N.setAttribute('opacity','0.45');
+    if (which === 'N') { N.setAttribute('stroke-width','2.5'); N.setAttribute('opacity','1'); bN.setAttribute('aria-pressed','true');
+      txt.innerHTML = '<strong>Normal dosing:</strong> the peak sits inside the band, effective and safe.'; }
+    if (which === 'D') { D.style.display = ''; bD.setAttribute('aria-pressed','true');
+      txt.innerHTML = '<strong>Induction (e.g., St. John’s wort):</strong> more enzyme is made, the drug clears faster, the peak drops below the minimum-effective line, the drug fails.'; }
+    if (which === 'I') { I.style.display = ''; bI.setAttribute('aria-pressed','true');
+      txt.innerHTML = '<strong>Inhibition (e.g., goldenseal):</strong> enzyme activity falls, the drug accumulates, the peak climbs above the maximum-safe line, the drug turns toxic.'; }
+  }
+  bN.addEventListener('click', function () { show('N'); });
+  bD.addEventListener('click', function () { show('D'); });
+  bI.addEventListener('click', function () { show('I'); });
+})();
+</script>
+<section role="tabpanel" id="panel-3" aria-labelledby="tab-3" tabindex="0" hidden>
+  <div class="panel-head">
+    <p class="eyebrow">Module 03 · Metacognition</p>
+    <h2 class="panel-title">Interrogation Gym</h2>
+  </div>
+  <p class="panel-sub">The discussion names a method, <em>interrogation</em> (Harvard's Six Reading Habits), and then links out to it. Here you practice the moves on a throwaway text, so that when you turn the method on the HerbalGram article it's already in your hands.</p>
+
+  <div class="panel-body">
+    <div class="callout">
+      <span class="clabel">What interrogation is</span>
+      Reading a text by putting questions <em>to</em> it instead of absorbing it: What is being claimed? What actually supports the claim? What is assumed but never stated? What's missing? Compared to what, and who says so?
+    </div>
+
+    <h3>Part A, Tag the moves</h3>
+    <p>Below is a <strong>fabricated</strong> passage about a made-up plant, &ldquo;Silverleaf.&rdquo; (Fabricated on purpose, so you can't and won't cite it.) Open each sentence and label it: is it a <strong>claim</strong>, the <strong>evidence</strong>, or a hidden <strong>assumption</strong>? There isn't always one right tag, the win is the reason you give.</p>
+
+    <div class="passage" id="passage">
+      <div class="sentwrap">
+        <button class="sent" type="button" aria-expanded="false" data-i="0">&ldquo;Silverleaf tea has been consumed for generations and is widely regarded as safe.&rdquo;</button>
+        <div class="tagrow" hidden></div>
+        <p class="fb" hidden></p>
+      </div>
+      <div class="sentwrap">
+        <button class="sent" type="button" aria-expanded="false" data-i="1">&ldquo;In one study, rats given Silverleaf extract showed no liver changes.&rdquo;</button>
+        <div class="tagrow" hidden></div>
+        <p class="fb" hidden></p>
+      </div>
+      <div class="sentwrap">
+        <button class="sent" type="button" aria-expanded="false" data-i="2">&ldquo;Therefore, Silverleaf is non-toxic to the human liver.&rdquo;</button>
+        <div class="tagrow" hidden></div>
+        <p class="fb" hidden></p>
+      </div>
+      <div class="sentwrap">
+        <button class="sent" type="button" aria-expanded="false" data-i="3">&ldquo;A wellness blog notes that concentrated Silverleaf capsules caused stomach upset in some users.&rdquo;</button>
+        <div class="tagrow" hidden></div>
+        <p class="fb" hidden></p>
+      </div>
+      <div class="sentwrap">
+        <button class="sent" type="button" aria-expanded="false" data-i="4">&ldquo;Because it is natural, Silverleaf is gentler than pharmaceutical alternatives.&rdquo;</button>
+        <div class="tagrow" hidden></div>
+        <p class="fb" hidden></p>
+      </div>
+    </div>
+    <p style="font-size:0.82rem;color:var(--muted)">Notice the shape: one thin data point (sentence 2), an over-reaching conclusion built on it (3), a contradicting anecdote (4), and two sentences held up entirely by unstated premises (1, 5). A confident paragraph can be almost empty of usable evidence.</p>
+
+    <h3>Part B, Turn the gaps into questions</h3>
+    <p>Interrogation doesn't stop at &ldquo;this is weak.&rdquo; It converts each gap into a question you could actually go answer. Tick every category the Silverleaf passage leaves unanswered, then build the question set.</p>
+
+    <div class="card">
+      <ul class="checklist" id="gapList">
+        <li><label><input type="checkbox" data-k="dose"> Dose &amp; form</label></li>
+        <li><label><input type="checkbox" data-k="who"> Population (who was studied)</label></li>
+        <li><label><input type="checkbox" data-k="dur"> Duration / chronic vs single use</label></li>
+        <li><label><input type="checkbox" data-k="auth"> Authentication &amp; adulteration</label></li>
+        <li><label><input type="checkbox" data-k="comp"> Comparator / control</label></li>
+        <li><label><input type="checkbox" data-k="mech"> Mechanism (why would it harm or not)</label></li>
+        <li><label><input type="checkbox" data-k="fund"> Funding / source interest</label></li>
+        <li><label><input type="checkbox" data-k="def"> How &ldquo;safe&rdquo; was defined &amp; measured</label></li>
+      </ul>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="qBuild" type="button">Build my questions</button>
+        <button class="btn btn-ghost btn-sm" id="qAll" type="button">Tick all the passage omits</button>
+      </div>
+      <ol class="qstem" id="qOut" aria-live="polite"></ol>
+    </div>
+
+    <div class="callout warn">
+      <span class="clabel">Now do it for real</span>
+      Run the same two passes on the <em>HerbalGram</em> article: tag what's claim vs evidence vs assumption, then generate at least three missing-data questions. That's literally Part 2 of your discussion, but the questions have to be yours, about green tea, not Silverleaf.
+    </div>
+  </div>
+</section>
+<script>
+(function () {
+  var FB = [
+    { primary:'assumption',
+      claim:'Partly, it is asserting safety. But look at what holds it up: "for generations" and "widely regarded." The load-bearing part is an unstated premise, not the assertion.',
+      evidence:'No data here. "Widely regarded as safe" is vague attribution, nobody named, nothing measured.',
+      assumption:'Yes. The hidden premise is that long, traditional use proves safety. Long use can hide slow-onset or rare harms, so the premise is doing unearned work.' },
+    { primary:'evidence',
+      claim:'It reports a finding rather than asserting a thesis, closer to evidence. The thesis arrives in the next sentence.',
+      evidence:'Yes, this is the one real data point. Now interrogate it: one study, rats not humans, no dose, no duration. Evidence, but thin.',
+      assumption:'It states an observed result, not an unstated premise.' },
+    { primary:'claim',
+      claim:'Yes, and "Therefore" is doing illegitimate work. Rat liver in one study does not equal "non-toxic to the human liver." This is the animal→human leap.',
+      evidence:'No new data, it is a conclusion drawn from the previous sentence.',
+      assumption:'There is a buried assumption (animal results transfer to humans), but the sentence’s main job is asserting the conclusion.' },
+    { primary:'evidence',
+      claim:'It reports an observation rather than asserting a thesis.',
+      evidence:'Yes, but rank it: a blog, "some users," no numbers, no authenticated product. Low-grade evidence, and notice it quietly contradicts sentence 3.',
+      assumption:'Nothing unstated is carrying this one.' },
+    { primary:'assumption',
+      claim:'It does assert gentleness, but the prize is naming WHY it is unsupported.',
+      evidence:'No data at all.',
+      assumption:'Yes, "natural, therefore gentler" is the classic unstated premise. Hemlock is natural too.' }
+  ];
+  var TAGS = [['claim','Claim'],['evidence','Evidence'],['assumption','Assumption']];
+  document.querySelectorAll('#passage .sentwrap').forEach(function (w) {
+    var btn = w.querySelector('.sent');
+    var row = w.querySelector('.tagrow');
+    var fb = w.querySelector('.fb');
+    var i = +btn.getAttribute('data-i');
+    TAGS.forEach(function (t) {
+      var b = document.createElement('button');
+      b.className = 'opt'; b.type = 'button'; b.textContent = t[1]; b.setAttribute('data-t', t[0]);
+      row.appendChild(b);
+    });
+    btn.addEventListener('click', function () {
+      var open = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', open ? 'false' : 'true');
+      row.hidden = open;
+    });
+    row.addEventListener('click', function (e) {
+      var b = e.target.closest('.opt'); if (!b) return;
+      var t = b.getAttribute('data-t');
+      row.querySelectorAll('.opt').forEach(function (x){ x.classList.remove('correct','wrong'); x.setAttribute('aria-pressed','false'); });
+      b.setAttribute('aria-pressed','true');
+      b.classList.add(t === FB[i].primary ? 'correct' : 'wrong');
+      fb.className = 'fb ' + (t === FB[i].primary ? 'ok' : 'info');
+      fb.textContent = FB[i][t];
+      fb.hidden = false;
+    });
+  });
+
+  var STEMS = {
+    dose:'At what dose and in what form was Silverleaf tested, and how does that compare with how people actually take it?',
+    who:'Which population was studied, healthy adults, particular ages, people with existing liver conditions?',
+    dur:'Over what period? Were effects checked after a single dose or after chronic use?',
+    auth:'Was the Silverleaf material botanically authenticated, and could the product have been adulterated or misidentified?',
+    comp:'Compared with what? Was there a control group or a reference substance?',
+    mech:'Is there a plausible biological mechanism for harm or safety, or only an observed association?',
+    fund:'Who funded or published these claims, and do they have a stake in the conclusion?',
+    def:'How were "liver change" and "safe" actually defined and measured?'
+  };
+  var out = document.getElementById('qOut');
+  function build() {
+    out.innerHTML = '';
+    var any = false;
+    document.querySelectorAll('#gapList input:checked').forEach(function (c) {
+      any = true;
+      var li = document.createElement('li');
+      li.textContent = STEMS[c.getAttribute('data-k')];
+      out.appendChild(li);
+    });
+    if (!any) { var li = document.createElement('li'); li.style.listStyle='none'; li.style.color='var(--muted)'; li.textContent='Tick at least one gap, then build.'; out.appendChild(li); }
+  }
+  document.getElementById('qBuild').addEventListener('click', build);
+  document.getElementById('qAll').addEventListener('click', function () {
+    document.querySelectorAll('#gapList input').forEach(function (c){ c.checked = true; });
+    build();
+  });
+})();
+</script>
+<section role="tabpanel" id="panel-4" aria-labelledby="tab-4" tabindex="0" hidden>
+  <div class="panel-head">
+    <p class="eyebrow">Module 04 · Metacognition · seeds Week 10</p>
+    <h2 class="panel-title">Confidence Dial</h2>
+  </div>
+  <p class="panel-sub">A verdict is only as good as the confidence attached to it. This module builds one habit: state a claim, set your confidence, and refuse to hold it until you can name the strongest case against it and what would change your mind.</p>
+
+  <div class="panel-body">
+    <div class="callout">
+      <span class="clabel">The rule</span>
+      Confidence should track the balance of evidence, not how good the claim sounds. If you can't say what would move you off a position, you don't hold a calibrated belief, you hold a commitment.
+    </div>
+
+    <div class="card">
+      <h4><label for="claimIn">1. A claim you're weighing</label></h4>
+      <input type="text" id="claimIn" placeholder="e.g. &ldquo;Brewed tea and concentrated extracts carry the same liver risk.&rdquo;">
+
+      <h4 style="margin-top:1.2rem"><label for="confSl">2. How confident are you? <span class="val" id="confVal">50%</span></label></h4>
+      <input type="range" id="confSl" min="0" max="100" value="50" step="5" aria-describedby="confHelp">
+      <p id="confHelp" style="font-size:0.8rem;color:var(--muted)">0% = I'd bet against it · 50% = coin flip · 100% = I'd stake the grade on it</p>
+
+      <h4 style="margin-top:1.2rem"><label for="counterSl">3. How strong is the best case <em>against</em> it, as you currently understand it? <span class="val" id="counterVal">50%</span></label></h4>
+      <input type="range" id="counterSl" min="0" max="100" value="50" step="5">
+
+      <h4 style="margin-top:1.2rem"><label for="counterTxt">4. Name that strongest counter-case (required)</label></h4>
+      <textarea id="counterTxt" rows="2" placeholder="The best argument someone could make that you're wrong…"></textarea>
+
+      <h4 style="margin-top:1rem"><label for="falsifyTxt">5. What evidence would change your mind? (required)</label></h4>
+      <textarea id="falsifyTxt" rows="2" placeholder="A specific finding that would lower your confidence…"></textarea>
+
+      <div class="btn-row" style="margin-top:0.9rem">
+        <button class="btn btn-primary" id="lockBtn" type="button">Lock a calibrated verdict</button>
+      </div>
+      <p class="fb" id="lockFb" hidden></p>
+    </div>
+
+    <div class="grid cols-2" style="margin-top:0.4rem">
+      <div>
+        <svg class="quad" viewBox="0 0 300 300" role="img" aria-labelledby="qT qD">
+          <title id="qT">Confidence versus counter-evidence plot</title>
+          <desc id="qD">A square plot. The horizontal axis is the strength of the case against your claim; the vertical axis is your confidence. A diagonal band from top-left to bottom-right marks calibrated positions, where confidence falls as the opposing case strengthens.</desc>
+          <rect x="40" y="40" width="220" height="220" fill="var(--surface-2)" stroke="var(--border)"></rect>
+          <polygon points="40,8 40,72 8,40" fill="none"></polygon>
+          <line x1="40" y1="40" x2="260" y2="260" stroke="var(--good-rule)" stroke-width="20" opacity="0.18" stroke-linecap="round"></line>
+          <line x1="40" y1="40" x2="260" y2="260" stroke="var(--good-rule)" stroke-width="1" stroke-dasharray="4 4" opacity="0.6"></line>
+          <text x="150" y="30" font-size="10" fill="var(--muted)" text-anchor="middle">confidence &uarr;</text>
+          <text x="150" y="284" font-size="10" fill="var(--muted)" text-anchor="middle">strength of the case against &rarr;</text>
+          <text x="250" y="56" font-size="9" fill="var(--bad-rule)" text-anchor="end">overclaiming</text>
+          <text x="50" y="252" font-size="9" fill="var(--warn-ink)">under-examined</text>
+          <circle id="qDot" cx="150" cy="150" r="7" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"></circle>
+        </svg>
+      </div>
+      <div>
+        <div class="readout">
+          <p style="font-size:0.78rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:0.3rem">Diagnosis</p>
+          <p class="big-num" id="diagTitle" style="font-size:1.15rem">Calibrated</p>
+          <p id="diagBody" style="font-size:0.86rem;color:var(--muted);margin-top:0.3rem">Your confidence roughly matches the opposition you can see.</p>
+        </div>
+        <div id="cardOut" class="callout good" hidden style="margin-top:0.8rem">
+          <span class="clabel">Your calibration card</span>
+          <div id="cardBody" style="font-size:0.86rem"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <span class="clabel">Why now</span>
+      Week 10 asks you to commit to a hypothesis on kratom and defend it. A defensible verdict is exactly this: a confidence that moves with evidence, plus a stated falsifier. Build the reflex on low stakes here.
+    </div>
+  </div>
+</section>
+<script>
+(function () {
+  var conf = document.getElementById('confSl'), counter = document.getElementById('counterSl');
+  var confVal = document.getElementById('confVal'), counterVal = document.getElementById('counterVal');
+  var dot = document.getElementById('qDot');
+  var diagTitle = document.getElementById('diagTitle'), diagBody = document.getElementById('diagBody');
+
+  function diagnose() {
+    var c = +conf.value, k = +counter.value, sum = c + k;
+    confVal.textContent = c + '%'; counterVal.textContent = k + '%';
+    dot.setAttribute('cx', 40 + (k/100)*220);
+    dot.setAttribute('cy', 260 - (c/100)*220);
+    var title, body, tone;
+    if (sum > 125) { title = 'Overclaiming'; tone = 'var(--bad-rule)';
+      body = 'High confidence AND a strong case against. Both can’t be right, either your confidence is too high or you’re overrating the opposition. Reconcile it.'; }
+    else if (sum < 75) { title = 'Under-examined'; tone = 'var(--warn-rule)';
+      body = 'Low confidence, but you can’t name strong opposition either. You haven’t looked hard enough to earn either number. Go find the strongest objection.'; }
+    else { title = 'Calibrated'; tone = 'var(--good-rule)';
+      body = 'Your confidence roughly tracks the opposition you can see. This is the zone a defensible verdict lives in.'; }
+    diagTitle.textContent = title; diagTitle.style.color = tone; diagBody.textContent = body;
+  }
+  conf.addEventListener('input', diagnose);
+  counter.addEventListener('input', diagnose);
+  diagnose();
+
+  document.getElementById('lockBtn').addEventListener('click', function () {
+    var fb = document.getElementById('lockFb');
+    var cc = document.getElementById('counterTxt').value.trim();
+    var fx = document.getElementById('falsifyTxt').value.trim();
+    var claim = document.getElementById('claimIn').value.trim() || '(no claim entered)';
+    if (!cc || !fx) {
+      fb.className = 'fb no';
+      fb.textContent = 'Fill both boxes first. If you can’t name the strongest case against your claim and a piece of evidence that would change your mind, your confidence is faith, not calibration.';
+      fb.hidden = false; return;
+    }
+    fb.hidden = true;
+    var c = +conf.value;
+    var card = document.getElementById('cardOut'), body = document.getElementById('cardBody');
+    body.innerHTML = '<p style="margin:0.2rem 0"><strong>Claim:</strong> ' + esc(claim) + '</p>' +
+      '<p style="margin:0.2rem 0"><strong>Confidence:</strong> ' + c + '%</p>' +
+      '<p style="margin:0.2rem 0"><strong>Strongest case against:</strong> ' + esc(cc) + '</p>' +
+      '<p style="margin:0.2rem 0"><strong>Would change my mind:</strong> ' + esc(fx) + '</p>' +
+      '<p style="margin:0.4rem 0 0;color:var(--muted)">Diagnosis: ' + diagTitle.textContent + '. Carry this shape into the essay, a claim is stronger when it ships with its own falsifier.</p>';
+    card.hidden = false;
+    card.scrollIntoView({ behavior: (matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'), block: 'nearest' });
+  });
+  function esc(s){ return s.replace(/[&<>]/g, function(m){ return {'&':'&amp;','<':'&lt;','>':'&gt;'}[m]; }); }
+})();
+</script>
+<section role="tabpanel" id="panel-5" aria-labelledby="tab-5" tabindex="0" hidden>
+  <div class="panel-head">
+    <p class="eyebrow">Module 05 · Establishing context</p>
+    <h2 class="panel-title">Dose &ne; Dose</h2>
+  </div>
+  <p class="panel-sub">Two of the discussion questions hinge on quantities the lecture never makes explicit: do animal doses transfer to humans, and which preparation is riskier? Both are reasoning problems, not lookups. This module builds the reasoning, with deliberately illustrative numbers.</p>
+
+  <div class="panel-body">
+    <div class="callout bad">
+      <span class="clabel">Read this first</span>
+      Every number here is a <strong>round, illustrative figure for teaching the logic</strong>. None of it is citable, and none of it answers your essay. The scaling formula is standard; the per-cup and per-capsule amounts are ballpark. Take the <em>shape</em> of the reasoning, not the digits.
+    </div>
+
+    <h3>A. Why an animal dose isn't a human dose</h3>
+    <p>You can't read a milligram-per-kilogram dose straight across species. A smaller animal runs a faster metabolism per kilogram, so the same mg/kg hits it less hard. The standard fix scales by body-surface area (the FDA &ldquo;human-equivalent dose&rdquo; method). Watch what a big animal dose becomes in a person.</p>
+
+    <div class="card">
+      <div class="control">
+        <label for="animDose">Animal dose <span class="val"><span id="animDoseV">1000</span> mg/kg</span></label>
+        <input type="range" id="animDose" min="10" max="2000" value="1000" step="10">
+      </div>
+      <div class="control" style="margin-bottom:0.6rem">
+        <label for="species" style="display:block">Species</label>
+        <div class="seg" role="group" aria-label="Species" id="species">
+          <button type="button" data-km="6" aria-pressed="true">Rat</button>
+          <button type="button" data-km="3" aria-pressed="false">Mouse</button>
+          <button type="button" data-km="20" aria-pressed="false">Dog</button>
+        </div>
+      </div>
+      <div class="readout" aria-live="polite">
+        <p style="font-size:0.85rem;margin-bottom:0.2rem">Human-equivalent dose: <strong id="hedKg">162</strong> mg/kg</p>
+        <p class="big-num" id="hedTotal">11,300 mg</p>
+        <p style="font-size:0.85rem;color:var(--muted)">for a 70 kg adult, about <strong id="cups">160</strong> cups of brewed tea (~70 mg catechins each) or <strong id="caps">28</strong> concentrated-extract capsules (~400 mg each).</p>
+      </div>
+      <p style="font-size:0.82rem;color:var(--muted);margin-top:0.5rem" id="scaleNote">A 1000 mg/kg rat dose is frightening on paper, but the human-equivalent is unreachable by drinking tea. The animal number warns; it doesn't translate one-to-one.</p>
+    </div>
+
+    <h3>B. Why the same compound, two forms, is two risks</h3>
+    <p>Total dose isn't the whole story. A concentrated extract delivers a sharp bolus; brewed tea is dilute and sipped. An empty stomach raises catechin absorption. Move the controls and watch peak exposure relative to one cup of tea taken with food.</p>
+
+    <div class="grid cols-2">
+      <div class="card">
+        <div class="control">
+          <label for="bw">Body weight <span class="val"><span id="bwV">70</span> kg</span></label>
+          <input type="range" id="bw" min="40" max="110" value="70" step="1">
+        </div>
+        <div class="control">
+          <label for="cat">Catechin dose <span class="val"><span id="catV">70</span> mg</span></label>
+          <input type="range" id="cat" min="50" max="1500" value="70" step="10">
+        </div>
+        <div class="control" style="margin-bottom:0.6rem">
+          <label style="display:block">Preparation</label>
+          <div class="seg" role="group" aria-label="Preparation" id="form">
+            <button type="button" data-f="1" aria-pressed="true">Brewed infusion</button>
+            <button type="button" data-f="1.8" aria-pressed="false">Concentrated extract</button>
+          </div>
+        </div>
+        <div class="control">
+          <label style="display:block">Stomach</label>
+          <div class="seg" role="group" aria-label="Stomach" id="fast">
+            <button type="button" data-x="1" aria-pressed="true">With food</button>
+            <button type="button" data-x="2.5" aria-pressed="false">Fasted</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <p style="font-size:0.78rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted)">Relative peak exposure</p>
+        <p class="big-num"><span id="mult">1.0</span>&times;</p>
+        <p style="font-size:0.83rem;color:var(--muted);margin-top:-0.2rem">vs one cup of tea taken with food</p>
+        <div class="bar-track"><div class="bar-fill" id="expBar"></div></div>
+        <p style="font-size:0.86rem;margin-top:0.4rem">Risk band: <strong id="band">Low</strong></p>
+        <p id="expNote" style="font-size:0.82rem;color:var(--muted)">Brewed tea with food sits near the baseline.</p>
+      </div>
+    </div>
+
+    <div class="callout">
+      <span class="clabel">The move this teaches</span>
+      When a source says &ldquo;green tea is/ isn't hepatotoxic,&rdquo; the first question is <em>which exposure are we talking about?</em> A fasted, high-dose, concentrated bolus and a cup of tea with dinner are different exposures of the same molecule. That distinction, not a single yes/no, is what your Question 3 answer has to be built on. Go find the real figures yourself.
+    </div>
+  </div>
+</section>
+<script>
+(function () {
+  // A. allometric
+  var animDose = document.getElementById('animDose'), animDoseV = document.getElementById('animDoseV');
+  var speciesWrap = document.getElementById('species');
+  var km = 6;
+  var hedKg = document.getElementById('hedKg'), hedTotal = document.getElementById('hedTotal');
+  var cupsEl = document.getElementById('cups'), capsEl = document.getElementById('caps'), scaleNote = document.getElementById('scaleNote');
+  function fmt(n){ return n.toLocaleString('en-US'); }
+  function calcA() {
+    var d = +animDose.value; animDoseV.textContent = d;
+    var hed = d * km / 37;
+    var total = hed * 70;
+    hedKg.textContent = Math.round(hed);
+    hedTotal.textContent = fmt(Math.round(total)) + ' mg';
+    cupsEl.textContent = fmt(Math.round(total / 70));
+    capsEl.textContent = fmt(Math.max(1, Math.round(total / 400)));
+    scaleNote.textContent = (total/70 > 30)
+      ? 'That human-equivalent is far past anything you could drink, the animal number is a warning flag, not a human dose.'
+      : 'Here the human-equivalent is within reach of real-world intake, which is exactly when an animal signal deserves attention.';
+  }
+  speciesWrap.addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    speciesWrap.querySelectorAll('button').forEach(function(x){ x.setAttribute('aria-pressed','false'); });
+    b.setAttribute('aria-pressed','true'); km = +b.getAttribute('data-km'); calcA();
+  });
+  animDose.addEventListener('input', calcA); calcA();
+
+  // B. exposure index
+  var bw = document.getElementById('bw'), cat = document.getElementById('cat');
+  var bwV = document.getElementById('bwV'), catV = document.getElementById('catV');
+  var formWrap = document.getElementById('form'), fastWrap = document.getElementById('fast');
+  var form = 1, fast = 1;
+  var mult = document.getElementById('mult'), bar = document.getElementById('expBar'), band = document.getElementById('band'), note = document.getElementById('expNote');
+  function seg(wrap, set) {
+    wrap.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      wrap.querySelectorAll('button').forEach(function(x){ x.setAttribute('aria-pressed','false'); });
+      b.setAttribute('aria-pressed','true'); set(b); calcB();
+    });
+  }
+  seg(formWrap, function(b){ form = +b.getAttribute('data-f'); });
+  seg(fastWrap, function(b){ fast = +b.getAttribute('data-x'); });
+  function calcB() {
+    var w = +bw.value, c = +cat.value; bwV.textContent = w; catV.textContent = c;
+    var m = (c * form * fast) / w * (70 / 1); // baseline (70mg,1,1,70kg)=1
+    m = (c * form * fast) / w; // since 70/70=1 baseline
+    var mr = Math.round(m * 10) / 10;
+    mult.textContent = mr;
+    bar.style.width = Math.min(100, (m / 45) * 100) + '%';
+    var label, color, txt;
+    if (m < 3) { label='Low'; color='var(--good-rule)'; txt='Brewed tea with food sits near the baseline.'; }
+    else if (m < 10) { label='Moderate'; color='var(--warn-rule)'; txt='Larger amounts, or a sharper delivery, lift exposure several-fold.'; }
+    else if (m < 25) { label='Elevated'; color='var(--bad-rule)'; txt='Concentration and fasting are stacking, this is leaving everyday-tea territory.'; }
+    else { label='High'; color='var(--bad-rule)'; txt='A fasted, high-dose, concentrated bolus, the corner where catechin liver signals cluster.'; }
+    band.textContent = label; band.style.color = color; bar.style.background = color; note.textContent = txt;
+  }
+  bw.addEventListener('input', calcB); cat.addEventListener('input', calcB); calcB();
+})();
+</script>
+<section role="tabpanel" id="panel-6" aria-labelledby="tab-6" tabindex="0" hidden>
+  <div class="panel-head">
+    <p class="eyebrow">Module 06 · Metacognition · carries Wk4 → Wk10</p>
+    <h2 class="panel-title">Bias Deck</h2>
+  </div>
+  <p class="panel-sub">Dr. Kingston and Dr. Gurley between them demonstrate a whole catalog of ways weak evidence looks strong. Naming the bias is half of disarming it. Run the deck until the patterns are automatic, on neutral examples, so the recognition transfers anywhere.</p>
+
+  <div class="panel-body">
+    <div class="card">
+      <div class="deckbar">
+        <span class="pill">Card <span id="dIdx">1</span> / <span id="dTot">8</span></span>
+        <span class="pill">Score <span id="dScore">0</span></span>
+      </div>
+      <p class="scase" id="dQ" aria-live="polite" style="min-height:3em"></p>
+      <div class="choices" id="dChoices"></div>
+      <p class="fb" id="dFb" hidden></p>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="dNext" type="button" disabled>Next card</button>
+        <button class="btn btn-ghost btn-sm" id="dRestart" type="button" hidden>Restart deck</button>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <span class="clabel">Where this lands</span>
+      Your essay is graded on describing &ldquo;the bias that was reported about the risk,&rdquo; and Week 10 explicitly requires you to discuss bias in toxicity reporting. A named bias is a citable analytical move; &ldquo;this seems off&rdquo; is not. (One more to watch that isn't in the deck: <strong>media amplification</strong>, mistaking volume of coverage for weight of evidence.)
+    </div>
+  </div>
+</section>
+<script>
+(function () {
+  var DECK = [
+    { q:'Five review articles all warn that Herb X harms the kidneys. Trace the citations and every one points back to a single 1990 case report.',
+      opts:['Circular citation','Confounding','Naturalistic fallacy','In-vitro overreach'], a:0,
+      ex:'The apparent weight is one source wearing five coats. Always check whether "many sources" collapse to a single origin.' },
+    { q:'A dish of liver cells dies when flooded with a high concentration of Compound Y, so a headline calls Compound Y toxic to people.',
+      opts:['Single-case inflation','In-vitro overreach','Circular citation','Misattribution'], a:1,
+      ex:'Cells in a dish meet concentrations a living body may never reach, absorption and first-pass metabolism intervene. Gurley makes this exact point about in-vitro screens.' },
+    { q:'Rats given 1,500 mg/kg of an extract developed tumours, so a blog tells humans to avoid the herb entirely.',
+      opts:['Confounding','Naturalistic fallacy','Animal→human extrapolation','Circular citation'], a:2,
+      ex:'mg/kg does not cross species cleanly, and that dose may be unreachable in people. See Module 05.' },
+    { q:'A supplement is "standardized," so a reviewer assumes every bottle delivers the same amount of the active compound.',
+      opts:['Lot variability ignored','Misattribution','Confounding','Single-case inflation'], a:0,
+      ex:'Gurley’s St. John’s wort lots varied about four-fold in hyperforin despite identical labels. Standardized to one marker is not consistent in the active one.' },
+    { q:'A patient taking six medications, with existing illness, drinks an herbal tea and has a stroke. The report names the tea as the cause.',
+      opts:['Confounding','Misattribution','Naturalistic fallacy','In-vitro overreach'], a:0,
+      ex:'Six drugs and underlying disease are competing explanations the report never ruled out. The tea is the least-supported candidate, not the only one.' },
+    { q:'One person had a severe reaction after taking Herb Z. An article presents this as evidence that Herb Z is dangerous.',
+      opts:['Circular citation','Single-case inflation','Lot variability ignored','Animal→human extrapolation'], a:1,
+      ex:'A single case generates a hypothesis; it cannot establish a risk rate. Kingston’s lecture is largely about how single reports get inflated.' },
+    { q:'A product labelled "Herb A" actually contained a look-alike species carrying a toxin. The harm gets blamed on Herb A.',
+      opts:['Misattribution / misidentification','Confounding','Circular citation','Naturalistic fallacy'], a:0,
+      ex:'This is why authentication matters: the wrong plant (or an adulterant) took the blame. Kingston’s "toad venom filed as herbal" is the same error.' },
+    { q:'Because it is a plant and people have used it for centuries, a writer concludes it must be safe.',
+      opts:['In-vitro overreach','Lot variability ignored','Naturalistic fallacy','Confounding'], a:2,
+      ex:'Natural and old does not mean safe, the unstated premise you tagged in Module 03. Plenty of potent toxins are botanical and ancient.' }
+  ];
+  var i = 0, score = 0, answered = false;
+  var qEl = document.getElementById('dQ'), chEl = document.getElementById('dChoices'), fbEl = document.getElementById('dFb');
+  var idxEl = document.getElementById('dIdx'), scoreEl = document.getElementById('dScore'), totEl = document.getElementById('dTot');
+  var nextBtn = document.getElementById('dNext'), restartBtn = document.getElementById('dRestart');
+  totEl.textContent = DECK.length;
+
+  function render() {
+    answered = false; nextBtn.disabled = true; fbEl.hidden = true;
+    idxEl.textContent = i + 1;
+    var card = DECK[i];
+    qEl.textContent = card.q;
+    chEl.innerHTML = '';
+    card.opts.forEach(function (label, k) {
+      var b = document.createElement('button');
+      b.className = 'choice'; b.type = 'button'; b.textContent = label; b.setAttribute('data-k', k);
+      chEl.appendChild(b);
+    });
+  }
+  chEl.addEventListener('click', function (e) {
+    var b = e.target.closest('.choice'); if (!b || answered) return;
+    answered = true;
+    var k = +b.getAttribute('data-k'), card = DECK[i];
+    chEl.querySelectorAll('.choice').forEach(function (x, j) {
+      x.disabled = true;
+      if (j === card.a) x.classList.add('correct');
+      else if (j === k) x.classList.add('wrong');
+    });
+    if (k === card.a) { score++; scoreEl.textContent = score; fbEl.className = 'fb ok'; fbEl.textContent = '✓ ' + card.ex; }
+    else { fbEl.className = 'fb no'; fbEl.textContent = '✗ ' + card.opts[card.a] + '. ' + card.ex; }
+    fbEl.hidden = false;
+    nextBtn.disabled = false;
+  });
+  nextBtn.addEventListener('click', function () {
+    if (i < DECK.length - 1) { i++; render(); }
+    else {
+      qEl.textContent = 'Deck complete, ' + score + ' / ' + DECK.length + '. ' +
+        (score === DECK.length ? 'Every pattern named. Take this eye to the HerbalGram article.' :
+         'Re-run the ones that slipped; the goal is recognition without thinking.');
+      chEl.innerHTML = ''; fbEl.hidden = true; nextBtn.disabled = true; restartBtn.hidden = false;
+    }
+  });
+  restartBtn.addEventListener('click', function () { i = 0; score = 0; scoreEl.textContent = 0; restartBtn.hidden = true; render(); });
+  render();
+})();
+</script>
+<section role="tabpanel" id="panel-7" aria-labelledby="tab-7" tabindex="0" hidden>
+  <div class="panel-head">
+    <p class="eyebrow">Module 07 · Metacognition</p>
+    <h2 class="panel-title">Real Risk vs Reported Risk</h2>
+  </div>
+  <p class="panel-sub">Your essay's biggest single criterion (40 points) asks for one narrative that holds two things at once: the <em>real</em> toxicity risk and the <em>bias that was reported</em> about it. Most drafts blur them. This module trains the split before you write.</p>
+
+  <div class="panel-body">
+    <div class="callout">
+      <span class="clabel">Three buckets, not two</span>
+      A statement about the danger itself is a claim about <strong>real risk</strong>. A statement about how sources talk about the danger is about <strong>reported risk</strong>. And a competing cause that muddies who's to blame is a <strong>confound</strong>, the thing that lets you separate the first two. Sort each card.
+    </div>
+
+    <p style="font-size:0.85rem;color:var(--muted)">Click a statement, then click a bucket to drop it in. You can also drag it, or use the keyboard (Tab to a statement, Enter to pick it up, Tab to a bucket, Enter to drop). All statements use a neutral stand-in, &ldquo;Compound Q.&rdquo;</p>
+    <div class="tokens" id="tokens" role="group" aria-label="Statements to sort"></div>
+
+    <div class="bins">
+      <div class="bin" id="bin-real" data-bin="real"><h4>Real risk</h4></div>
+      <div class="bin" id="bin-reported" data-bin="reported"><h4>Reported risk (bias)</h4></div>
+      <div class="bin" id="bin-confound" data-bin="confound"><h4>Confound / neither</h4></div>
+    </div>
+    <p class="fb" id="sortFb" hidden></p>
+
+    <div class="callout good" id="splitWrap" hidden>
+      <span class="clabel">Now synthesize, don't just sort</span>
+      A top essay fuses the buckets into one consumer-useful line: <em>&ldquo;Here is the actual risk and the exposure it depends on; here is how reporting over- or under-stated it; and here are the confounds that explain the gap.&rdquo;</em> Sorting is the warm-up; the 40 points are for weaving the three back together.
+    </div>
+  </div>
+</section>
+<script>
+(function () {
+  var ITEMS = [
+    { t:'At high concentrated doses, Compound Q damages liver cells in controlled studies.', bin:'real', ex:'A statement about the danger itself, backed by controlled data, real risk.' },
+    { t:'Three news outlets ran alarming headlines after a single hospitalisation.', bin:'reported', ex:'About coverage, not the hazard, and volume mistaken for weight. Reported risk.' },
+    { t:'Most reports blaming Compound Q involved patients on several other medications.', bin:'confound', ex:'A competing cause the reports never ruled out, a confound, not a property of Q.' },
+    { t:'The dose that harmed animals is far above typical human intake.', bin:'real', ex:'Characterises the magnitude of the actual risk (dose-response), real risk.' },
+    { t:'Reviews call the risk "well documented" but all cite the same original case.', bin:'reported', ex:'About how the literature represents the risk, circular citation. Reported risk.' },
+    { t:'Brewed and concentrated-extract forms differ in how much active compound they deliver.', bin:'real', ex:'An exposure fact about the substance itself, real risk (and the crux of "which form").' },
+    { t:'Coverage stressed the rare severe cases and skipped the common mild ones.', bin:'reported', ex:'Selection and framing in the reporting, reported risk.' },
+    { t:'Several "Q-caused" cases turned out to involve a misidentified look-alike plant.', bin:'confound', ex:'The wrong plant took the blame, misattribution, a confound on causation.' }
+  ];
+  var LABEL = { real:'Real risk', reported:'Reported risk', confound:'Confound' };
+  var tokensEl = document.getElementById('tokens');
+  var bins = document.querySelectorAll('.bin');
+  var fb = document.getElementById('sortFb');
+  var selected = null, placed = 0;
+
+  function arm(on) { bins.forEach(function (bn) { bn.classList.toggle('armed', on); }); }
+  function pick(b) {
+    if (selected && selected !== b) selected.setAttribute('aria-pressed', 'false');
+    selected = b; b.setAttribute('aria-pressed', 'true'); arm(true);
+  }
+  function place(bin) {
+    if (!selected) { fb.className = 'fb info'; fb.textContent = 'Pick a statement first (click it), then choose a bucket.'; fb.hidden = false; return; }
+    var idx = +selected.getAttribute('data-i'), it = ITEMS[idx];
+    var ok = bin.getAttribute('data-bin') === it.bin;
+    var chip = document.createElement('span');
+    chip.className = 'chip ' + (ok ? 'ok' : 'no');
+    chip.textContent = it.t;
+    bin.appendChild(chip);
+    selected.classList.add('done'); selected.setAttribute('aria-pressed', 'false');
+    fb.className = 'fb ' + (ok ? 'ok' : 'no');
+    fb.textContent = (ok ? '\u2713 ' : '\u2717 Belongs in \u201c' + LABEL[it.bin] + '.\u201d ') + it.ex;
+    fb.hidden = false;
+    selected = null; arm(false);
+    placed++;
+    if (placed === ITEMS.length) document.getElementById('splitWrap').hidden = false;
+  }
+
+  ITEMS.forEach(function (it, idx) {
+    var b = document.createElement('button');
+    b.className = 'token'; b.type = 'button'; b.textContent = it.t;
+    b.setAttribute('data-i', idx); b.setAttribute('aria-pressed', 'false');
+    b.setAttribute('draggable', 'true');
+    b.addEventListener('dragstart', function (e) {
+      if (b.classList.contains('done')) { e.preventDefault(); return; }
+      pick(b);
+      e.dataTransfer.setData('text/plain', String(idx)); // required so Firefox initiates the drag
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    b.addEventListener('dragend', function () { arm(false); });
+    tokensEl.appendChild(b);
+  });
+
+  tokensEl.addEventListener('click', function (e) {
+    var b = e.target.closest('.token'); if (!b || b.classList.contains('done')) return;
+    if (selected === b) { selected = null; b.setAttribute('aria-pressed', 'false'); arm(false); return; }
+    pick(b);
+  });
+
+  bins.forEach(function (bin) {
+    bin.setAttribute('tabindex', '0');
+    bin.setAttribute('role', 'button');
+    var h = bin.querySelector('h4');
+    bin.setAttribute('aria-label', 'Place the selected statement in ' + (h ? h.textContent : 'this bucket'));
+    bin.addEventListener('click', function () { place(bin); });
+    bin.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); place(bin); } });
+    bin.addEventListener('dragover', function (e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; });
+    bin.addEventListener('drop', function (e) { e.preventDefault(); place(bin); });
+  });
+})();
+</script>
+<section role="tabpanel" id="panel-8" aria-labelledby="tab-8" tabindex="0" hidden>
+  <div class="panel-head">
+    <p class="eyebrow">Module 08 · Scaffolding between weeks</p>
+    <h2 class="panel-title">The Arc Map</h2>
+  </div>
+  <p class="panel-sub">Green Tea isn't a standalone week. It's the middle of a three-week move: learn what a verdict needs (Week 4), test whether someone else's verdict holds (Week 6), then render your own (Week 10). Knowing which rung you're on tells you what this week is actually training.</p>
+
+  <div class="panel-body">
+    <div class="callout">
+      <span class="clabel">The throughline</span>
+      Week 4 builds the toolkit. Week 6 turns it on a published claim. Week 10 makes you commit. Each week the evidence gets more self-sourced, the writing more argumentative, and the verdict more your own.
+    </div>
+
+    <div class="arc" role="group" aria-label="Module arc, choose a week">
+      <button class="node" type="button" data-wk="4" aria-pressed="false">
+        <span class="nwk">Week 4</span><span class="nsub">Causality</span><span class="nrole">what a verdict needs</span>
+      </button>
+      <button class="node" type="button" data-wk="6" aria-pressed="true">
+        <span class="nwk">Week 6</span><span class="nsub">Green Tea</span><span class="nrole">test a verdict</span><span class="here">You are here</span>
+      </button>
+      <button class="node" type="button" data-wk="10" aria-pressed="false">
+        <span class="nwk">Week 10</span><span class="nsub">Kratom</span><span class="nrole">render a verdict</span>
+      </button>
+    </div>
+
+    <div class="arc-detail card">
+      <h3 id="arcH" style="margin-top:0">Week 6, Green Tea</h3>
+      <dl>
+        <dt>Lecturer</dt><dd id="arcLect"></dd>
+        <dt>The skill</dt><dd id="arcSkill"></dd>
+        <dt>Thinking level</dt><dd id="arcBloom"></dd>
+        <dt>Evidence you bring</dt><dd id="arcEvid"></dd>
+        <dt>The verdict is about</dt><dd id="arcVerd"></dd>
+        <dt>Writing mode</dt><dd id="arcWrite"></dd>
+      </dl>
+    </div>
+
+    <h3>Seen as one escalation</h3>
+    <table class="matrix">
+      <caption>How each axis ramps across the three weeks.</caption>
+      <thead><tr><th>Axis</th><th>Week 4 · Causality</th><th>Week 6 · Green Tea</th><th>Week 10 · Kratom</th></tr></thead>
+      <tbody>
+        <tr><th>Skill</th><td>Learn what evidence a verdict requires</td><td>Test whether a published verdict is warranted</td><td>Render and defend your own verdict</td></tr>
+        <tr><th>Evidence</th><td>≥2 references, supplement the curated material</td><td>2&ndash;3 references, fill the gaps you found</td><td>≥5 primary references, build the base yourself</td></tr>
+        <tr><th>Writing</th><td>Procedural (describe a process)</td><td>Narrative synthesis (weave peer findings)</td><td>Formal argument (thesis, defense, conclusion)</td></tr>
+        <tr><th>Verdict</th><td>None on a substance, a process recommendation</td><td>On the <em>claims</em>, is the reported risk accurate?</td><td>On the <em>substance</em>, commit to a hypothesis</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout good">
+      <span class="clabel">Why Week 6 is the hinge</span>
+      This is the only week whose whole job is checking someone else's verdict, and the first time a named critical-reading method (interrogation) and an explicit bias vocabulary appear. Everything you build here, from bias-spotting to missing-data questions to calibrated confidence, is what you'll deploy under far messier conditions in Week 10.
+    </div>
+  </div>
+</section>
+<script>
+(function () {
+  var DATA = {
+    '4': { sub:'Causality', lect:'Dr. Rick Kingston, clinical toxicology, post-market surveillance',
+      skill:'Learn what a safety verdict requires: choose among three causality methods and prioritise the data that matters.',
+      bloom:'Comprehension → Application',
+      evid:'≥2 peer-reviewed references, you supplement the curated material.',
+      verd:'No verdict on a substance yet. You output a process recommendation for clinicians.',
+      write:'Procedural, describe a clinical workflow.' },
+    '6': { sub:'Green Tea', lect:'Dr. Bill Gurley, pharmaceutical sciences, herb–drug interaction studies',
+      skill:'Test whether an existing published verdict holds: interrogate sources for bias and missing data.',
+      bloom:'Analysis → Evaluation',
+      evid:'2–3 authoritative references, you fill the gaps you identified.',
+      verd:'The claims, not the substance. Is the reported toxicity risk accurate? You prove or disprove the narrative.',
+      write:'Narrative synthesis, weave peer findings into one account of real vs reported risk.' },
+    '10': { sub:'Kratom', lect:'Dr. Michael Tims, intrinsic vs idiosyncratic toxicity (kava case)',
+      skill:'Render and defend your own verdict: commit to a hypothesis (intrinsic vs idiosyncratic) and argue it.',
+      bloom:'Evaluation → Creation',
+      evid:'≥5 primary peer-reviewed references, you build the entire evidence base.',
+      verd:'The substance itself, under genuine uncertainty. You must integrate all three prior frames.',
+      write:'Formal argument, thesis, organised defense, concluding analysis.' }
+  };
+  var nodes = document.querySelectorAll('.arc .node');
+  var H = document.getElementById('arcH');
+  var f = { lect:'arcLect', skill:'arcSkill', bloom:'arcBloom', evid:'arcEvid', verd:'arcVerd', write:'arcWrite' };
+  function render(wk) {
+    var d = DATA[wk];
+    H.textContent = 'Week ' + wk + ', ' + d.sub;
+    document.getElementById('arcLect').textContent = d.lect;
+    document.getElementById('arcSkill').textContent = d.skill;
+    document.getElementById('arcBloom').textContent = d.bloom;
+    document.getElementById('arcEvid').textContent = d.evid;
+    document.getElementById('arcVerd').textContent = d.verd;
+    document.getElementById('arcWrite').textContent = d.write;
+  }
+  nodes.forEach(function (n) {
+    n.addEventListener('click', function () {
+      nodes.forEach(function(x){ x.setAttribute('aria-pressed','false'); });
+      n.setAttribute('aria-pressed','true');
+      render(n.getAttribute('data-wk'));
+    });
+  });
+  render('6');
+})();
+</script>
+  </main>
+
+  <footer class="page">
+    <p><strong>Safety Tuesday · Week 6 (Green Tea)</strong>, optional, ungraded practice for HRB-641. Built to develop reasoning, not to produce submittable content.</p>
+    <p>Accessibility: keyboard-operable tabs (arrow keys, Home/End), visible focus, reduced-motion honored, light/dark themes, text equivalents for every visual. Single self-contained file, no network, no tracking, no stored data.</p>
+  </footer>
+
+</div>
+
+<script>
+/* ---------- core: tabs ---------- */
+(function () {
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('[role="tab"]'));
+  var panels = tabs.map(function (t) { return document.getElementById(t.getAttribute('aria-controls')); });
+
+  function select(tab, setFocus) {
+    tabs.forEach(function (t, i) {
+      var on = t === tab;
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+      t.tabIndex = on ? 0 : -1;
+      if (panels[i]) panels[i].hidden = !on;
+    });
+    if (setFocus !== false) tab.focus();
+  }
+
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () { select(tab); });
+    tab.addEventListener('keydown', function (e) {
+      var i = tabs.indexOf(tab), n = tabs.length, next = null;
+      switch (e.key) {
+        case 'ArrowRight': case 'ArrowDown': next = tabs[(i + 1) % n]; break;
+        case 'ArrowLeft':  case 'ArrowUp':   next = tabs[(i - 1 + n) % n]; break;
+        case 'Home': next = tabs[0]; break;
+        case 'End':  next = tabs[n - 1]; break;
+        default: return;
+      }
+      e.preventDefault();
+      select(next);
+    });
+  });
+
+  // deep-link via hash (#tab-3)
+  var h = location.hash.replace('#', '');
+  var match = tabs.filter(function (t) { return t.id === h; })[0];
+  if (match) select(match, false); else select(tabs[0], false);
+})();
+
+/* ---------- core: theme toggle ---------- */
+(function () {
+  var btn = document.getElementById('themeBtn');
+  var label = document.getElementById('themeLabel');
+  var icon = document.getElementById('themeIcon');
+  var root = document.documentElement;
+  var sun = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';
+  var moon = '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>';
+
+  function apply(theme) {
+    root.setAttribute('data-theme', theme);
+    var dark = theme === 'dark';
+    btn.setAttribute('aria-pressed', dark ? 'true' : 'false');
+    btn.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
+    label.textContent = dark ? 'Light' : 'Dark';
+    icon.innerHTML = dark ? moon : sun;
+  }
+  // honor OS preference on first load
+  try {
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) apply('dark');
+  } catch (e) {}
+  btn.addEventListener('click', function () {
+    apply(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+})();
+
+/* tab modules attach their own listeners inline, below each panel. */
+</script>
+</body>
+</html>
