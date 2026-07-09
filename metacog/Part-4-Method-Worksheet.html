@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Part 4 — The Method (Your Fishing Pole)</title>
+<style>
+  :root{
+    --ink:#1c1e1c; --muted:#5c625b; --line:#d9ded6; --accent:#38603f;
+    --accent-soft:#eef3ec; --bg:#ffffff; --field:#fbfcfa; --field-focus:#f3f7f1;
+    --warn-line:#c9b45a; --warn-soft:#fbf7e8;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  .wrap{max-width:820px; margin:0 auto; padding:40px 28px 96px}
+  h1{font-size:26px; line-height:1.2; margin:0 0 6px; letter-spacing:-0.01em}
+  .sub{color:var(--muted); margin:0 0 22px; font-size:15px}
+  h2{font-size:19px; margin:0 0 4px; letter-spacing:-0.01em}
+  p{margin:0 0 12px}
+  a{color:var(--accent)}
+
+  .meta{display:grid; grid-template-columns:1fr 1fr; gap:12px 18px; margin:0 0 26px}
+  .meta .full{grid-column:1 / -1}
+  .meta label{display:block; font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin-bottom:4px}
+  .meta input{width:100%; padding:8px 10px; border:1px solid var(--line); border-radius:6px; background:var(--field); font:inherit; color:inherit}
+  .meta input:focus{outline:none; border-color:var(--accent); background:var(--field-focus)}
+
+  .intro{background:var(--accent-soft); border:1px solid #d5e2d3; border-radius:10px; padding:16px 18px; margin:0 0 14px}
+  .intro p{margin:0 0 8px}
+  .intro p:last-child{margin:0}
+  .rubric{border:1px solid var(--line); border-radius:10px; padding:14px 18px; margin:0 0 34px}
+  .rubric h3{margin:0 0 8px; font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted)}
+  .rubric ul{margin:0; padding-left:18px}
+  .rubric li{margin:0 0 5px}
+  .rubric li:last-child{margin:0}
+
+  .module{border-top:2px solid var(--accent); padding:22px 0 6px; margin:0}
+  .module .num{display:inline-block; font-size:12px; font-weight:700; color:var(--accent); letter-spacing:.08em; text-transform:uppercase; margin-bottom:2px}
+  .prompt{color:var(--muted); margin:2px 0 14px}
+  .opt{font-weight:400; color:var(--muted); font-size:13px; text-transform:none; letter-spacing:0}
+
+  .field{margin:0 0 14px}
+  .field > label{display:block; font-size:14px; font-weight:600; margin:0 0 6px}
+  textarea{
+    width:100%; min-height:52px; padding:9px 11px; border:1px solid var(--line);
+    border-radius:7px; background:var(--field); font:inherit; color:inherit; resize:vertical; overflow:hidden;
+  }
+  textarea:focus{outline:none; border-color:var(--accent); background:var(--field-focus)}
+
+  .calib{background:#f6f8f5; border-left:3px solid var(--accent); border-radius:0 7px 7px 0; padding:11px 14px; margin:6px 0 4px}
+  .calib > label{display:block; font-size:13px; font-weight:600; color:var(--accent); margin:0 0 6px}
+  .calib textarea{background:#fff}
+
+  .frag{border:1px solid var(--warn-line); background:var(--warn-soft); border-radius:8px; padding:12px 14px; margin:0 0 8px}
+  .frag blockquote{margin:0 0 8px; padding:0 0 0 12px; border-left:3px solid var(--warn-line); font-style:italic; color:#4a4630}
+  .frag .tag{font-size:11px; text-transform:uppercase; letter-spacing:.07em; color:#8a7b2e; font-weight:700}
+
+  .toolbar{position:sticky; bottom:0; margin-top:36px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+    background:rgba(255,255,255,.92); backdrop-filter:saturate(1.2) blur(3px); border-top:1px solid var(--line); padding:12px 0}
+  button{font:inherit; cursor:pointer; border-radius:7px; padding:9px 16px; border:1px solid var(--accent)}
+  .btn-print{background:var(--accent); color:#fff}
+  .btn-clear{background:#fff; color:var(--muted); border-color:var(--line)}
+  .save-note{font-size:12px; color:var(--muted); margin-left:auto}
+
+  @media (max-width:560px){ .meta{grid-template-columns:1fr} .wrap{padding:28px 18px 90px} }
+
+  @media print{
+    .no-print{display:none !important}
+    body{background:#fff; color:#000; font-size:11.5pt}
+    .wrap{max-width:none; padding:0}
+    .intro{background:#fff; border:1px solid #bbb}
+    .module{border-top:1.5pt solid #000; break-inside:auto}
+    h2{break-after:avoid}
+    .field,.calib,.frag,.rubric{break-inside:avoid}
+    textarea{border:1px solid #999; background:#fff; resize:none; color:#000}
+    .calib{background:#fff; border-left:2pt solid #000}
+    .meta input{background:#fff; border:1px solid #999}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Part 4 — The Method (your &ldquo;fishing pole&rdquo;)</h1>
+  <p class="sub">HRB794 &middot; A worksheet for reflecting and building. It is not a template to fill in for points, and there is no answer key. It only asks the questions; you supply the method.</p>
+
+  <div class="meta">
+    <div><label for="m-name">Name</label><input id="m-name" type="text" autocomplete="off"></div>
+    <div><label for="m-date">Date</label><input id="m-date" type="text" autocomplete="off" placeholder="2026-__-__"></div>
+    <div class="full"><label for="m-anchor">The Fox Haven decision I&rsquo;m anchoring this on</label><input id="m-anchor" type="text" autocomplete="off" placeholder="e.g., equipment tier routing / GRAS as guide vs. dossier / MD-compliant drying"></div>
+  </div>
+
+  <div class="intro">
+    <p>Parts 1&ndash;3 are the fish. Part 4 is the pole &mdash; the account of <em>how</em> your team built Parts 1&ndash;3 and how the Herbshed keeps updating them after you&rsquo;re gone. It is the one part whose value doesn&rsquo;t decay when a price or a regulation changes.</p>
+    <p>Work the modules against <strong>one real decision your team actually made</strong>. Answer from what you did, not from how it &ldquo;should&rdquo; be done. When finished, use <strong>Print / Save as PDF</strong> at the bottom.</p>
+  </div>
+
+  <div class="rubric">
+    <h3>What this is looked at for (there is no external key)</h3>
+    <ul>
+      <li><strong>Derived, not generic.</strong> It reads like an account of what your team actually did, not a textbook process that would fit any project.</li>
+      <li><strong>Calibrated.</strong> Your stated confidence matches your evidence; it says plainly what it does <em>not</em> cover.</li>
+      <li><strong>Reusable.</strong> A Herbshed member could run it next year, on a tool or herb you never touched, without you in the room.</li>
+      <li><strong>Honest about change.</strong> It shows where your thinking was wrong or incomplete and what moved it.</li>
+    </ul>
+  </div>
+
+  <!-- MODULE 1 -->
+  <section class="module">
+    <span class="num">Module 1</span>
+    <h2>Reconstruct the actual process</h2>
+    <p class="prompt">Take one question Fox Haven actually put to your team. Reconstruct the real path from their words to your answer.</p>
+    <div class="field"><label for="q1a">The question as the stakeholder stated it</label><textarea id="q1a"></textarea></div>
+    <div class="field"><label for="q1b">The question as you ended up actually answering it. Did it change on the way? How, and why?</label><textarea id="q1b"></textarea></div>
+    <div class="field"><label for="q1c">The moves, in the order you made them (first you&hellip;, then&hellip;, then&hellip;)</label><textarea id="q1c"></textarea></div>
+    <div class="field"><label for="q1d">Where did the real difficulty sit &mdash; finding facts, or deciding how to frame the problem?</label><textarea id="q1d"></textarea></div>
+    <div class="calib"><label for="q1cal">Calibration — at which step were you most likely to be wrong, and how would you have known?</label><textarea id="q1cal"></textarea></div>
+  </section>
+
+  <!-- MODULE 2 -->
+  <section class="module">
+    <span class="num">Module 2</span>
+    <h2>Your decision structure</h2>
+    <p class="prompt">How your matrix or heuristic actually decides &mdash; before you tidy it up.</p>
+    <div class="field"><label for="q2a">Describe how your team&rsquo;s decision method currently works. What goes in, what comes out, and how is a &ldquo;winner&rdquo; chosen?</label><textarea id="q2a"></textarea></div>
+    <div class="field"><label for="q2b">Some variables may not behave like the others: some can rule a candidate out entirely, no matter how well it scores elsewhere; some only rank the candidates still in the running; some sort candidates onto different paths (not better or worse, just different). Sort your variables. Which are which?</label><textarea id="q2b"></textarea></div>
+    <div class="field"><label for="q2c">Does any variable land in more than one group, or get counted twice? What happens to your result if it does?</label><textarea id="q2c"></textarea></div>
+    <div class="calib"><label for="q2cal">Calibration — name the one criterion you are least sure how to place, and why.</label><textarea id="q2cal"></textarea></div>
+  </section>
+
+  <!-- MODULE 3 -->
+  <section class="module">
+    <span class="num">Module 3</span>
+    <h2>Make it reusable (the no-author test)</h2>
+    <p class="prompt">For each thing your team built &mdash; matrix, heuristic, guide &mdash; put it through the same three questions.</p>
+    <div class="field"><label for="q3a">Could a Herbshed member run it next year, on a new tool or herb, with none of you in the room? If not, what is missing?</label><textarea id="q3a"></textarea></div>
+    <div class="field"><label for="q3b">What event should trigger them to re-run or update it?</label><textarea id="q3b"></textarea></div>
+    <div class="field"><label for="q3c">What has to be written down now so the reasoning &mdash; not just the conclusion &mdash; survives you?</label><textarea id="q3c"></textarea></div>
+    <div class="calib"><label for="q3cal">Calibration — which artifact is most likely to be used without being understood after you leave? Why that one?</label><textarea id="q3cal"></textarea></div>
+  </section>
+
+  <!-- MODULE 4 -->
+  <section class="module">
+    <span class="num">Module 4</span>
+    <h2>The transfer: culture, process, framing</h2>
+    <p class="prompt">One concrete change Fox Haven could adopt in each, so they answer future questions without you.</p>
+    <div class="field"><label for="q4a">Culture &mdash; a change in what the group rewards or how it behaves</label><textarea id="q4a"></textarea></div>
+    <div class="field"><label for="q4b">Process &mdash; a change in what gets recorded, repeated, or triggered</label><textarea id="q4b"></textarea></div>
+    <div class="field"><label for="q4c">Framing &mdash; a change in the questions members ask, or how they judge evidence</label><textarea id="q4c"></textarea></div>
+    <div class="calib"><label for="q4cal">Calibration — which of the three will be hardest for them to actually adopt, and what would make it stick?</label><textarea id="q4cal"></textarea></div>
+  </section>
+
+  <!-- MODULE 5 -->
+  <section class="module">
+    <span class="num">Module 5</span>
+    <h2>Generalize (strip out the herbs)</h2>
+    <p class="prompt">If the method only works on this project, it isn&rsquo;t a method yet.</p>
+    <div class="field"><label for="q5a">Write your method as steps that would work on a product-design problem you have never seen.</label><textarea id="q5a"></textarea></div>
+    <div class="field"><label for="q5b">Now apply those steps, in one paragraph, to a deliberately unrelated problem &mdash; a bakery scaling to wholesale, a clinic choosing records software, or one of your own.</label><textarea id="q5b"></textarea></div>
+    <div class="field"><label for="q5c">Where did the method break, or need a step you hadn&rsquo;t named?</label><textarea id="q5c"></textarea></div>
+    <div class="calib"><label for="q5cal">Calibration — how daunting did that transfer feel, and what specifically made it more (or less) manageable?</label><textarea id="q5cal"></textarea></div>
+  </section>
+
+  <!-- MODULE 6 -->
+  <section class="module">
+    <span class="num">Module 6</span>
+    <h2>What changed &mdash; in you, and in the group</h2>
+    <p class="prompt">Six weeks ago the group could not shepherd a GRAS designation; now you can describe the pathway. Trace one such shift.</p>
+    <div class="field"><label for="q6a">What did you believe about this problem at the start that turned out wrong or incomplete?</label><textarea id="q6a"></textarea></div>
+    <div class="field"><label for="q6b">What input or moment changed it?</label><textarea id="q6b"></textarea></div>
+    <div class="field"><label for="q6c">Once it changed, what did you have to re-derive downstream?</label><textarea id="q6c"></textarea></div>
+    <div class="calib"><label for="q6cal">Calibration — rate your confidence in your current understanding here, and name the biggest remaining unknown.</label><textarea id="q6cal"></textarea></div>
+  </section>
+
+  <!-- MODULE 7 (optional) -->
+  <section class="module">
+    <span class="num">Module 7 <span class="opt">&mdash; optional</span></span>
+    <h2>Critique these fragments</h2>
+    <p class="prompt">Three sample &ldquo;Part 4&rdquo; fragments. None is a model answer; each fails in a specific way. Say what is wrong, and what you would need to see instead.</p>
+
+    <div class="frag">
+      <span class="tag">Fragment A</span>
+      <blockquote>&ldquo;Part 4: Below is our final recommended equipment-and-tier table. Going forward, the Herbshed should use this table.&rdquo;</blockquote>
+    </div>
+    <div class="field"><label for="q7a">What is wrong / what is missing?</label><textarea id="q7a"></textarea></div>
+
+    <div class="frag">
+      <span class="tag">Fragment B</span>
+      <blockquote>&ldquo;This method is comprehensive and will handle any future equipment decision the network faces.&rdquo;</blockquote>
+    </div>
+    <div class="field"><label for="q7b">What is wrong / what is missing?</label><textarea id="q7b"></textarea></div>
+
+    <div class="frag">
+      <span class="tag">Fragment C</span>
+      <blockquote>&ldquo;Our process was: define the problem, brainstorm options, weigh the options, decide, and implement.&rdquo;</blockquote>
+    </div>
+    <div class="field"><label for="q7c">What is wrong / what is missing?</label><textarea id="q7c"></textarea></div>
+  </section>
+
+  <!-- SELF-EVAL -->
+  <section class="module">
+    <span class="num">Close</span>
+    <h2>Self-evaluation</h2>
+    <div class="field"><label for="se1">On the spectrum from the textbook &ldquo;thermoregulation&rdquo; answer to the open &ldquo;genetic-engineer&rdquo; question, where does your current Part 4 draft sit &mdash; and what single change would move it toward the generative end?</label><textarea id="se1"></textarea></div>
+    <div class="field"><label for="se2">The last time you were totally wrong in this project &mdash; what was it, and what did it teach you?</label><textarea id="se2"></textarea></div>
+  </section>
+
+  <div class="toolbar no-print">
+    <button class="btn-print" type="button" onclick="window.print()">Print / Save as PDF</button>
+    <button class="btn-clear" type="button" id="clearBtn">Clear all</button>
+    <span class="save-note" id="saveNote">Your answers save in this browser as you type.</span>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var STORE = 'hrb794_part4_worksheet_v1';
+  var fields = Array.prototype.slice.call(document.querySelectorAll('textarea, .meta input'));
+
+  function grow(el){ if(el.tagName==='TEXTAREA'){ el.style.height='auto'; el.style.height=(el.scrollHeight+2)+'px'; } }
+
+  function save(){
+    try{
+      var data={};
+      fields.forEach(function(el){ if(el.id) data[el.id]=el.value; });
+      localStorage.setItem(STORE, JSON.stringify(data));
+    }catch(e){ /* storage unavailable (e.g. private mode) — worksheet still works, just no autosave */ }
+  }
+
+  function restore(){
+    try{
+      var raw=localStorage.getItem(STORE);
+      if(!raw) return;
+      var data=JSON.parse(raw);
+      fields.forEach(function(el){ if(el.id && typeof data[el.id]==='string'){ el.value=data[el.id]; } });
+    }catch(e){}
+  }
+
+  restore();
+  fields.forEach(function(el){
+    grow(el);
+    el.addEventListener('input', function(){ grow(el); save(); });
+  });
+
+  document.getElementById('clearBtn').addEventListener('click', function(){
+    if(!confirm('Clear every answer on this sheet? This cannot be undone.')) return;
+    fields.forEach(function(el){ el.value=''; grow(el); });
+    try{ localStorage.removeItem(STORE); }catch(e){}
+  });
+
+  window.addEventListener('beforeprint', function(){ fields.forEach(grow); });
+})();
+</script>
+</body>
+</html>
