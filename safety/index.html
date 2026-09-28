@@ -3,13 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pedagogy Tools — Clinical Herbalism Education</title>
+<title>Safety — Pedagogy Tools</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #f5f1eb;
     --bg-card: #fefcf9;
-    --bg-elevated: #ede8df;
     --bg-dark: #1e1a14;
     --border: #cfc5b4;
     --border-light: #e2dbd0;
@@ -17,9 +16,7 @@
     --text-secondary: #6b5e48;
     --text-muted: #9b8f7c;
     --accent-green: #2c5f47;
-    --accent-green-light: #e8f3ee;
     --accent-amber: #b86c10;
-    --accent-amber-light: #fdf0e0;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -62,6 +59,19 @@
     padding: 2.5rem 1.5rem 4rem;
   }
 
+  .back-link {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-decoration: none;
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.02em;
+  }
+
+  .back-link:hover { color: var(--text-secondary); }
+  .back-link::before { content: '\2190 '; }
+
   .section-label {
     font-size: 11px;
     font-weight: 600;
@@ -69,13 +79,6 @@
     letter-spacing: 0.08em;
     color: var(--text-muted);
     margin-bottom: 1rem;
-  }
-
-  .tool-count {
-    font-size: 12px;
-    color: var(--text-muted);
-    font-weight: 400;
-    margin-left: 0.25rem;
   }
 
   .tool-card {
@@ -92,11 +95,7 @@
     box-shadow: 0 2px 12px rgba(0,0,0,0.06);
   }
 
-  .tool-card a {
-    text-decoration: none;
-    color: inherit;
-    display: block;
-  }
+  .tool-card a { text-decoration: none; color: inherit; display: block; }
 
   .tool-title {
     font-family: 'Playfair Display', serif;
@@ -122,9 +121,7 @@
     letter-spacing: 0.02em;
   }
 
-  .tool-link::after {
-    content: ' \2192';
-  }
+  .tool-link::after { content: ' \2192'; }
 
   footer {
     text-align: center;
@@ -143,45 +140,38 @@
 </header>
 
 <main class="container">
-  <div class="section-label">Categories</div>
+  <a href="../" class="back-link">All categories</a>
+  <div class="section-label">Safety</div>
 
   <div class="tool-card">
-    <a href="./safety/">
-      <div class="tool-title">Safety <span class="tool-count">(4 tools)</span></div>
-      <div class="tool-description">Frameworks for interrogating herb safety claims, causality assessment, bias detection, and evidence evaluation — from kratom toxicity to green tea hepatotoxicity.</div>
-      <span class="tool-link">Browse tools</span>
+    <a href="./herb-safety-claims/">
+      <div class="tool-title">When an Herb Gets Labeled Dangerous</div>
+      <div class="tool-description">An interactive framework for interrogating herb safety claims — causality methods, bias taxonomy, and parallel case studies in green tea and kratom.</div>
+      <span class="tool-link">Open tool</span>
     </a>
   </div>
 
   <div class="tool-card">
-    <a href="./physiology/">
-      <div class="tool-title">Physiology <span class="tool-count">(2 tools)</span></div>
-      <div class="tool-description">Interactive labs on the physiological systems herbalists lean on hardest — allostatic load, epithelial barrier integrity, and respiratory mechanics.</div>
-      <span class="tool-link">Browse tools</span>
+    <a href="./kratom-toxicity/">
+      <div class="tool-title">Kratom Toxicity: Intrinsic or Idiosyncratic?</div>
+      <div class="tool-description">A metacognitive scaffold for evaluating kratom hepatotoxicity claims — guiding students through causality assessment, confounders, and the intrinsic vs. idiosyncratic distinction.</div>
+      <span class="tool-link">Open tool</span>
     </a>
   </div>
 
   <div class="tool-card">
-    <a href="./consulting/">
-      <div class="tool-title">Consulting <span class="tool-count">(2 tools)</span></div>
-      <div class="tool-description">Diagnostic and scaffolding tools for capstone-level work — final report failure modes, research methodology worksheets, and structured revision.</div>
-      <span class="tool-link">Browse tools</span>
+    <a href="./signal-and-causality/">
+      <div class="tool-title">Signal & Causality Scaffold</div>
+      <div class="tool-description">An interactive scaffold for HRB-641 Safety of Botanical Medicine — guiding students through signal detection, causality assessment, and evidence evaluation frameworks.</div>
+      <span class="tool-link">Open tool</span>
     </a>
   </div>
 
   <div class="tool-card">
-    <a href="./dispensary/">
-      <div class="tool-title">Dispensary <span class="tool-count">(3 tools)</span></div>
-      <div class="tool-description">Operating manuals, batch production records, and professional association references for dispensary management and regulatory compliance.</div>
-      <span class="tool-link">Browse tools</span>
-    </a>
-  </div>
-
-  <div class="tool-card">
-    <a href="./reference/">
-      <div class="tool-title">Reference <span class="tool-count">(2 tools)</span></div>
-      <div class="tool-description">Dosing references and orientation materials — practical lookup tools and the AI trajectory memo for incoming students.</div>
-      <span class="tool-link">Browse tools</span>
+    <a href="./green-tea-workbench/">
+      <div class="tool-title">Green Tea — A Thinking Workbench</div>
+      <div class="tool-description">Eight interactive modules for Safety Tuesday Week 6 — building the reasoning green tea's safety profile demands without writing the essay for you. Evidence audit, bias detection, dose-response modeling, and the kind of structured thinking that makes the difference between summarizing a review and actually interrogating one.</div>
+      <span class="tool-link">Open tool</span>
     </a>
   </div>
 </main>
