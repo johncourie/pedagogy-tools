@@ -1,0 +1,809 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>AI Trajectory, Class of 2028</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..800&family=IBM+Plex+Mono:wght@400;500&family=Literata:opsz,wght@7..72,400..700&display=swap">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#f3f4f0; --surface:#fbfbf9; --ink:#14171a; --ink-2:#4b5157; --ink-3:#7f868c;
+  --hair:#dcdfd8; --rule:#c4c9c0;
+  --accent:#2a78d6; --accent-ink:#1c5cab; --accent-wash:rgba(42,120,214,.10);
+  --s2:#eb6834;
+  --band:rgba(20,23,26,.07); --band-edge:rgba(20,23,26,.28); --ceiling:rgba(20,23,26,.05);
+  --seg-fill:#1c5cab; --seg-ink:#ffffff; --focus:#2a78d6;
+  --tip-bg:#14171a; --tip-ink:#f3f4f0;
+  --display:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --body:"Literata",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0f1113; --surface:#181b1e; --ink:#f2f3f0; --ink-2:#b9bfc4; --ink-3:#848b91;
+    --hair:#2a2e32; --rule:#3a3f44;
+    --accent:#3987e5; --accent-ink:#86b6ef; --accent-wash:rgba(57,135,229,.16);
+    --s2:#d95926;
+    --band:rgba(242,243,240,.08); --band-edge:rgba(242,243,240,.30); --ceiling:rgba(242,243,240,.06);
+    --seg-fill:#86b6ef; --seg-ink:#0f1113; --focus:#86b6ef;
+    --tip-bg:#f2f3f0; --tip-ink:#0f1113;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0f1113; --surface:#181b1e; --ink:#f2f3f0; --ink-2:#b9bfc4; --ink-3:#848b91;
+  --hair:#2a2e32; --rule:#3a3f44;
+  --accent:#3987e5; --accent-ink:#86b6ef; --accent-wash:rgba(57,135,229,.16);
+  --s2:#d95926;
+  --band:rgba(242,243,240,.08); --band-edge:rgba(242,243,240,.30); --ceiling:rgba(242,243,240,.06);
+  --seg-fill:#86b6ef; --seg-ink:#0f1113; --focus:#86b6ef;
+  --tip-bg:#f2f3f0; --tip-ink:#0f1113;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:var(--accent-ink)}
+.deck{height:100%;display:flex;flex-direction:column}
+.progress{position:fixed;left:0;top:env(safe-area-inset-top,0px);height:3px;width:0;background:var(--accent);z-index:5;transition:width .25s ease}
+.stage{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden}
+.slide{display:none;min-height:100%;width:100%;max-width:1360px;margin:0 auto;padding:clamp(18px,2.6vw,36px) clamp(16px,4vw,64px) 108px;flex-direction:column;justify-content:center;gap:clamp(12px,1.6vw,22px)}
+@media (max-width:640px){.slide{padding-bottom:132px}}
+.slide.active{display:flex}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin:0}
+h1,h2{font-family:var(--display);margin:0;text-wrap:balance;letter-spacing:-.015em}
+h1{font-size:clamp(44px,7.4vw,116px);line-height:.94;font-weight:800;font-stretch:110%}
+.byline{font-family:var(--display);font-size:clamp(17px,1.5vw,22px);font-weight:600;color:var(--ink-2);margin:0}
+h2{font-size:clamp(28px,3.2vw,48px);line-height:1.04;font-weight:700}
+.lead{font-size:clamp(16px,1.25vw,19px);line-height:1.45;max-width:70ch;margin:0}
+.lead strong,.note strong{font-weight:600}
+.note{font-size:15px;line-height:1.45;color:var(--ink-2);max-width:74ch;margin:0}
+.src{font-family:var(--mono);font-size:12px;line-height:1.5;color:var(--ink-3);margin:0}
+.kicker{font-family:var(--display);font-size:clamp(17px,1.4vw,21px);font-weight:600;line-height:1.3;max-width:62ch;margin:0;text-wrap:balance}
+.stack{display:flex;flex-direction:column;gap:14px;min-width:0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:clamp(16px,2.4vw,40px);align-items:start}
+.two-wide{grid-template-columns:3fr 2fr}
+.two-narrow{grid-template-columns:2fr 3fr}
+@media (max-width:860px){.two,.two-wide,.two-narrow{grid-template-columns:1fr}}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.tiles.three{grid-template-columns:repeat(3,1fr)}
+@media (max-width:1000px){.tiles,.tiles.three{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:480px){.tiles,.tiles.three{grid-template-columns:1fr}}
+.tile{background:var(--surface);border:1px solid var(--hair);border-radius:6px;padding:14px 16px 12px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.tile .v{font-family:var(--display);font-weight:700;font-size:clamp(32px,3.4vw,52px);line-height:1;letter-spacing:-.02em}
+.tile .v small{font-size:.5em;font-weight:600;letter-spacing:0;color:var(--ink-2);margin-left:.15em}
+.tile .l{font-size:15px;line-height:1.35;color:var(--ink-2)}
+.tile .s{font-family:var(--mono);font-size:11.5px;line-height:1.4;color:var(--ink-3);margin-top:auto}
+.tile.accent{border-color:var(--accent);background:var(--accent-wash)}
+.ctl{display:flex;flex-direction:column;gap:6px;min-width:0}
+.ctl .lbl{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;font-family:var(--display);font-size:14px;font-weight:600;letter-spacing:.005em}
+.ctl .val{font-family:var(--mono);font-size:14px;font-weight:500;color:var(--accent-ink)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:30px;background:transparent;margin:0;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:4px;background:var(--rule);border-radius:2px}
+input[type=range]::-moz-range-track{height:4px;background:var(--rule);border-radius:2px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:var(--accent);border:3px solid var(--surface);box-shadow:0 0 0 1px var(--rule);margin-top:-10px}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--accent);border:3px solid var(--surface);box-shadow:0 0 0 1px var(--rule)}
+input[type=range]:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:6px}
+.ticks{position:relative;height:38px;margin:-6px 12px 0;font-family:var(--mono);font-size:11px;color:var(--ink-3)}
+.ticks span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap;text-align:center;line-height:1.25}
+.ticks span::before{content:"";display:block;width:1px;height:7px;background:var(--rule);margin:0 auto 3px}
+.ticklist{display:flex;flex-wrap:wrap;gap:4px 18px;font-family:var(--mono);font-size:11.5px;color:var(--ink-3);margin:0;padding:0;list-style:none}
+.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--rule);border-radius:6px;overflow:hidden;background:var(--surface);max-width:100%}
+.seg button{font-family:var(--display);font-size:14px;font-weight:600;padding:9px 14px;border:0;background:transparent;color:var(--ink-2);cursor:pointer;border-right:1px solid var(--rule)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed=true]{background:var(--seg-fill);color:var(--seg-ink)}
+.seg button:focus-visible{outline:2px solid var(--focus);outline-offset:-3px}
+.seg.small button{font-size:13px;padding:7px 11px}
+.chart{background:var(--surface);border:1px solid var(--hair);border-radius:6px;padding:14px 14px 10px;min-width:0}
+.chart .ct{font-family:var(--display);font-size:14px;font-weight:600;margin:0 0 1px}
+.chart .cs{font-family:var(--mono);font-size:12px;color:var(--ink-3);margin:0 0 8px;line-height:1.4}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.chart .legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--ink-2);margin:6px 0 0;padding:0;list-style:none;font-family:var(--display)}
+.legend i{display:inline-block;width:14px;height:3px;border-radius:2px;vertical-align:middle;margin-right:7px;background:var(--accent)}
+.legend i.s2{background:var(--s2)} .legend i.band{height:10px;background:var(--band);border:1px solid var(--band-edge)} .legend i.dash{background:repeating-linear-gradient(90deg,var(--accent) 0 5px,transparent 5px 9px)}
+svg text{font-family:var(--display);font-size:12px;fill:var(--ink-2)}
+svg .tick{font-family:var(--mono);font-size:11px;fill:var(--ink-3)}
+svg .grid{stroke:var(--hair);stroke-width:1}
+svg .axis{stroke:var(--rule);stroke-width:1}
+svg .line{fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+svg .line.proj{stroke-dasharray:6 5}
+svg .band{fill:var(--band)} svg .band-edge{fill:none;stroke:var(--band-edge);stroke-width:1}
+svg .dot{fill:var(--accent);stroke:var(--surface);stroke-width:2}
+svg .lbl{fill:var(--ink);font-weight:600} svg .lbl.muted{fill:var(--ink-2);font-weight:400} svg .lbl.faint{fill:var(--ink-3);font-weight:400;font-size:11px}
+svg .ceil{fill:var(--ceiling)} svg .ref{stroke:var(--rule);stroke-width:1}
+svg .bar{fill:var(--accent)} svg .bar.s2{fill:var(--s2)}
+svg .hit{fill:transparent;cursor:crosshair}
+svg .cross{stroke:var(--ink-3);stroke-width:1}
+.tip{position:fixed;pointer-events:none;background:var(--tip-bg);color:var(--tip-ink);font-family:var(--mono);font-size:12px;line-height:1.4;padding:6px 9px;border-radius:4px;transform:translate(-50%,calc(-100% - 12px));white-space:nowrap;z-index:9;display:none}
+details.tbl{margin-top:8px} details.tbl summary{cursor:pointer;font-family:var(--mono);font-size:12px;color:var(--ink-3)}
+table{border-collapse:collapse;font-size:13px;width:100%;margin-top:6px;font-family:var(--display)}
+td,th{padding:5px 8px;border-bottom:1px solid var(--hair);text-align:left;vertical-align:top}
+td.n,th.n{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
+.spectrum{position:relative;height:190px;margin:8px 0 0}
+.spectrum .track{position:absolute;left:0;right:0;top:86px;height:8px;border-radius:4px;background:linear-gradient(90deg,var(--accent) 0%,var(--accent-wash) 60%,var(--band) 100%)}
+.spectrum .marker{position:absolute;top:70px;width:2px;height:40px;background:var(--ink);transform:translateX(-50%)}
+.spectrum .marker::after{content:attr(data-label);position:absolute;top:44px;left:50%;transform:translateX(-50%);white-space:nowrap;font-family:var(--mono);font-size:11px;color:var(--ink)}
+.spectrum .item{position:absolute;transform:translateX(-50%);font-family:var(--display);font-size:12.5px;line-height:1.2;color:var(--ink-2);text-align:center;width:120px}
+.spectrum .item::after{content:"";position:absolute;left:50%;width:1px;background:var(--rule)}
+.spectrum .item.r0{top:0} .spectrum .item.r0::after{top:100%;height:calc(86px - 100% + 2px)}
+.spectrum .item.r1{top:36px} .spectrum .item.r1::after{top:100%;height:20px}
+.spectrum .item.r2{top:126px} .spectrum .item.r2::after{bottom:100%;height:30px}
+.spectrum .pole{position:absolute;top:100px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.spectrum .pole.l{left:0} .spectrum .pole.r{right:0}
+.speclist{display:none;grid-template-columns:1fr 1fr;gap:14px;margin:0;padding:0;list-style:none}
+.speclist li{background:var(--surface);border:1px solid var(--hair);border-radius:6px;padding:12px 14px;font-size:14px;line-height:1.4}
+.speclist li b{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin-bottom:6px;font-weight:500}
+@media (max-width:760px){.spectrum{display:none}.speclist{display:grid}}
+@media (max-width:480px){.speclist{grid-template-columns:1fr}}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:clamp(16px,2.4vw,40px)}
+@media (max-width:760px){.cols{grid-template-columns:1fr}}
+.cols h3{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin:0 0 10px;font-weight:500}
+.cols ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px}
+.cols li{padding-left:16px;position:relative;font-size:clamp(15px,1.15vw,17px);line-height:1.45}
+.cols li::before{content:"";position:absolute;left:0;top:.62em;width:7px;height:7px;border-radius:50%;background:var(--accent)}
+.cols .open li::before{background:transparent;border:1.5px solid var(--ink-3);width:5px;height:5px}
+.cols li .ev{display:block;font-family:var(--mono);font-size:11.5px;color:var(--ink-3);margin-top:2px}
+.oq-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 32px}
+@media (max-width:760px){.oq-grid{grid-template-columns:1fr}}
+.oq{border-top:2px solid var(--rule);padding-top:10px;min-width:0}
+.oq.closed{border-top-color:var(--accent)}
+.oq.wide{grid-column:1/-1}
+.oq h3{font-family:var(--display);font-size:clamp(16px,1.25vw,19px);font-weight:600;line-height:1.3;margin:0 0 6px;text-wrap:balance}
+.oq p{font-size:clamp(14px,1.02vw,15.5px);line-height:1.45;margin:0}
+.oq .ev{display:block;font-family:var(--mono);font-size:11.5px;line-height:1.45;color:var(--ink-3);margin-top:7px}
+.quote{border-left:3px solid var(--accent);padding:6px 0 6px 18px;margin:0;font-size:clamp(16px,1.3vw,19px);line-height:1.45;font-style:italic;max-width:60ch}
+.quote cite{display:block;font-style:normal;font-family:var(--mono);font-size:12px;color:var(--ink-3);margin-top:6px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
+.chips li{font-family:var(--mono);font-size:12.5px;padding:5px 10px;border:1px solid var(--rule);border-radius:999px;color:var(--ink-2);background:var(--surface)}
+.chips li b{font-weight:500;color:var(--ink)}
+.presets{display:flex;gap:8px;flex-wrap:wrap}
+.btn{font-family:var(--display);font-size:14px;font-weight:600;padding:10px 16px;border:1px solid var(--rule);border-radius:6px;background:var(--surface);color:var(--ink);cursor:pointer}
+.btn[aria-pressed=true]{background:var(--seg-fill);color:var(--seg-ink);border-color:transparent}
+.btn:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.hint{font-family:var(--mono);font-size:12.5px;color:var(--ink-3)}
+.sources{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:10px 28px;font-size:14px;line-height:1.4}
+@media (max-width:760px){.sources{grid-template-columns:1fr}}
+.sources li{padding-left:0}
+.sources .t{font-family:var(--display);font-weight:600}
+.sources .m{font-family:var(--mono);font-size:11.5px;color:var(--ink-3);display:block}
+.bar{position:fixed;left:0;right:0;bottom:0;padding:10px clamp(12px,2vw,24px) calc(10px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:var(--bg);border-top:1px solid var(--hair);z-index:6}
+@supports (background:color-mix(in srgb,red 50%,transparent)){.bar{background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}}
+.bar .grp{display:flex;gap:6px;align-items:center}
+.bar button{font-family:var(--display);font-size:13px;font-weight:600;padding:8px 12px;border:1px solid var(--rule);border-radius:6px;background:var(--surface);color:var(--ink);cursor:pointer;min-width:40px}
+.bar button[aria-pressed=true]{background:var(--seg-fill);color:var(--seg-ink);border-color:transparent}
+.bar button:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.bar .glbl{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin-right:2px}
+.bar .count{font-family:var(--mono);font-size:12px;color:var(--ink-3);margin-left:auto;font-variant-numeric:tabular-nums}
+.title-wrap{display:flex;flex-direction:column;gap:clamp(18px,2.6vw,34px)}
+.title-wrap .sub{font-size:clamp(20px,2.2vw,30px);line-height:1.3;max-width:34ch;margin:0;text-wrap:balance}
+.title-wrap .rule{width:72px;height:4px;background:var(--accent)}
+@media (prefers-reduced-motion:reduce){.progress{transition:none}}
+</style>
+
+</head>
+<body>
+<div class="deck" id="deck">
+<div class="progress" id="progress"></div>
+<div class="stage" id="stage">
+
+<!-- 1 · Title -->
+<section class="slide" id="s1" data-n="1">
+  <div class="title-wrap">
+    <p class="eyebrow">SOIH AI Memo 09/28/26</p>
+    <h1>AI Trajectory, Class of 2028</h1>
+    <p class="byline">Projections by John Courie</p>
+    <div class="rule"></div>
+    <p class="sub">The following charts are interactive and take a moment to understand. I have attempted to describe the forecast in simple terms on each page.</p>
+    <p class="hint">Each page has controls on it. If you play with them, the deck runs through the range of reasonable forecasts.</p>
+  </div>
+</section>
+
+<!-- 2 · Shipped -->
+<section class="slide" id="s2" data-n="2">
+  <p class="eyebrow">01 · Shipped, September 2026</p>
+  <h2>Where we are now.</h2>
+  <div class="tiles">
+    <div class="tile">
+      <div class="v">16<small>+ h</small></div>
+      <div class="l">Longest software or research task a frontier model completes at 50% reliability. At the ceiling of the 228-task suite; 95% CI 8.5 to 55 h.</div>
+      <div class="s">Claude Mythos Preview · METR · May 2026</div>
+    </div>
+    <div class="tile">
+      <div class="v">91<small>%</small></div>
+      <div class="l">GPQA Diamond, PhD-level science questions, from a model priced at $0.20 per million input tokens.</div>
+      <div class="s">GPT-5.6 Luna · OpenRouter · July 2026</div>
+    </div>
+    <div class="tile">
+      <div class="v">162</div>
+      <div class="l">Epoch Capabilities Index, frontier. GPT-4 scored 126 in March 2023. Eight points is the gap between GPT-5 and GPT-5.5.</div>
+      <div class="s">Claude Fable 5 · Epoch AI · June 2026</div>
+    </div>
+    <div class="tile">
+      <div class="v">4<small>months</small></div>
+      <div class="l">Lag between the best open-weight model and the closed frontier since January 2026. Downloadable. No vendor controls access.</div>
+      <div class="s">Epoch AI · May 2026</div>
+    </div>
+  </div>
+  <p class="note">Nothing on this page is a forecast. The following slides present likely scenarios for higher education between now and the graduating class of 2028.</p>
+</section>
+
+<!-- 3 · Price -->
+<section class="slide" id="s3" data-n="3">
+  <p class="eyebrow">02 · The price of thought</p>
+  <h2>Thought is getting cheaper faster than anything before it.</h2>
+  <div class="two two-wide">
+    <div class="stack">
+      <p class="lead">Epoch AI, September 2026: the price of a fixed level of AI capability has fallen <strong>47% per quarter, 13x per year</strong>, since 2023. Newly released frontier capability falls 75x per year; two years after release it still falls 4.7x. In plain terms, whatever the best model does today costs about a tenth as much a year from now. Example: a 75% score on GPQA Diamond cost $0.30 a question in January 2025 and $0.0004 in July 2026.</p>
+      <div class="chart" id="priceChart">
+        <p class="ct">Price of a fixed capability level, relative to today</p>
+        <p class="cs">Log scale. Shaded band: every prior general-purpose technology at its historical rate (electricity 1.05x, Li-ion 1.16x, compute 1.51x, DNA sequencing 1.84x per year). Vertical rule: your graduation year.</p>
+        <div class="svgwrap"></div>
+        <ul class="legend"><li><i></i>AI, at the rate you set</li><li><i class="band"></i>Prior general-purpose technologies</li></ul>
+        <details class="tbl"><summary>Table view</summary><div class="tblwrap"></div></details>
+      </div>
+    </div>
+    <div class="stack">
+      <div class="ctl">
+        <div class="lbl"><span>Annual price decline for a fixed capability</span><span class="val" id="declineVal">13x per year</span></div>
+        <input type="range" id="declineRange" min="0" max="1000" step="1" value="594" aria-label="Annual price decline factor">
+        <div class="ticks" id="declineTicks"></div>
+        <ul class="ticklist">
+          <li>1x: no further decline</li><li>1.5x: compute, 1940 to 2001</li><li>4.7x: SOTA two years after debut</li><li>13x: Epoch average, 2023 to 2026</li><li>75x: freshly debuted SOTA</li>
+        </ul>
+      </div>
+      <div class="ctl">
+        <div class="lbl"><span>Graduation year</span></div>
+        <div class="seg small gradSeg" role="group" aria-label="Graduation year"></div>
+      </div>
+      <div class="tiles" style="grid-template-columns:1fr">
+        <div class="tile accent">
+          <div class="v" id="semCost">$3.50</div>
+          <div class="l" id="semCostL">One semester of heavy agentic use at the frontier tier, at graduation. $240 today.</div>
+          <div class="s">Heavy agentic use: 20M input and 2M output tokens a month for four months. Frontier tier: GPT-5.6 Sol, $2 in / $10 out per million. The cheap tier (GPT-5.6 Luna, $0.20 / $1.20) runs the same load for $26 today.</div>
+        </div>
+      </div>
+      <p class="note">Epoch's own stated limits: benchmark scores are not useful work; labs train toward benchmarks; users switch models slower than the frontier moves; the series is three years of noisy data. Keep those. None of them changes the order of magnitude.</p>
+    </div>
+  </div>
+  <p class="src">Emberson &amp; Roodman, "The Plunging Price of Thought," Epoch AI, 22 Sep 2026. Comparator rates as reported there.</p>
+</section>
+
+<!-- 4 · Capability -->
+<section class="slide" id="s4" data-n="4">
+  <p class="eyebrow">03 · Capability</p>
+  <h2>How much better the models get by 2028.</h2>
+  <p class="lead">Epoch AI, April 2026: capability growth sped up when reasoning models arrived in late 2024, a jump plus a 2 to 3x steeper trend. The frontier has gained <strong>14 ECI points a year</strong> since, against 6 before. The length of task a model can finish on its own has doubled every <strong>89 days</strong> since 2024, against 196 over the long run. One research group fits a curve that levels off from mid-2026; through September the data has not leveled off, and METR's test can no longer measure the top models. Three forecasts below. I hold the first.</p>
+  <div class="two">
+    <div class="ctl">
+      <div class="lbl"><span>Forecast from here</span></div>
+      <div class="seg" role="group" aria-label="Capability forecast" id="trendSeg">
+        <button type="button" data-v="reasoning" aria-pressed="true">Trend continues (my projection)</button>
+        <button type="button" data-v="pre" aria-pressed="false">Slows to the pre-2024 pace</button>
+        <button type="button" data-v="plateau" aria-pressed="false">Levels off now</button>
+      </div>
+    </div>
+    <div class="ctl">
+      <div class="lbl"><span>Graduation year</span></div>
+      <div class="seg small gradSeg" role="group" aria-label="Graduation year"></div>
+    </div>
+  </div>
+  <div class="two">
+    <div class="chart" id="eciChart">
+      <p class="ct">Epoch Capabilities Index, frontier</p>
+      <p class="cs">Points: Epoch ECI scores. Solid: Epoch's reported era slopes (6/yr, then 14/yr from Sep 2024). Dashed: your forecast to graduation.</p>
+      <div class="svgwrap"></div>
+      <ul class="legend"><li><i></i>Reported frontier</li><li><i class="dash"></i>Your forecast</li></ul>
+      <details class="tbl"><summary>Table view</summary><div class="tblwrap"></div></details>
+    </div>
+    <div class="chart" id="metrChart">
+      <p class="ct">METR 50% task horizon, frontier</p>
+      <p class="cs">Log hours. Solid: 89-day doubling through the two TH1.1 measurements cited. Shaded: above 16 h METR calls its suite unreliable. Dashed: your forecast.</p>
+      <div class="svgwrap"></div>
+      <ul class="legend"><li><i></i>Measured (TH1.1)</li><li><i class="dash"></i>Your forecast</li><li><i class="band"></i>Beyond METR's instrument</li></ul>
+      <details class="tbl"><summary>Table view</summary><div class="tblwrap"></div></details>
+    </div>
+  </div>
+  <p class="note"><strong>Epoch's caveat, kept on purpose:</strong> the speed-up is concentrated where an answer can be checked automatically (mathematics, code), which is where the labs aimed their training. The fourth metric, WeirdML, showed no break. Slide 06 uses that.</p>
+  <p class="src">Denain &amp; Barry, "Have AI Capabilities Accelerated?", Epoch AI, 16 Apr 2026 · Epoch ECI frontier trend, 1 Sep 2026 · METR Time Horizon 1.1, 29 Jan 2026 · METR Mythos Preview, May 2026 · Ge, Bastani &amp; Bastani, arXiv 2602.04836, Feb 2026.</p>
+</section>
+
+<!-- 5 · Who has it -->
+<section class="slide" id="s5" data-n="5">
+  <p class="eyebrow">04 · Who has it</p>
+  <h2>Students already use it. Institutions are behind.</h2>
+  <div class="tiles">
+    <div class="tile"><div class="v">95<small>%</small></div><div class="l">of undergraduates use AI in at least one way.</div><div class="s">HEPI, UK, n=1,054, Mar 2026</div></div>
+    <div class="tile"><div class="v">94<small>%</small></div><div class="l">use it on assessed work.</div><div class="s">HEPI 2026</div></div>
+    <div class="tile"><div class="v">57<small>%</small></div><div class="l">of US college students use AI in coursework at least weekly; one in five daily.</div><div class="s">Gallup, n=3,801, Apr 2026</div></div>
+    <div class="tile"><div class="v">53<small>%</small></div><div class="l">say their school discourages (42%) or prohibits (11%) it. They use it anyway.</div><div class="s">Gallup 2026</div></div>
+  </div>
+  <div class="two">
+    <div class="chart" id="submitChart">
+      <p class="ct">Submitted AI-generated text directly in assessed work</p>
+      <p class="cs">UK undergraduates, HEPI annual survey.</p>
+      <div class="svgwrap"></div>
+      <details class="tbl"><summary>Table view</summary><div class="tblwrap"></div></details>
+    </div>
+    <div class="chart" id="instChart">
+      <p class="ct">What students say their institution gives them</p>
+      <p class="cs">Share agreeing. HEPI 2026.</p>
+      <div class="svgwrap"></div>
+      <details class="tbl"><summary>Table view</summary><div class="tblwrap"></div></details>
+    </div>
+  </div>
+  <p class="kicker">Access is not the gap. Guided skill is. Open-weight models trail the closed frontier by four months, so the frontier reaches free tiers within months however you count it. The scarce input is a person who teaches the use.</p>
+  <p class="src">HEPI Student Generative AI Survey 2026, 12 Mar 2026 · Gallup, "AI Is Routine for College Students, Despite Campus Limits," 1 Apr 2026 · Epoch AI open/closed ECI gap, 29 May 2026.</p>
+</section>
+
+<!-- 6 · Stance -->
+<section class="slide" id="s6" data-n="6">
+  <p class="eyebrow">05 · The stance</p>
+  <h2>The one control that changes what students learn from it.</h2>
+  <p class="lead">The randomized trial we have: Bastani and colleagues, PNAS 2025, about a thousand high-school mathematics students. Unguided GPT-4 access raised practice scores <strong>48%</strong> and lowered the unassisted exam <strong>17%</strong>. A guarded tutor on the same model raised practice <strong>127%</strong> with no exam penalty. Students in the unguided arm, in the authors' words, "most often simply ask for the answer."</p>
+  <div class="two two-narrow">
+    <div class="stack">
+      <div class="ctl">
+        <div class="lbl"><span>Institutional stance</span></div>
+        <div class="seg" role="group" aria-label="Institutional stance" id="stanceSeg">
+          <button type="button" data-v="prohibit" aria-pressed="false">Prohibit</button>
+          <button type="button" data-v="discourage" aria-pressed="true">Discourage</button>
+          <button type="button" data-v="permit" aria-pressed="false">Permit</button>
+          <button type="button" data-v="teach" aria-pressed="false">Teach</button>
+        </div>
+      </div>
+      <div class="ctl">
+        <div class="lbl"><span>Share of your students using AI weekly</span><span class="val" id="adoptVal">57%</span></div>
+        <input type="range" id="adoptRange" min="30" max="95" step="1" value="57" aria-label="Share of students using AI weekly">
+        <ul class="ticklist"><li>57%: Gallup US weekly</li><li>94%: HEPI on assessed work</li></ul>
+      </div>
+      <p class="note" id="stanceText"></p>
+      <div class="tiles" style="grid-template-columns:1fr 1fr">
+        <div class="tile accent"><div class="v" id="unguidedN">57</div><div class="l">of every 100 students are in the unguided arm under this stance.</div><div class="s">Assumed guided share: prohibit 0%, discourage 0%, permit 25%, teach 85%</div></div>
+        <div class="tile"><div class="v" id="examEff">−9.7%</div><div class="l">expected effect on unassisted exam performance across the cohort, if the RCT transfers.</div><div class="s">−17% × users × unguided share. Trial was high-school mathematics.</div></div>
+      </div>
+    </div>
+    <div class="stack">
+      <div class="chart" id="rctChart">
+        <p class="ct">Effect on performance, relative to control</p>
+        <p class="cs">Bastani et al., PNAS 2025. Practice with the tool; exam without it.</p>
+        <div class="svgwrap"></div>
+        <ul class="legend"><li><i class="s2"></i>Unguided (GPT Base)</li><li><i></i>Guided (GPT Tutor)</li></ul>
+        <details class="tbl"><summary>Table view</summary><div class="tblwrap"></div></details>
+      </div>
+      <p class="kicker">Prohibition does not remove the tool. It removes the guardrails. The harm study is an argument for teaching the use, and it comes from the same research group as the levels-off forecast.</p>
+    </div>
+  </div>
+  <p class="src">Bastani, Bastani, Sungu, Ge, Kabakcı &amp; Mariman, "Generative AI without guardrails can harm learning," PNAS 122, 2025 · Ge, Bastani &amp; Bastani, "Are AI Capabilities Increasing Exponentially? A Competing Hypothesis," arXiv 2602.04836, 9 Feb 2026.</p>
+</section>
+
+<!-- 7 · Verifiability -->
+<section class="slide" id="s7" data-n="7">
+  <p class="eyebrow">06 · Where it moves first</p>
+  <h2>Automation follows verification. So does grading.</h2>
+  <p class="lead">The speed-up on slide 03 happened where a right answer can be checked automatically, because that is what the training rewards. That gradient is a map of the curriculum. Checkable material is already handled at the cheapest tier. Judged material sits on the slower slope. The line moves right every year as training learns to grade with rubrics.</p>
+  <div class="spectrum" id="spectrum">
+    <div class="track"></div>
+    <span class="pole l">Checkable automatically</span><span class="pole r">Judged by an expert</span>
+    <div class="marker" id="specMarker" data-label="your course"></div>
+  </div>
+  <ul class="speclist">
+    <li><b>Checkable</b>Dosing arithmetic · pharmacokinetics · 21 CFR 111 citation · Latin binomials and taxonomy · mechanism recall</li>
+    <li><b>Judged</b>Case reasoning under uncertainty · organoleptic quality assessment · supply-chain provenance audit · the therapeutic relationship · IRB and ethics judgment</li>
+  </ul>
+  <div class="two two-narrow">
+    <div class="ctl">
+      <div class="lbl"><span>Where does your course sit?</span><span class="val" id="verifVal">midpoint</span></div>
+      <input type="range" id="verifRange" min="0" max="100" step="1" value="50" aria-label="Verifiability of your domain">
+      <p class="note" id="verifText"></p>
+    </div>
+    <div class="stack">
+      <div class="tiles" style="grid-template-columns:1fr 1fr">
+        <div class="tile accent"><div class="v" id="multVal">2.0x</div><div class="l">expected trend multiplier for this material, against the pre-reasoning slope.</div><div class="s">Epoch: 2 to 3x where verifiable; no break (WeirdML) where not. Linear between.</div></div>
+        <div class="tile"><div class="v" id="slopeVal">10<small>/yr</small></div><div class="l">implied ECI-equivalent rate for this material.</div><div class="s">6/yr pre-reasoning slope × multiplier</div></div>
+      </div>
+      <p class="kicker">Anything cheap to grade automatically is on the checkable side by definition. The assessments that survive are the ones expensive to grade, so valid assessment gets more expensive as models improve. That is structural, and today the redesign work is unpaid.</p>
+    </div>
+  </div>
+  <p class="src">Denain &amp; Barry, Epoch AI, Apr 2026 (concentration of acceleration in auto-verifiable domains) · GPT-5.6 Luna GPQA Diamond 91.1%, OpenRouter.</p>
+</section>
+
+<!-- 8 · Cost of a year -->
+<section class="slide" id="s8" data-n="8">
+  <p class="eyebrow">07 · What waiting costs</p>
+  <h2>What waiting costs.</h2>
+  <div class="two two-narrow">
+    <div class="stack">
+      <div class="ctl">
+        <div class="lbl"><span>Years of delay</span><span class="val" id="delayVal">1 year</span></div>
+        <input type="range" id="delayRange" min="0" max="4" step="0.5" value="1" aria-label="Years of delay">
+      </div>
+      <p class="note" id="delayText"></p>
+      <p class="kicker">Systems that suppress variation adapt more slowly than systems that allow it. The cost lands on the program, not the person: a person can wait out a career; a program competing for students cannot.</p>
+    </div>
+    <div class="tiles" style="grid-template-columns:1fr 1fr">
+      <div class="tile accent"><div class="v" id="costPrice">13x</div><div class="l">price disadvantage per unit of capability, against whoever did not wait.</div><div class="s">At the decline rate you set on slide 02</div></div>
+      <div class="tile"><div class="v" id="costEci">14</div><div class="l" id="costEciL">ECI points of frontier capability foregone. About 1.8 GPT-5-to-5.5 gaps.</div><div class="s">At the forecast you set on slide 03</div></div>
+      <div class="tile"><div class="v" id="costHorizon">17x</div><div class="l" id="costHorizonL">longer tasks the frontier completes unattended by the time you start.</div><div class="s">89-day doubling; 196 under the fallback; none under plateau</div></div>
+      <div class="tile"><div class="v">74<small>%</small></div><div class="l">of employers call AI skills a strong advantage or a requirement. Half expect candidates to arrive as practical users.</div><div class="s">ZipRecruiter AI Employer Report, n≈1,000, Jul 2026</div></div>
+    </div>
+  </div>
+  <p class="src">Epoch AI (price, ECI) · METR (horizon) · ZipRecruiter Economic Research, 29 Jul 2026 · Jezos &amp; bayeslord, beff.substack.com, 10 Jul 2022.</p>
+</section>
+
+<!-- 9 · Settled -->
+<section class="slide" id="s9" data-n="9">
+  <p class="eyebrow">08 · Settled</p>
+  <h2>Questions the evidence has closed.</h2>
+  <div class="oq-grid">
+    <div class="oq closed"><h3>Do students use it?</h3><p>95% of UK undergraduates use AI and 94% use it on assessed work. In the US, 57% use it in coursework at least weekly and one in five daily. Use is the baseline condition of the classroom, whatever the syllabus says.</p><span class="ev">HEPI 2026, n=1,054 · Gallup 2026, n=3,801</span></div>
+    <div class="oq closed"><h3>Is access the equity barrier?</h3><p>The price of a fixed level of capability falls 13x a year. The best open-weight models trail the closed frontier by four months and can be run by anyone. Every major lab offers a free student tier. Within a degree window, cost stops being the thing that separates students.</p><span class="ev">Epoch AI, Sep 2026 and May 2026</span></div>
+    <div class="oq closed"><h3>Does waiting pay?</h3><p>Even the levels-off case freezes the frontier above 16-hour unattended tasks and 91% on PhD-level science, at near-zero cost. There is no later point at which the decision gets easier or the information gets better.</p><span class="ev">METR, May 2026 · OpenRouter pricing, Jul 2026</span></div>
+    <div class="oq closed"><h3>Is detection a strategy?</h3><p>At $0.0004 a question, rewriting a draft until it passes is free. Direct submission of generated text rose from 3% to 12% in two years, most of it under detection and prohibition regimes. Detection selects for concealment, which is the condition that harms learning.</p><span class="ev">Epoch AI 2026 · HEPI 2024 to 2026</span></div>
+    <div class="oq closed wide"><h3>Does unguided use harm learning?</h3><p>Yes. In the one randomized trial of size, students with unrestricted access scored 17% lower on the unassisted exam. Students with a guarded tutor built on the same model showed no penalty and larger practice gains. The variable that mattered was guidance, and guidance is something a program decides to provide.</p><span class="ev">Bastani, Bastani, Sungu, Ge, Kabakcı &amp; Mariman, PNAS 2025</span></div>
+  </div>
+</section>
+
+<!-- 10 · Open work -->
+<section class="slide" id="s10" data-n="10">
+  <p class="eyebrow">09 · Open work</p>
+  <h2>Questions still open, and the work they name.</h2>
+  <div class="oq-grid">
+    <div class="oq"><h3>What does a valid assessment look like once the checkable half is automated?</h3><p>Training rewards what can be checked automatically, so the assessments cheapest for us to grade are the ones models master first. What survives is the expensive kind: judgment under uncertainty, reasoning the student has to defend, work observed while it is being done. Building that instrument, calibrating raters on its middle anchors, and paying for the design are all unresolved.</p><span class="ev">Epoch AI, Apr 2026 (speed-up concentrated where answers are checkable) · HEPI 2026 (12% direct submission)</span></div>
+    <div class="oq"><h3>How is an output checked when no automatic checker exists?</h3><p>In checkable domains the model's own training loop does the verifying. Everywhere else a person has to judge, and judgment is slow, inconsistent between readers, and weakens as outputs become more fluent: the better a passage reads, the less of it gets checked. The open problem is a method of verification that scales with the volume of output without collapsing into trust. Candidates include an independent second reader (human or model), breaking a claim into parts that can each be checked, sampled audits, and calibrating readers against one another. None is settled, in this field or any other.</p><span class="ev">Epoch AI, Apr 2026 (no speed-up where checking is hard) · METR 2026 (performance falls when work is judged as a whole rather than by tests)</span></div>
+    <div class="oq"><h3>When access is free, what does equity require?</h3><p>The price trend removes cost as a barrier inside the degree window. What stays scarce is guided practice: a person who shows the use, corrects it, and sets the friction so that the easy path is the learning path. Students who do not get that at home get it only from us. The open question is how to provide it across a faculty with uneven fluency, at scale, without asking the students who most need it to announce that they need it.</p><span class="ev">HEPI 2026: 36% feel encouraged, 38% are given tools, 48% say staff help build the skill · Gallup 2026: 53% of institutions discourage or prohibit, 57% of students use weekly</span></div>
+    <div class="oq"><h3>Can the RCT's guided condition be reproduced in a graduate health program?</h3><p>The RCT removed the exam penalty by changing the tool, not the student: a tutor that would not hand over the answer. Our students arrive habituated to the tool that will. Three questions follow. Do guardrails built into course tooling transfer from high-school mathematics to case reasoning and clinical judgment? Will a student who already owns the unguided tool use the guided one? And what does the guided condition look like when the task has no single right answer to withhold?</p><span class="ev">Bastani et al., PNAS 2025: practice +48% unguided, +127% guided; exam −17% unguided, no penalty guided</span></div>
+    <div class="oq wide"><h3>Does the forecast depend on the models becoming minds?</h3><p>No. Everything on page 01 was done by systems that, on most accounts, still lack a lasting sense of self, attention driven by their own goals, anything like feeling, and continuity from one session to the next. The projections in this memo need none of that: they need the price and capability trends to hold, and the conservative case needs only what has already shipped. Separately, a growing number of researchers in cognitive science and machine learning now treat those missing pieces as questions that can be studied and answered, with candidate designs on the table, rather than as permanent mysteries. If they are right, the range on page 03 is a floor.</p><span class="ev">Bach, 2024 to 2026 talks (what current systems lack) · Epoch and METR trends require no assumption about machine minds</span></div>
+  </div>
+</section>
+
+<!-- 11 · My conclusion -->
+<section class="slide" id="s11" data-n="11">
+  <p class="eyebrow">10 · My conclusion</p>
+  <h2>Plan for the top of the range.</h2>
+  <p class="kicker">My projection is the maximal case: by the class of 2028, students carry systems that complete weeks of unattended work per task, at a semester cost below one textbook, and no vendor can withhold them. The conservative floor on this page asks the same of us. The one variable the school controls is whether the use is taught.</p>
+  <p class="eyebrow">Under the current settings</p>
+  <ul class="chips" id="chips"></ul>
+  <div class="two two-narrow">
+    <div class="stack">
+      <div class="ctl">
+        <div class="lbl"><span>Graduation year</span></div>
+        <div class="seg small gradSeg" role="group" aria-label="Graduation year"></div>
+      </div>
+      <div class="presets">
+        <button type="button" class="btn preset" data-p="reported">Current trend</button>
+        <button type="button" class="btn preset" data-p="skeptic">Conservative</button>
+      </div>
+      <p class="note">Current trend: Epoch, METR and Gallup figures as published, with the reasoning-era slope continuing. Conservative: no further price decline, capability levels off now, earliest graduation, 30% weekly use, a fully judged domain, prohibition.</p>
+    </div>
+    <div class="tiles" style="grid-template-columns:1fr 1fr">
+      <div class="tile"><div class="v" id="cEci">187</div><div class="l" id="cEciL">frontier ECI at graduation.</div><div class="s">Today 162; GPT-4 was 126</div></div>
+      <div class="tile"><div class="v" id="cHorizon">—</div><div class="l" id="cHorizonL">task horizon at graduation.</div><div class="s" id="cHorizonS">Projection beyond METR's 16 h instrument ceiling</div></div>
+      <div class="tile"><div class="v" id="cCost">—</div><div class="l" id="cCostL">for a semester of heavy agentic use at the frontier tier.</div><div class="s">$240 today</div></div>
+      <div class="tile accent"><div class="v" id="cUnguided">57</div><div class="l" id="cUnguidedL">of every 100 students in the unguided arm.</div><div class="s" id="cUnguidedS">Under: discourage</div></div>
+    </div>
+  </div>
+  <p class="kicker" id="conclusion"></p>
+</section>
+
+<!-- 12 · References -->
+<section class="slide" id="s12" data-n="12">
+  <p class="eyebrow">11 · References</p>
+  <h2>References.</h2>
+  <ul class="sources">
+    <li><span class="t"><a href="https://epoch.ai/publications/the-plunging-price-of-thought">The Plunging Price of Thought</a></span><span class="m">Emberson &amp; Roodman, Epoch AI, 22 Sep 2026. 47%/quarter; 13x/yr; 75x/yr fresh SOTA; 4.7x/yr at two years; 725x GPQA example; comparator rates.</span></li>
+    <li><span class="t"><a href="https://epoch.ai/publications/have-ai-capabilities-accelerated">Have AI Capabilities Accelerated?</a></span><span class="m">Denain &amp; Barry, Epoch AI, 16 Apr 2026. Break at reasoning models; 2 to 3x steeper trend; concentration in verifiable domains; WeirdML null.</span></li>
+    <li><span class="t"><a href="https://epoch.ai/data-insights/eci-frontier-trend">ECI frontier trend</a></span><span class="m">Epoch AI, 1 Sep 2026. 14 pts/yr reasoning era vs 6 pts/yr; anchors GPT-4 126.19, Claude 3.5 Sonnet 130.00, GPT-4.5 137.63, Claude Fable 5 162.48.</span></li>
+    <li><span class="t"><a href="https://epoch.ai/data-insights/open-closed-eci-gap">Open models lag closed by 4 months</a></span><span class="m">Epoch AI, 29 May 2026. 8 ECI points; DeepSeek-V3.2, Kimi K2.5, GLM-4.7, Qwen3-235B.</span></li>
+    <li><span class="t"><a href="https://metr.org/blog/2026-1-29-time-horizon-1-1/">Time Horizon 1.1</a></span><span class="m">METR, 29 Jan 2026. Claude Opus 4.5 at 320 min [170, 729]; doubling 196 days long-run, 89 days since 2024; 228 tasks.</span></li>
+    <li><span class="t"><a href="https://metr.org/time-horizons/">Task-completion time horizons</a></span><span class="m">METR, updated 8 May 2026. Claude Mythos Preview ≥16 h (95% CI 8.5 to 55 h); measurements above 16 h unreliable with current suite.</span></li>
+    <li><span class="t"><a href="https://arxiv.org/abs/2602.04836">Are AI Capabilities Increasing Exponentially? A Competing Hypothesis</a></span><span class="m">Ge, Bastani &amp; Bastani, arXiv, 9 Feb 2026. Sigmoid fit; base inflection Nov 2024; reasoning inflection predicted Jun 2026.</span></li>
+    <li><span class="t"><a href="https://www.pnas.org/doi/10.1073/pnas.2422633122">Generative AI without guardrails can harm learning</a></span><span class="m">Bastani, Bastani, Sungu, Ge, Kabakcı &amp; Mariman, PNAS 122, 2025. n≈1,000; practice +48% / +127%; exam −17% / n.s.</span></li>
+    <li><span class="t"><a href="https://www.hepi.ac.uk/reports/student-generative-ai-survey-2026/">Student Generative AI Survey 2026</a></span><span class="m">HEPI, 12 Mar 2026. n=1,054 UK undergraduates. 95% use; 94% assessed work; 12% direct submission (3%, 8%, 12%); 36% / 38% / 48% / 68%.</span></li>
+    <li><span class="t"><a href="https://news.gallup.com/poll/704090/routine-college-students-despite-campus-limits.aspx">AI Is Routine for College Students, Despite Campus Limits</a></span><span class="m">Gallup, 1 Apr 2026. n=3,801. 57% weekly; ~20% daily; 42% discourage, 11% prohibit, 7% encourage freely, 35% with limits.</span></li>
+    <li><span class="t"><a href="https://www.ziprecruiter-research.org/economic-insights-research/ai-employer-report-2026">The 2026 AI Employer Report</a></span><span class="m">ZipRecruiter Economic Research, 29 Jul 2026. n&gt;1,000 hiring managers. 74%; 50% expect practical or advanced users.</span></li>
+    <li><span class="t"><a href="https://openrouter.ai/openai/gpt-5.6-luna">GPT-5.6 Luna</a> · <a href="https://openrouter.ai/openai/gpt-5.6">GPT-5.6 Sol</a></span><span class="m">OpenRouter pricing, Jul 2026. Luna $0.20 / $1.20 per M, GPQA Diamond 91.1%. Sol $2 / $10 per M.</span></li>
+    <li><span class="t"><a href="https://beff.substack.com/p/notes-on-eacc-principles-and-tenets">Notes on e/acc principles and tenets</a></span><span class="m">Beff Jezos &amp; bayeslord, 10 Jul 2022.</span></li>
+    <li><span class="t">Joscha Bach on machine consciousness</span><span class="m">Four components current systems lack: persistent self-model, motivated attention, affective signals, temporal continuity. Summary of 2024 to 2026 talks.</span></li>
+  </ul>
+  <p class="note">Derived figures are labeled on the page where they appear: semester cost profiles, guided-share assumptions by stance, the verifiability multiplier, and the frontier-to-free lag.</p>
+</section>
+
+</div>
+
+<div class="bar" id="bar">
+  <div class="grp">
+    <button type="button" id="prevBtn" aria-label="Previous slide">←</button>
+    <button type="button" id="nextBtn" aria-label="Next slide">→</button>
+  </div>
+  <div class="grp">
+    <span class="glbl">Settings</span>
+    <button type="button" class="preset" data-p="reported" aria-pressed="true">Current trend</button>
+    <button type="button" class="preset" data-p="skeptic" aria-pressed="false">Conservative</button>
+  </div>
+  <div class="grp"><button type="button" id="themeBtn" aria-label="Toggle theme">Theme</button></div>
+  <span class="count" id="count">1 / 12</span>
+</div>
+</div>
+<div class="tip" id="tip"></div>
+<script>
+(function(){
+'use strict';
+const $=(s,r)=> (r||document).querySelector(s);
+const $$=(s,r)=> Array.from((r||document).querySelectorAll(s));
+const NS='http://www.w3.org/2000/svg';
+function svgEl(tag,attrs,parent){const el=document.createElementNS(NS,tag);for(const k in attrs){if(attrs[k]!==undefined&&attrs[k]!==null)el.setAttribute(k,attrs[k]);}if(parent)parent.appendChild(el);return el;}
+function text(parent,x,y,str,cls,anchor){const t=svgEl('text',{x:x,y:y,'text-anchor':anchor||'start','class':cls||''},parent);t.textContent=str;return t;}
+const lin=(d0,d1,r0,r1)=>v=>r0+(v-d0)/(d1-d0)*(r1-r0);
+const logS=(d0,d1,r0,r1)=>{const a=Math.log10(d0),b=Math.log10(d1);return v=>r0+(Math.log10(v)-a)/(b-a)*(r1-r0);};
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+
+/* ---------- constants (reported values) ---------- */
+const NOW=2026.74;                                   /* 27 Sep 2026 */
+const FRONT={eci:162.48,eciT:2026.44,hz:16,hzT:2026.35};
+const SLOPE={reasoning:14,pre:6,plateau:0};          /* ECI points per year */
+const DBL={reasoning:89,pre:196,plateau:Infinity};   /* METR doubling, days */
+const TREND_LABEL={reasoning:'trend continues',pre:'slows to pre-2024 pace',plateau:'levels off now'};
+const GUIDED={prohibit:0,discourage:0,permit:0.25,teach:0.85};
+const STANCE_LABEL={prohibit:'prohibit',discourage:'discourage',permit:'permit',teach:'teach'};
+const SEM={front:240,cheap:25.6};
+const ECI_PTS=[{n:'GPT-4',t:2023.20,v:126.19,d:'Mar 2023'},{n:'Claude 3.5 Sonnet',t:2024.47,v:130.00,d:'Jun 2024'},{n:'GPT-4.5',t:2025.16,v:137.63,d:'Feb 2025'},{n:'Claude Fable 5',t:2026.44,v:162.48,d:'Jun 2026'}];
+const BREAK=2024.72;
+const COMP=[{n:'Electricity, 1892 to 1973',r:1.05},{n:'Li-ion batteries, 1991 to 2024',r:1.16},{n:'Compute, 1940 to 2001',r:1.51},{n:'DNA sequencing, 2001 to 2025',r:1.84}];
+const PRESET={
+  reported:{decline:13,trend:'reasoning',gradYear:2028,stance:'discourage',adoption:57,verif:0.5,delay:1},
+  skeptic:{decline:1,trend:'plateau',gradYear:2027,stance:'prohibit',adoption:30,verif:1,delay:0}
+};
+const S=Object.assign({},PRESET.reported);
+
+/* ---------- derived ---------- */
+const gradT=()=>S.gradYear+0.4;
+const yrsToGrad=()=>Math.max(0,gradT()-NOW);
+const eciAt=t=>FRONT.eci+SLOPE[S.trend]*Math.max(0,t-FRONT.eciT);
+function hzAt(t){const d=DBL[S.trend];if(!isFinite(d))return FRONT.hz;return FRONT.hz*Math.pow(2,Math.max(0,t-FRONT.hzT)*365.25/d);}
+const priceMult=y=>Math.pow(S.decline,-y);
+const verifMult=()=>3-2*S.verif;
+
+/* ---------- formatters ---------- */
+function fmtMoney(v){if(v>=100)return '$'+Math.round(v).toLocaleString();if(v>=1)return '$'+v.toFixed(2);if(v>=0.01)return '$'+v.toFixed(2);return '$'+v.toPrecision(2);}
+function fmtMult(x){if(x>=100)return Math.round(x).toLocaleString()+'x';if(x>=10)return Math.round(x)+'x';if(x>=2)return x.toFixed(1)+'x';return x.toFixed(2)+'x';}
+function fmtBig(n){if(n<1.05)return '1';if(n<10)return n.toFixed(1);if(n<1000)return Math.round(n).toString();return n.toLocaleString(undefined,{maximumSignificantDigits:2});}
+function labelPrice(mult){if(mult>0.95)return 'same price';return '1/'+fmtBig(1/mult);}
+function fmtHoursTile(h){if(h<100)return {v:Math.round(h).toLocaleString(),u:' h'};if(h<1e6)return {v:Math.round(h).toLocaleString(),u:' h'};return {v:h.toLocaleString(undefined,{maximumSignificantDigits:2}),u:' h'};}
+function fmtHoursPhrase(h,plateau){if(plateau)return '16 hours or more';if(h<100)return 'about '+Math.round(h)+' hours';if(h<2000)return 'about '+(h/40).toLocaleString(undefined,{maximumSignificantDigits:2})+' work-weeks';return 'about '+(h/2000).toLocaleString(undefined,{maximumSignificantDigits:2})+' work-years';}
+function fmtHoursShort(h){if(h<100)return Math.round(h)+' h';if(h<1e6)return Math.round(h).toLocaleString()+' h';return h.toLocaleString(undefined,{maximumSignificantDigits:2})+' h';}
+function fmtDecline(d){if(d<1.02)return 'no further decline';const hm=12*Math.log(2)/Math.log(d);return fmtMult(d)+' per year · halves every '+(hm<1?(hm*4.33).toFixed(1)+' weeks':hm.toFixed(1)+' months');}
+const SUP={'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹','-':'⁻'};
+function decLabel(e){if(e===0)return '1';if(e>=-4)return '1/'+Math.pow(10,-e).toLocaleString();return '10'+String(e).split('').map(ch=>SUP[ch]||ch).join('');}
+function tableHTML(head,rows){return '<table><thead><tr>'+head.map((h,i)=>'<th'+(i?' class="n"':'')+'>'+h+'</th>').join('')+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+r.map((c,i)=>'<td'+(i?' class="n"':'')+'>'+c+'</td>').join('')+'</tr>').join('')+'</tbody></table>';}
+
+/* ---------- tooltip ---------- */
+const tip=$('#tip');
+function showTip(html,cx,cy){tip.innerHTML=html;tip.style.display='block';const w=tip.offsetWidth;tip.style.left=clamp(cx,w/2+8,window.innerWidth-w/2-8)+'px';tip.style.top=Math.max(cy,60)+'px';}
+function hideTip(){tip.style.display='none';}
+function hoverable(el,html){el.addEventListener('pointerenter',e=>showTip(html,e.clientX,e.clientY));el.addEventListener('pointermove',e=>showTip(html,e.clientX,e.clientY));el.addEventListener('pointerleave',hideTip);}
+
+/* ---------- chart frame ---------- */
+function frame(c,opts){opts=opts||{};const wrap=$('.svgwrap',c);wrap.innerHTML='';const W=Math.max(280,wrap.clientWidth||300);const H=opts.height||Math.round(Math.min(opts.maxH||320,Math.max(220,W*0.5)));const m=Object.assign({t:18,r:20,b:34,l:54},opts.m||{});const svg=svgEl('svg',{width:W,height:H,viewBox:'0 0 '+W+' '+H,role:'img','aria-label':opts.label||''},wrap);return {svg:svg,W:W,H:H,m:m,pw:W-m.l-m.r,ph:H-m.t-m.b,c:c};}
+function setTable(c,html){const w=$('.tblwrap',c);if(w)w.innerHTML=html;}
+function colPath(x,yTop,yBase,w){const r=Math.min(4,w/2);if(yTop>yBase){return 'M'+x+','+yBase+' L'+x+','+(yTop-r)+' Q'+x+','+yTop+' '+(x+r)+','+yTop+' L'+(x+w-r)+','+yTop+' Q'+(x+w)+','+yTop+' '+(x+w)+','+(yTop-r)+' L'+(x+w)+','+yBase+' Z';}return 'M'+x+','+yBase+' L'+x+','+(yTop+r)+' Q'+x+','+yTop+' '+(x+r)+','+yTop+' L'+(x+w-r)+','+yTop+' Q'+(x+w)+','+yTop+' '+(x+w)+','+(yTop+r)+' L'+(x+w)+','+yBase+' Z';}
+function hbarPath(x0,x1,y,h){const r=Math.min(4,h/2);return 'M'+x0+','+y+' L'+(x1-r)+','+y+' Q'+x1+','+y+' '+x1+','+(y+r)+' L'+x1+','+(y+h-r)+' Q'+x1+','+(y+h)+' '+(x1-r)+','+(y+h)+' L'+x0+','+(y+h)+' Z';}
+
+/* ---------- charts ---------- */
+function renderPrice(){
+  const c=$('#priceChart');if(!c.offsetParent)return;
+  const wrapW=($('.svgwrap',c).clientWidth||600);const f=frame(c,{maxH:310,m:{t:18,r:wrapW<520?58:78,b:34,l:wrapW<520?56:66},label:'Price of a fixed capability level over 48 months, log scale'});
+  const M=48;const ai=m=>Math.pow(S.decline,-m/12);const comp=(r,m)=>Math.pow(r,-m/12);
+  const aiEnd=ai(M);const yMin=Math.pow(10,Math.floor(Math.log10(Math.min(aiEnd,0.05))+1e-9));
+  const x=lin(0,M,f.m.l,f.m.l+f.pw),y=logS(yMin,1,f.m.t+f.ph,f.m.t);
+  for(let e=0;e>=Math.log10(yMin)-1e-9;e--){const yy=y(Math.pow(10,e));svgEl('line',{x1:f.m.l,x2:f.m.l+f.pw,y1:yy,y2:yy,'class':e===0?'axis':'grid'},f.svg);text(f.svg,f.m.l-8,yy+4,decLabel(e),'tick','end');}
+  for(let m=0;m<=M;m+=12){const xx=x(m);svgEl('line',{x1:xx,x2:xx,y1:f.m.t+f.ph,y2:f.m.t+f.ph+4,'class':'axis'},f.svg);text(f.svg,xx,f.m.t+f.ph+18,m===0?'now':(m/12)+' yr','tick','middle');}
+  let top='',bot='';for(let m=0;m<=M;m++){top+=(m?'L':'M')+x(m).toFixed(1)+','+y(comp(1.05,m)).toFixed(1)+' ';}
+  for(let m=M;m>=0;m--){bot+='L'+x(m).toFixed(1)+','+y(comp(1.84,m)).toFixed(1)+' ';}
+  svgEl('path',{d:top+bot+'Z','class':'band'},f.svg);
+  svgEl('path',{d:top,'class':'band-edge'},f.svg);svgEl('path',{d:'M'+bot.slice(1),'class':'band-edge'},f.svg);
+  const mg=yrsToGrad()*12;if(mg<=M){const xg=x(mg);svgEl('line',{x1:xg,x2:xg,y1:f.m.t,y2:f.m.t+f.ph,'class':'ref'},f.svg);text(f.svg,xg+5,f.m.t+11,'graduation '+S.gradYear,'lbl faint');}
+  let d='';for(let m=0;m<=M;m++){d+=(m?'L':'M')+x(m).toFixed(1)+','+y(Math.max(ai(m),yMin)).toFixed(1)+' ';}
+  svgEl('path',{d:d,'class':'line'},f.svg);
+  const yEnd=y(Math.max(aiEnd,yMin));svgEl('circle',{cx:x(M),cy:yEnd,r:4.5,'class':'dot'},f.svg);
+  text(f.svg,x(M)+9,yEnd+4,labelPrice(aiEnd),'lbl');
+  let yb=y(comp(1.4,M));if(Math.abs(yb-yEnd)<16)yb=yEnd+(yb>yEnd?16:-16);
+  text(f.svg,x(M)+9,yb+4,'prior GPTs','lbl faint');
+  const hit=svgEl('rect',{x:f.m.l,y:f.m.t,width:f.pw,height:f.ph,'class':'hit'},f.svg);
+  const cross=svgEl('line',{x1:0,x2:0,y1:f.m.t,y2:f.m.t+f.ph,'class':'cross',visibility:'hidden'},f.svg);
+  const dotH=svgEl('circle',{cx:0,cy:0,r:4.5,'class':'dot',visibility:'hidden'},f.svg);
+  function mv(e){const r=f.svg.getBoundingClientRect();const m=clamp(Math.round((e.clientX-r.left-f.m.l)/f.pw*M),0,M);const xx=x(m);cross.setAttribute('x1',xx);cross.setAttribute('x2',xx);cross.setAttribute('visibility','visible');dotH.setAttribute('cx',xx);dotH.setAttribute('cy',y(Math.max(ai(m),yMin)));dotH.setAttribute('visibility','visible');showTip('month '+m+' · AI '+labelPrice(ai(m))+' · prior GPTs '+labelPrice(comp(1.05,m))+' to '+labelPrice(comp(1.84,m)),r.left+xx,e.clientY);}
+  hit.addEventListener('pointermove',mv);hit.addEventListener('pointerdown',mv);hit.addEventListener('pointerleave',()=>{cross.setAttribute('visibility','hidden');dotH.setAttribute('visibility','hidden');hideTip();});
+  const rows=[0,6,12,18,24,36,48].map(m=>[m+' mo',labelPrice(ai(m))].concat(COMP.map(k=>labelPrice(comp(k.r,m)))));
+  setTable(c,tableHTML(['Months','AI at '+fmtMult(S.decline)+'/yr'].concat(COMP.map(k=>k.n)),rows));
+}
+
+function renderEci(){
+  const c=$('#eciChart');if(!c.offsetParent)return;
+  const f=frame(c,{maxH:290,m:{t:18,r:96,b:34,l:44},label:'Epoch Capabilities Index frontier, reported and forecast'});
+  const t0=2023.0,t1=gradT()+0.25;const endV=eciAt(gradT());
+  const yMin=120,yMax=Math.max(190,Math.ceil((endV+8)/10)*10);
+  const x=lin(t0,t1,f.m.l,f.m.l+f.pw),y=lin(yMin,yMax,f.m.t+f.ph,f.m.t);
+  const step=(yMax-yMin)>140?20:10;
+  for(let v=yMin;v<=yMax+1e-9;v+=step){const yy=y(v);svgEl('line',{x1:f.m.l,x2:f.m.l+f.pw,y1:yy,y2:yy,'class':v===yMin?'axis':'grid'},f.svg);text(f.svg,f.m.l-8,yy+4,String(v),'tick','end');}
+  for(let yr=2023;yr<=Math.floor(t1);yr++){const xx=x(yr);svgEl('line',{x1:xx,x2:xx,y1:f.m.t+f.ph,y2:f.m.t+f.ph+4,'class':'axis'},f.svg);text(f.svg,xx,f.m.t+f.ph+18,String(yr),'tick','middle');}
+  const xb=x(BREAK);svgEl('line',{x1:xb,x2:xb,y1:f.m.t,y2:f.m.t+f.ph,'class':'ref'},f.svg);text(f.svg,xb+5,f.m.t+11,'reasoning models · Sep 2024','lbl faint');
+  const preEnd=126.19+6*(BREAK-2023.20),reaStart=FRONT.eci-14*(FRONT.eciT-BREAK);
+  svgEl('path',{d:'M'+x(2023.20)+','+y(126.19)+' L'+x(BREAK)+','+y(preEnd),'class':'line'},f.svg);
+  svgEl('path',{d:'M'+x(BREAK)+','+y(reaStart)+' L'+x(FRONT.eciT)+','+y(FRONT.eci),'class':'line'},f.svg);
+  svgEl('path',{d:'M'+x(FRONT.eciT)+','+y(FRONT.eci)+' L'+x(gradT())+','+y(endV),'class':'line proj'},f.svg);
+  svgEl('circle',{cx:x(gradT()),cy:y(endV),r:4.5,'class':'dot'},f.svg);
+  text(f.svg,x(gradT())+9,y(endV)+4,Math.round(endV)+' · '+S.gradYear,'lbl');
+  const place=[{dx:8,dy:15,a:'start'},{dx:8,dy:15,a:'start'},{dx:8,dy:15,a:'start'},{dx:-9,dy:-9,a:'end'}];
+  ECI_PTS.forEach((p,i)=>{const cx=x(p.t),cy=y(p.v);const dot=svgEl('circle',{cx:cx,cy:cy,r:4.5,'class':'dot'},f.svg);text(f.svg,cx+place[i].dx,cy+place[i].dy,p.n+' · '+Math.round(p.v),'lbl muted',place[i].a);const h=svgEl('circle',{cx:cx,cy:cy,r:14,'class':'hit'},f.svg);hoverable(h,p.n+' · '+p.d+' · ECI '+p.v.toFixed(1));});
+  if(f.pw>300){const bx=f.m.l+f.pw+14,y1=y(FRONT.eci-8),y2=y(FRONT.eci);svgEl('line',{x1:bx,x2:bx,y1:y1,y2:y2,'class':'axis'},f.svg);svgEl('line',{x1:bx-3,x2:bx+3,y1:y1,y2:y1,'class':'axis'},f.svg);svgEl('line',{x1:bx-3,x2:bx+3,y1:y2,y2:y2,'class':'axis'},f.svg);const tl=text(f.svg,bx+7,(y1+y2)/2-3,'8 pts =','lbl faint');const t2=text(f.svg,bx+7,(y1+y2)/2+10,'GPT-5 → 5.5','lbl faint');}
+  const rows=ECI_PTS.map(p=>[p.n+' ('+p.d+')',p.v.toFixed(1)]).concat([['Forecast, May '+S.gradYear+' ('+TREND_LABEL[S.trend]+')',Math.round(endV).toString()]]);
+  setTable(c,tableHTML(['Model','ECI'],rows));
+}
+
+function renderMetr(){
+  const c=$('#metrChart');if(!c.offsetParent)return;
+  const f=frame(c,{maxH:290,m:{t:18,r:96,b:34,l:62},label:'METR 50 percent task horizon in hours, log scale, measured and forecast'});
+  const t0=2025.0,t1=gradT()+0.25;const endV=hzAt(gradT());
+  const yMin=1,yMax=Math.pow(10,Math.ceil(Math.log10(Math.max(64,endV*1.3))));
+  const x=lin(t0,t1,f.m.l,f.m.l+f.pw),y=logS(yMin,yMax,f.m.t+f.ph,f.m.t);
+  svgEl('rect',{x:f.m.l,y:f.m.t,width:f.pw,height:y(16)-f.m.t,'class':'ceil'},f.svg);
+  for(let e=0;e<=Math.log10(yMax)+1e-9;e++){const v=Math.pow(10,e);const yy=y(v);svgEl('line',{x1:f.m.l,x2:f.m.l+f.pw,y1:yy,y2:yy,'class':e===0?'axis':'grid'},f.svg);text(f.svg,f.m.l-8,yy+4,v.toLocaleString()+' h','tick','end');}
+  [[40,'one work-week'],[2000,'one work-year']].forEach(r=>{if(r[0]<yMax){const yy=y(r[0]);svgEl('line',{x1:f.m.l,x2:f.m.l+f.pw,y1:yy,y2:yy,'class':'ref'},f.svg);text(f.svg,f.m.l+f.pw-4,yy-4,r[1],'lbl faint','end');}});
+  const y16=y(16);svgEl('line',{x1:f.m.l,x2:f.m.l+f.pw,y1:y16,y2:y16,'class':'ref'},f.svg);text(f.svg,f.m.l+f.pw-4,y16+13,'METR instrument ceiling · 16 h','lbl faint','end');
+  for(let yr=2025;yr<=Math.floor(t1);yr++){const xx=x(yr);svgEl('line',{x1:xx,x2:xx,y1:f.m.t+f.ph,y2:f.m.t+f.ph+4,'class':'axis'},f.svg);text(f.svg,xx,f.m.t+f.ph+18,String(yr),'tick','middle');}
+  const a=2025.90,av=5.33;const hl=t=>av*Math.pow(2,(t-a)*365.25/89);
+  svgEl('path',{d:'M'+x(2025.45)+','+y(hl(2025.45))+' L'+x(FRONT.hzT)+','+y(hl(FRONT.hzT)),'class':'line'},f.svg);
+  svgEl('path',{d:'M'+x(FRONT.hzT)+','+y(FRONT.hz)+' L'+x(gradT())+','+y(endV),'class':'line proj'},f.svg);
+  const pts=[{n:'Claude Opus 4.5',t:a,v:av,lab:'Claude Opus 4.5 · 5.3 h',d:'Nov 2025 · TH1.1 · 320 min [170, 729]',dx:9,dy:15,an:'start'},{n:'Claude Mythos Preview',t:FRONT.hzT,v:FRONT.hz,lab:'Claude Mythos Preview · 16+ h',d:'May 2026 · ≥16 h, 95% CI 8.5 to 55 h',dx:-10,dy:-9,an:'end'}];
+  pts.forEach(p=>{const cx=x(p.t),cy=y(p.v);svgEl('circle',{cx:cx,cy:cy,r:4.5,'class':'dot'},f.svg);if(p.v===FRONT.hz){svgEl('path',{d:'M'+(cx-4)+','+(cy-7)+' L'+cx+','+(cy-13)+' L'+(cx+4)+','+(cy-7)+' Z','class':'bar'},f.svg);}text(f.svg,cx+p.dx,cy+p.dy,p.lab,'lbl muted',p.an);const h=svgEl('circle',{cx:cx,cy:cy,r:14,'class':'hit'},f.svg);hoverable(h,p.n+' · '+p.d);});
+  svgEl('circle',{cx:x(gradT()),cy:y(endV),r:4.5,'class':'dot'},f.svg);
+  text(f.svg,x(gradT())+9,y(endV)+4,(S.trend==='plateau'?'16+ h':fmtHoursShort(endV))+' · '+S.gradYear,'lbl');
+  const rows=[['Claude Opus 4.5 (Nov 2025)','5.3 h'],['Claude Mythos Preview (May 2026)','≥16 h'],['Forecast, May '+S.gradYear+' ('+TREND_LABEL[S.trend]+')',S.trend==='plateau'?'≥16 h (frozen)':fmtHoursShort(endV)+' (past the instrument)']];
+  setTable(c,tableHTML(['Model','50% horizon'],rows));
+}
+
+function renderSubmit(){
+  const c=$('#submitChart');if(!c.offsetParent)return;
+  const f=frame(c,{height:230,m:{t:24,r:16,b:30,l:40},label:'Share of UK undergraduates submitting AI-generated text directly, 2024 to 2026'});
+  const data=[{n:'2024',v:3},{n:'2025',v:8},{n:'2026',v:12}];const yMax=15;
+  const y=lin(0,yMax,f.m.t+f.ph,f.m.t);const slot=f.pw/data.length;const w=Math.min(24,slot*0.5);
+  for(let v=0;v<=yMax;v+=5){const yy=y(v);svgEl('line',{x1:f.m.l,x2:f.m.l+f.pw,y1:yy,y2:yy,'class':v===0?'axis':'grid'},f.svg);text(f.svg,f.m.l-8,yy+4,v+'%','tick','end');}
+  data.forEach((d,i)=>{const x0=f.m.l+slot*i+slot/2-w/2;const p=svgEl('path',{d:colPath(x0,y(d.v),y(0),w),'class':'bar'},f.svg);text(f.svg,x0+w/2,y(d.v)-7,d.v+'%','lbl','middle');text(f.svg,x0+w/2,f.m.t+f.ph+18,d.n,'tick','middle');hoverable(p,d.n+' · '+d.v+'% submitted AI text directly');});
+  setTable(c,tableHTML(['Year','Share'],data.map(d=>[d.n,d.v+'%'])));
+}
+
+function renderInst(){
+  const c=$('#instChart');if(!c.offsetParent)return;
+  const data=[{n:'Feel encouraged by their institution to use AI',v:36},{n:'Are provided AI tools',v:38},{n:'Say teaching staff help build the skill',v:48},{n:'See AI skills as essential to thriving',v:68}];
+  const rowH=46;const f=frame(c,{height:data.length*rowH+18,m:{t:6,r:44,b:8,l:0},label:'What UK undergraduates say their institution gives them, HEPI 2026'});
+  const x=lin(0,100,f.m.l,f.m.l+f.pw);
+  data.forEach((d,i)=>{const yy=f.m.t+i*rowH;text(f.svg,f.m.l,yy+11,d.n,'lbl muted');const p=svgEl('path',{d:hbarPath(x(0),x(d.v),yy+18,14),'class':'bar'},f.svg);text(f.svg,x(d.v)+8,yy+29,d.v+'%','lbl');hoverable(p,d.n+' · '+d.v+'%');});
+  setTable(c,tableHTML(['Statement','Agree'],data.map(d=>[d.n,d.v+'%'])));
+}
+
+function renderRct(){
+  const c=$('#rctChart');if(!c.offsetParent)return;
+  const f=frame(c,{height:250,m:{t:24,r:16,b:40,l:48},label:'Effect on performance relative to control in the Bastani et al. trial'});
+  const groups=[{n:'Practice, with the tool',u:48,g:127},{n:'Exam, unassisted',u:-17,g:0}];
+  const yMin=-30,yMax=140;const y=lin(yMin,yMax,f.m.t+f.ph,f.m.t);const slot=f.pw/groups.length;const w=Math.min(24,slot*0.2);
+  for(let v=-25;v<=yMax;v+=25){if(v===-25)continue;const yy=y(v);svgEl('line',{x1:f.m.l,x2:f.m.l+f.pw,y1:yy,y2:yy,'class':v===0?'axis':'grid'},f.svg);text(f.svg,f.m.l-8,yy+4,(v>0?'+':'')+v+'%','tick','end');}
+  groups.forEach((g,i)=>{const cx=f.m.l+slot*i+slot/2;const xu=cx-w-2,xg=cx+2;
+    const pu=svgEl('path',{d:colPath(xu,y(g.u),y(0),w),'class':'bar s2'},f.svg);text(f.svg,xu+w/2,g.u>=0?y(g.u)-7:y(g.u)+14,(g.u>0?'+':'')+g.u+'%','lbl','middle');hoverable(pu,'Unguided · '+g.n+' · '+(g.u>0?'+':'')+g.u+'%');
+    if(g.g!==0){const pg=svgEl('path',{d:colPath(xg,y(g.g),y(0),w),'class':'bar'},f.svg);text(f.svg,xg+w/2,y(g.g)-7,'+'+g.g+'%','lbl','middle');hoverable(pg,'Guided · '+g.n+' · +'+g.g+'%');}
+    else{svgEl('line',{x1:xg,x2:xg+w,y1:y(0),y2:y(0),'class':'line'},f.svg);text(f.svg,xg+w/2+2,y(0)-7,'n.s.','lbl','middle');}
+    text(f.svg,cx,f.m.t+f.ph+18,g.n,'tick','middle');});
+  setTable(c,tableHTML(['Measure','Unguided (GPT Base)','Guided (GPT Tutor)'],groups.map(g=>[g.n,(g.u>0?'+':'')+g.u+'%',g.g?'+'+g.g+'%':'no significant change'])));
+}
+
+const CHARTS={s3:[renderPrice],s4:[renderEci,renderMetr],s5:[renderSubmit,renderInst],s6:[renderRct]};
+
+/* ---------- text readouts ---------- */
+function stanceText(){const a=S.adoption;switch(S.stance){
+  case 'prohibit':return 'Prohibit: use continues (53% of US institutions discourage or prohibit; 57% of students use it weekly anyway). Nobody teaches guardrails. Every one of your '+a+'% is in the unguided arm.';
+  case 'discourage':return 'Discourage: the same realized condition as prohibition with less enforcement theater. Every one of your '+a+'% is in the unguided arm.';
+  case 'permit':return 'Permit: permission without instruction. A quarter self-scaffold; the rest use it the way the unguided arm did.';
+  default:return 'Teach: the guardrails are the curriculum. Use is disclosed, shaped and checked. Most of your '+a+'% are in the guided arm.';}}
+function verifText(){const v=S.verif;if(v<0.25)return 'Checkable. The answer can be verified without a person. This is where the reinforcement reward lived; it sits at the cheap tier already.';if(v<0.6)return 'Mixed. Structure is checkable; judgment is not. The checkable half moves first, and grading concentrates on the rest.';return 'Judged. An expert has to evaluate the output. Slowest slope, longest human leverage, and the most expensive material to assess.';}
+function delayText(){const yv=S.delay;if(yv===0)return 'No delay. Every number to the right is what waiting would have cost.';const pl=S.trend==='plateau';const s=yv===1?'a year':yv+' years';let t='Waiting '+s+' at the settings you chose: ';if(pl)t+='in the plateau world the capability cost of waiting is zero. The price gap and the students in the unguided arm remain.';else t+='the frontier gains '+Math.round(SLOPE[S.trend]*yv)+' ECI points and completes '+fmtMult(Math.pow(2,yv*365.25/DBL[S.trend]))+' longer tasks unattended, while a unit of capability costs '+fmtMult(Math.pow(S.decline,yv))+' more to whoever waited than to whoever did not.';return t;}
+
+function renderText(){
+  const yrs=yrsToGrad();
+  $('#declineVal').textContent=fmtDecline(S.decline);
+  const sem=SEM.front*priceMult(yrs);
+  $('#semCost').textContent=fmtMoney(sem);
+  $('#semCostL').textContent='One semester of heavy agentic use at the frontier tier, at graduation in '+S.gradYear+'. $240 today.';
+  $('#adoptVal').textContent=S.adoption+'%';
+  $('#stanceText').textContent=stanceText();
+  const ung=Math.round(S.adoption*(1-GUIDED[S.stance]));
+  $('#unguidedN').textContent=String(ung);
+  const eff=-17*S.adoption/100*(1-GUIDED[S.stance]);
+  $('#examEff').textContent=(eff<0?'−':'')+Math.abs(eff).toFixed(1)+'%';
+  const vl=S.verif<0.25?'checkable':S.verif<0.6?'mixed':'judged';
+  $('#verifVal').textContent=vl+' · '+Math.round(S.verif*100)+'/100';
+  $('#verifText').textContent=verifText();
+  const mult=verifMult();$('#multVal').textContent=mult.toFixed(1)+'x';
+  $('#slopeVal').innerHTML=Math.round(6*mult)+'<small>/yr</small>';
+  $('#delayVal').textContent=S.delay===0?'none':(S.delay===1?'1 year':S.delay+' years');
+  $('#delayText').textContent=delayText();
+  $('#costPrice').textContent=fmtMult(Math.pow(S.decline,S.delay));
+  const cE=Math.round(SLOPE[S.trend]*S.delay);$('#costEci').textContent=String(cE);
+  $('#costEciL').textContent=cE===0?'ECI points of frontier capability foregone. None, in the plateau world.':'ECI points of frontier capability foregone. About '+(cE/8).toFixed(1)+' GPT-5-to-5.5 gaps.';
+  const hf=isFinite(DBL[S.trend])?Math.pow(2,S.delay*365.25/DBL[S.trend]):1;$('#costHorizon').textContent=fmtMult(hf);
+  $('#costHorizonL').textContent=hf<1.05?'longer tasks completed unattended by the time you start. None: the horizon is frozen at 16 h.':'longer tasks the frontier completes unattended by the time you start.';
+  /* conclusion */
+  const e=eciAt(gradT());$('#cEci').textContent=String(Math.round(e));
+  $('#cEciL').textContent='frontier ECI at graduation, '+S.gradYear+'.';
+  const d=Math.round(e-FRONT.eci);$('#cEci').parentNode.querySelector('.s').textContent=d===0?'Today\'s frontier, frozen. GPT-4 was 126.':'+'+d+' over today, about '+(d/8).toFixed(1)+' GPT-5-to-5.5 gaps. GPT-4 was 126.';
+  const h=hzAt(gradT());const pl=S.trend==='plateau';
+  $('#cHorizon').innerHTML=pl?'16<small>+ h</small>':fmtHoursTile(h).v+'<small>'+fmtHoursTile(h).u+'</small>';
+  $('#cHorizonL').textContent='of unattended work per task at graduation.';
+  $('#cHorizonS').textContent=pl?'Today\'s frontier, held at METR\'s ceiling':'Projection past METR\'s 16 h instrument ceiling ('+(DBL[S.trend])+'-day doubling)';
+  $('#cCost').textContent=fmtMoney(sem);
+  $('#cCost').parentNode.querySelector('.s').textContent='$240 today. Cheap tier: '+fmtMoney(SEM.cheap*priceMult(yrs))+' at graduation, $26 today.';
+  $('#cUnguided').textContent=String(ung);
+  $('#cUnguidedS').textContent='Under: '+STANCE_LABEL[S.stance]+' · '+S.adoption+'% weekly use';
+  $('#chips').innerHTML=[['Price decline',S.decline<1.02?'none':fmtMult(S.decline)+'/yr'],['Forecast',TREND_LABEL[S.trend]],['Graduation',String(S.gradYear)],['Stance',STANCE_LABEL[S.stance]],['Weekly use',S.adoption+'%'],['Domain',vl]].map(p=>'<li>'+p[0]+': <b>'+p[1]+'</b></li>').join('');
+  $('#conclusion').textContent='Under these settings, a student graduating in '+S.gradYear+' holds a system that completes '+fmtHoursPhrase(h,pl)+' of unattended work per task and scores above PhD level on checkable science, for '+fmtMoney(sem)+' a semester. '+ung+' of every 100 students learn from it unguided under a stance of '+STANCE_LABEL[S.stance]+'.';
+  $('#specMarker').style.left=(S.verif*100)+'%';
+  syncPresetButtons();
+}
+function renderCharts(){const id=slides[cur].id;(CHARTS[id]||[]).forEach(f=>f());}
+function renderAll(){renderText();renderCharts();}
+
+/* ---------- controls ---------- */
+function syncControls(){
+  $('#declineRange').value=Math.round(1000*Math.log(S.decline)/Math.log(75));
+  $$('.gradSeg button').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.v===S.gradYear)));
+  $$('#trendSeg button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===S.trend)));
+  $$('#stanceSeg button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===S.stance)));
+  $('#adoptRange').value=S.adoption;$('#verifRange').value=Math.round(S.verif*100);$('#delayRange').value=S.delay;
+}
+function matchesPreset(p){return Object.keys(p).every(k=>Math.abs((+S[k]||0)-(+p[k]||0))<1e-9||S[k]===p[k]);}
+function syncPresetButtons(){$$('.preset').forEach(b=>b.setAttribute('aria-pressed',String(matchesPreset(PRESET[b.dataset.p]))));}
+function applyPreset(name){Object.assign(S,PRESET[name]);syncControls();renderAll();}
+
+$$('.gradSeg').forEach(seg=>{[2027,2028,2029,2030].forEach(yv=>{const b=document.createElement('button');b.type='button';b.dataset.v=String(yv);b.textContent=String(yv);b.setAttribute('aria-pressed',String(yv===S.gradYear));b.addEventListener('click',()=>{S.gradYear=yv;syncControls();renderAll();});seg.appendChild(b);});});
+$$('#trendSeg button').forEach(b=>b.addEventListener('click',()=>{S.trend=b.dataset.v;syncControls();renderAll();}));
+$$('#stanceSeg button').forEach(b=>b.addEventListener('click',()=>{S.stance=b.dataset.v;syncControls();renderAll();}));
+$('#declineRange').addEventListener('input',e=>{S.decline=Math.pow(75,(+e.target.value)/1000);renderAll();});
+$('#adoptRange').addEventListener('input',e=>{S.adoption=+e.target.value;renderAll();});
+$('#verifRange').addEventListener('input',e=>{S.verif=(+e.target.value)/100;renderAll();});
+$('#delayRange').addEventListener('input',e=>{S.delay=+e.target.value;renderAll();});
+$$('.preset').forEach(b=>b.addEventListener('click',()=>applyPreset(b.dataset.p)));
+(function ticks(){const el=$('#declineTicks');[[1,'1x'],[1.5,'1.5x'],[4.7,'4.7x'],[13,'13x'],[75,'75x']].forEach(t=>{const s=document.createElement('span');s.style.left=(100*Math.log(t[0])/Math.log(75))+'%';s.textContent=t[1];el.appendChild(s);});})();
+
+/* ---------- spectrum ---------- */
+(function spectrum(){const el=$('#spectrum');const items=[['Dosing arithmetic',3,'r0'],['Pharmacokinetics',11,'r2'],['21 CFR 111 citation',19,'r0'],['Latin binomials, taxonomy',27,'r2'],['Mechanism recall',35,'r0'],['Monograph synthesis',45,'r2'],['Literature review',54,'r0'],['Case reasoning under uncertainty',65,'r2'],['Organoleptic quality assessment',75,'r0'],['Supply-chain provenance audit',84,'r2'],['Therapeutic relationship',92,'r0'],['IRB and ethics judgment',98,'r2']];
+  items.forEach(it=>{const d=document.createElement('div');d.className='item '+it[2];d.textContent=it[0];if(it[1]<7){d.style.left='0';d.style.transform='none';d.style.textAlign='left';}else if(it[1]>93){d.style.right='0';d.style.transform='none';d.style.textAlign='right';}else{d.style.left=it[1]+'%';}el.appendChild(d);});})();
+
+/* ---------- navigation ---------- */
+const slides=$$('.slide');let cur=0;const stage=$('#stage');
+function show(n){n=clamp(n,0,slides.length-1);slides.forEach((s,i)=>s.classList.toggle('active',i===n));cur=n;$('#count').textContent=(n+1)+' / '+slides.length;$('#progress').style.width=((n+1)/slides.length*100)+'%';stage.scrollTop=0;try{history.replaceState(null,'','#s'+(n+1));}catch(e){}hideTip();renderCharts();}
+$('#prevBtn').addEventListener('click',()=>show(cur-1));$('#nextBtn').addEventListener('click',()=>show(cur+1));
+document.addEventListener('keydown',e=>{const t=e.target,tag=t&&t.tagName;if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT'||(t&&t.isContentEditable))return;if(tag==='BUTTON'&&(e.key===' '||e.key==='Enter'))return;if(e.metaKey||e.ctrlKey||e.altKey)return;
+  if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '||e.key==='Enter'){e.preventDefault();show(cur+1);}else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();show(cur-1);}else if(e.key==='Home'){e.preventDefault();show(0);}else if(e.key==='End'){e.preventDefault();show(slides.length-1);}});
+let tx=0,ty=0,tOK=false;
+stage.addEventListener('touchstart',e=>{const t=e.target;tOK=!(t.closest&&t.closest('input,button,.seg,.chart'));tx=e.touches[0].clientX;ty=e.touches[0].clientY;},{passive:true});
+stage.addEventListener('touchend',e=>{if(!tOK)return;const dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5){show(dx<0?cur+1:cur-1);}},{passive:true});
+stage.addEventListener('click',e=>{const t=e.target;if(t.closest&&t.closest('input,button,a,details,summary,.chart,.seg'))return;if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();});
+
+/* ---------- theme ---------- */
+const root=document.documentElement;
+try{const t=localStorage.getItem('fbg-theme');if(t==='dark'||t==='light')root.dataset.theme=t;}catch(e){}
+$('#themeBtn').addEventListener('click',()=>{const sys=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';const curT=root.dataset.theme||sys;const next=curT==='dark'?'light':'dark';root.dataset.theme=next;try{localStorage.setItem('fbg-theme',next);}catch(e){}});
+
+/* ---------- init ---------- */
+let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(renderCharts,150);});
+syncControls();
+const m=(location.hash||'').match(/^#s(\d{1,2})$/);
+show(m?(+m[1])-1:0);
+renderText();
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(renderCharts);}
+})();
+</script>
+
+</body>
+</html>
