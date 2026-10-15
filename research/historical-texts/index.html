@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Pathfinding the Historical Texts — Reading Pre-Flexner American Herbal Medicine</title>
+<meta name="description" content="A practice tool for anyone writing the historical-use section of a herbal monograph: why the pre-Flexner American texts still matter, who wrote what and when, a toolkit for the conventions the old books leave unsaid (missing ratios, apothecary units, drop doses, drifting names, archaic terms), and practice decoding entries, spotting traps, and checking your own section.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: light;
+    --bg: #f5f1eb;
+    --bg-card: #fefcf9;
+    --bg-inset: #efe9df;
+    --bg-dark: #1e1a14;
+    --border: #cfc5b4;
+    --border-light: #e2dbd0;
+    --text: #211c14;
+    --text-2: #6b5e48;
+    --text-muted: #74674f;
+    --on-dark: #f5f1eb;
+    --fill: #1e1a14;     --on-fill: #f5f1eb;
+    --sound: #2c6e49;    --sound-soft: #dff0e4;
+    --dismiss: #8c3f45;  --dismiss-soft: #f0dcdc;
+    --cred: #955709;     --cred-soft: #f6e6cf;
+    --prec: #2b5a8c;     --prec-soft: #dde7f2;
+    --record: #5e4a8c;   --record-soft: #e6e0f2;
+    --good: #2c6e49;     --good-soft: #dff0e4;
+    --bad: #a3382e;      --bad-soft: #f6dfdb;
+    --focus: #b86c10;
+    --radius: 10px;
+    --shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #17140f;
+      --bg-card: #221d16;
+      --bg-inset: #2b2419;
+      --bg-dark: #0f0d09;
+      --border: #4a4034;
+      --border-light: #342c22;
+      --text: #ece5d9;
+      --text-2: #bfb29c;
+      --text-muted: #a39784;
+      --on-dark: #ece5d9;
+      --fill: #ece5d9;    --on-fill: #17140f;
+      --sound: #8cc7a8;   --sound-soft: #1f3328;
+      --dismiss: #d98a90; --dismiss-soft: #3d2124;
+      --cred: #e2a558;    --cred-soft: #3d2c14;
+      --prec: #8fb6dd;    --prec-soft: #1c2d40;
+      --record: #b9a6e0;  --record-soft: #2a2340;
+      --good: #8cc7a8;    --good-soft: #1f3328;
+      --bad: #e09a90;     --bad-soft: #3d2124;
+      --shadow: 0 2px 12px rgba(0,0,0,0.35);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #17140f; --bg-card: #221d16; --bg-inset: #2b2419; --bg-dark: #0f0d09;
+    --border: #4a4034; --border-light: #342c22;
+    --text: #ece5d9; --text-2: #bfb29c; --text-muted: #a39784; --on-dark: #ece5d9;
+    --fill: #ece5d9; --on-fill: #17140f;
+    --sound: #8cc7a8; --sound-soft: #1f3328; --dismiss: #d98a90; --dismiss-soft: #3d2124;
+    --cred: #e2a558; --cred-soft: #3d2c14; --prec: #8fb6dd; --prec-soft: #1c2d40;
+    --record: #b9a6e0; --record-soft: #2a2340;
+    --good: #8cc7a8; --good-soft: #1f3328; --bad: #e09a90; --bad-soft: #3d2124;
+    --shadow: 0 2px 12px rgba(0,0,0,0.35);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--text);
+    background: var(--bg);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4 { font-family: 'Playfair Display', Georgia, serif; line-height: 1.25; letter-spacing: -0.01em; }
+  p + p { margin-top: 0.8rem; }
+  a { color: var(--cred); }
+  em { font-style: italic; }
+  button { font: inherit; cursor: pointer; }
+  input, select { font: inherit; color: var(--text); }
+  button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+  .skip { position: absolute; left: -999px; top: 0; background: var(--bg-card); color: var(--text); padding: 0.5rem 1rem; z-index: 100; }
+  .skip:focus { left: 1rem; top: 1rem; }
+
+  .site-header { background: var(--bg-dark); color: var(--on-dark); padding: 2.5rem 1.5rem 2.25rem; text-align: center; }
+  .site-header .crumb { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #cfc5b4; margin-bottom: 0.9rem; }
+  .site-header .crumb a { color: #cfc5b4; text-decoration: none; }
+  .site-header .crumb a:hover { color: var(--on-dark); }
+  .site-header h1 { font-size: clamp(28px, 4.5vw, 40px); font-weight: 600; color: var(--on-dark); margin-bottom: 0.5rem; }
+  .site-header .sub { font-size: 15px; color: #cfc5b4; font-weight: 300; max-width: 640px; margin: 0 auto; }
+  .site-header .course { font-size: 12px; color: #cfc5b4; margin-top: 0.9rem; letter-spacing: 0.04em; }
+
+  .wrap { max-width: 860px; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+
+  nav.tabs { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--bg); padding: 0.75rem 0 0.75rem; margin-bottom: 1.25rem; border-bottom: 1px solid var(--border-light); display: flex; gap: 0.4rem; flex-wrap: wrap; }
+  nav.tabs button { border: 1px solid var(--border); background: var(--bg-card); color: var(--text-2); border-radius: 999px; padding: 0.4rem 0.9rem; font-size: 13.5px; font-weight: 500; min-height: 40px; }
+  nav.tabs button[aria-selected="true"] { background: var(--fill); color: var(--on-fill); border-color: var(--fill); }
+  nav.tabs button .n { display: inline-block; width: 1.35em; height: 1.35em; line-height: 1.35em; text-align: center; border-radius: 50%; background: var(--bg-inset); color: var(--text-2); font-size: 11px; margin-right: 0.4em; }
+  nav.tabs button[aria-selected="true"] .n { background: color-mix(in srgb, var(--on-fill) 18%, transparent); color: var(--on-fill); }
+
+  section.view { display: none; }
+  section.view.active { display: block; }
+  section.view > h2 { font-size: 26px; margin-bottom: 0.35rem; }
+  .lede { color: var(--text-2); font-size: 16px; margin-bottom: 1.5rem; max-width: 68ch; }
+  h3.sec { font-size: 20px; margin: 1.6rem 0 0.3rem; }
+
+  .card { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius); padding: 1.35rem 1.5rem; margin-bottom: 1rem; box-shadow: var(--shadow); }
+  .card h3 { font-size: 19px; margin-bottom: 0.5rem; }
+  .card h4 { font-family: 'IBM Plex Sans', sans-serif; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin: 0.9rem 0 0.4rem; }
+  .muted { color: var(--text-2); }
+  .small { font-size: 13.5px; }
+  .eyebrow { font-size: 11.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.09em; color: var(--text-muted); margin-bottom: 0.4rem; }
+  ul.plain li, ol.plain li { margin: 0.4rem 0 0.4rem 1.2rem; }
+
+  /* colour roles */
+  .c-sound { --c: var(--sound); --cs: var(--sound-soft); }
+  .c-dismiss { --c: var(--dismiss); --cs: var(--dismiss-soft); }
+  .c-cred { --c: var(--cred); --cs: var(--cred-soft); }
+  .c-prec { --c: var(--prec); --cs: var(--prec-soft); }
+  .c-record { --c: var(--record); --cs: var(--record-soft); }
+  .tag { display: inline-block; font-size: 12px; font-weight: 600; letter-spacing: 0.03em; padding: 0.15rem 0.6rem; border-radius: 999px; background: var(--cs); color: var(--c); border: 1px solid color-mix(in srgb, var(--c) 35%, transparent); white-space: nowrap; }
+
+  .callout { border-radius: var(--radius); padding: 1rem 1.2rem; background: var(--cs, var(--bg-inset)); border: 1px solid color-mix(in srgb, var(--c, var(--border)) 30%, transparent); margin: 1rem 0; font-size: 15px; }
+  .callout .eyebrow { color: var(--c, var(--text-muted)); }
+
+  /* reasons grid */
+  .reasons { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.9rem; margin: 0.8rem 0 1.25rem; }
+  .reason { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius); padding: 1.05rem 1.15rem; }
+  .reason h3 { font-size: 17px; margin-bottom: 0.35rem; }
+  .reason p { font-size: 14.5px; color: var(--text-2); }
+
+  /* stance panel */
+  .stance-toggle { display: flex; gap: 0.5rem; flex-wrap: wrap; margin: 0.4rem 0 0.9rem; }
+  .stance-toggle button { border: 2px solid var(--c); background: var(--bg-card); color: var(--text); border-radius: 999px; padding: 0.45rem 1rem; font-size: 14px; font-weight: 500; min-height: 44px; }
+  .stance-toggle button[aria-pressed="true"] { background: var(--c); color: var(--bg-card); }
+  .entry { font-family: 'Playfair Display', Georgia, serif; font-size: 17px; line-height: 1.6; background: var(--bg-inset); border-left: 4px solid var(--border); padding: 1rem 1.2rem; border-radius: 0 var(--radius) var(--radius) 0; margin: 0.5rem 0 0.9rem; }
+  .entry .hw { font-variant: small-caps; font-weight: 700; letter-spacing: 0.02em; }
+  .entry cite { display: block; font-family: 'IBM Plex Sans', sans-serif; font-style: normal; font-size: 12.5px; color: var(--text-muted); margin-top: 0.6rem; }
+  .entry mark { background: transparent; color: inherit; border-radius: 3px; padding: 0 1px; transition: background .2s; }
+  .entry mark::after { content: attr(data-n); font-family: 'IBM Plex Sans', sans-serif; font-size: 11px; font-weight: 600; vertical-align: super; margin-left: 2px; color: var(--text-muted); }
+  [data-mode="bio"] .entry mark { background: var(--dismiss-soft); text-decoration: line-through; text-decoration-color: var(--dismiss); }
+  [data-mode="bio"] .entry mark::after { color: var(--dismiss); }
+  [data-mode="ctx"] .entry mark { background: var(--sound-soft); }
+  [data-mode="ctx"] .entry mark::after { color: var(--sound); }
+  .notes { display: grid; gap: 0.45rem; }
+  .notes .note { display: grid; grid-template-columns: 1.7rem 1fr; gap: 0.5rem; font-size: 14.5px; align-items: start; }
+  .notes .note .k { font-weight: 600; text-align: center; border-radius: 999px; background: var(--cs); color: var(--c); font-size: 12px; padding: 0.1rem 0; margin-top: 0.15rem; }
+  .verdict-line { margin-top: 0.9rem; padding-top: 0.8rem; border-top: 1px dashed var(--border); font-weight: 500; }
+
+  /* arc */
+  .arc { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.5rem; margin: 0.8rem 0 0.6rem; counter-reset: arc; }
+  .arc button { position: relative; text-align: left; border: 1px solid var(--border); background: var(--bg-card); color: var(--text); border-radius: var(--radius); padding: 0.7rem 0.8rem 0.7rem; min-height: 72px; line-height: 1.3; font-size: 14px; }
+  .arc button .s { display: block; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.2rem; }
+  .arc button[aria-pressed="true"] { background: var(--fill); color: var(--on-fill); border-color: var(--fill); }
+  .arc button[aria-pressed="true"] .s { color: color-mix(in srgb, var(--on-fill) 75%, transparent); }
+  .arc button.heart { border-width: 2px; border-color: var(--sound); }
+  .arc-panel { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius); padding: 1rem 1.2rem; font-size: 15px; min-height: 5rem; }
+
+  /* gantt */
+  .gantt { margin: 0.8rem 0 0.4rem; }
+  .g-axis, .g-row { display: grid; grid-template-columns: 9.5rem 1fr; gap: 0.6rem; align-items: center; }
+  .g-axis .scale { position: relative; height: 1.4rem; font-size: 11.5px; color: var(--text-muted); }
+  .g-axis .scale span { position: absolute; transform: translateX(-50%); }
+  .g-row { margin: 0.35rem 0; }
+  .g-row button.lab { text-align: left; border: 0; background: transparent; color: var(--text); font-weight: 600; font-size: 13.5px; padding: 0.3rem 0; line-height: 1.25; min-height: 40px; }
+  .g-row button.lab[aria-expanded="true"] { color: var(--c); }
+  .g-track { position: relative; height: 26px; background: var(--bg-inset); border-radius: 6px; cursor: pointer; }
+  .g-bar { position: absolute; top: 4px; bottom: 4px; background: var(--c); border-radius: 4px; opacity: .9; }
+  .g-mark { position: absolute; top: -4px; bottom: -4px; width: 0; border-left: 2px dashed var(--dismiss); }
+  .g-legend { display: flex; gap: 1rem; flex-wrap: wrap; font-size: 12.5px; color: var(--text-2); margin: 0.3rem 0 0.8rem 10.1rem; }
+  .g-legend i { display: inline-block; width: 14px; border-top: 2px dashed var(--dismiss); vertical-align: middle; margin-right: 0.35rem; }
+  .stream { border: 1px solid var(--border-light); border-left: 5px solid var(--c); background: var(--bg-card); border-radius: 0 var(--radius) var(--radius) 0; padding: 1rem 1.2rem; margin: 0.6rem 0 1rem; }
+  .stream[hidden] { display: none; }
+  .stream h3 { font-size: 18px; color: var(--c); margin-bottom: 0.3rem; }
+  .stream .texts li { margin: 0.3rem 0 0.3rem 1.2rem; font-size: 14.5px; }
+  .stream .meta { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.7rem; margin-top: 0.8rem; }
+  .stream .meta > div { background: var(--bg-inset); border-radius: 8px; padding: 0.7rem 0.85rem; font-size: 13.5px; }
+  .stream .meta b { display: block; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.2rem; }
+
+  .finds { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.7rem; margin: 0.6rem 0 1rem; }
+  .finds a { display: block; text-decoration: none; color: var(--text); background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius); padding: 0.8rem 1rem; font-size: 14px; }
+  .finds a:hover { border-color: var(--border); }
+  .finds a b { display: block; color: var(--cred); font-size: 15px; margin-bottom: 0.15rem; }
+  .finds a span { color: var(--text-2); font-size: 13.5px; }
+
+  /* toolkit */
+  .blade { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius); margin-bottom: 0.8rem; box-shadow: var(--shadow); }
+  .blade > summary { list-style: none; cursor: pointer; padding: 1rem 1.25rem; display: grid; grid-template-columns: 2rem 1fr auto; gap: 0.6rem; align-items: baseline; }
+  .blade > summary::-webkit-details-marker { display: none; }
+  .blade > summary .no { font-family: 'Playfair Display', serif; font-weight: 700; color: var(--cred); font-size: 18px; }
+  .blade > summary .t { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 600; line-height: 1.3; }
+  .blade > summary .t small { display: block; font-family: 'IBM Plex Sans', sans-serif; font-weight: 400; font-size: 13.5px; color: var(--text-2); margin-top: 0.15rem; }
+  .blade > summary::after { content: '+'; font-size: 20px; color: var(--text-muted); }
+  .blade[open] > summary::after { content: '−'; }
+  .blade .body { padding: 0 1.25rem 1.2rem 3.85rem; font-size: 15px; }
+  .blade .body p { margin-bottom: 0.6rem; }
+  .blade .body ol, .blade .body ul { margin: 0.3rem 0 0.7rem 1.2rem; }
+  .blade .body li { margin: 0.25rem 0; }
+  .eg { background: var(--bg-inset); border-radius: 8px; padding: 0.75rem 0.95rem; font-size: 14px; margin: 0.6rem 0; }
+  .eg b { font-weight: 600; }
+  table.t { width: 100%; border-collapse: collapse; font-size: 14px; margin: 0.5rem 0 0.8rem; }
+  table.t th, table.t td { text-align: left; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--border-light); vertical-align: top; }
+  table.t th { font-size: 11.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); font-weight: 600; }
+  table.t td.sym { font-family: 'Playfair Display', Georgia, serif; font-size: 16px; white-space: nowrap; }
+
+  .tool { border: 2px solid var(--prec); background: var(--prec-soft); border-radius: var(--radius); padding: 1rem 1.1rem; margin: 0.7rem 0; }
+  .tool .eyebrow { color: var(--prec); }
+  .fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem 0.9rem; margin: 0.5rem 0; }
+  .fields label { display: grid; gap: 0.2rem; font-size: 13px; font-weight: 500; color: var(--text-2); }
+  .fields input, .fields select, .rowin input { border: 1px solid var(--text-muted); background: var(--bg-card); border-radius: 8px; padding: 0.45rem 0.6rem; min-height: 42px; font-size: 15px; width: 100%; }
+  .rowin { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
+  .rowin input { flex: 1 1 200px; font-family: 'Playfair Display', Georgia, serif; font-size: 17px; }
+  .symkeys { display: flex; gap: 0.35rem; flex-wrap: wrap; margin-top: 0.5rem; }
+  .symkeys button { border: 1px solid var(--text-muted); background: var(--bg-card); color: var(--text); border-radius: 6px; min-width: 40px; min-height: 40px; font-family: 'Playfair Display', Georgia, serif; font-size: 17px; }
+  .out { background: var(--bg-card); border-radius: 8px; padding: 0.8rem 1rem; margin-top: 0.7rem; font-size: 14.5px; border: 1px solid var(--border-light); }
+  .out .big { font-size: 18px; font-weight: 600; }
+  .out .warn { color: var(--bad); font-weight: 500; }
+  .out p + p { margin-top: 0.45rem; }
+
+  .terms { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem; margin: 0.5rem 0 0.8rem; }
+  .terms details { border: 1px solid var(--border-light); background: var(--bg); border-radius: 8px; padding: 0.55rem 0.8rem; font-size: 14px; }
+  .terms summary { cursor: pointer; font-weight: 600; font-family: 'Playfair Display', Georgia, serif; font-size: 16px; }
+  .terms details p { margin-top: 0.3rem; color: var(--text-2); }
+
+  /* sorter */
+  .progress { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.9rem; font-size: 13px; color: var(--text-2); flex-wrap: wrap; }
+  .bar { flex: 1 1 160px; height: 8px; background: var(--bg-inset); border-radius: 999px; overflow: hidden; min-width: 120px; }
+  .bar > i { display: block; height: 100%; background: var(--fill); width: 0; transition: width .25s; }
+  .score { font-weight: 600; color: var(--text); }
+  .src { border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-card); padding: 1.35rem 1.5rem; box-shadow: var(--shadow); }
+  .src .kind { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 0.35rem; }
+  .src .stmt { font-family: 'Playfair Display', Georgia, serif; font-size: 19px; line-height: 1.5; }
+  .bins { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; margin-top: 1rem; }
+  .bins button { text-align: left; border: 2px solid var(--c); background: var(--cs); color: var(--text); border-radius: var(--radius); padding: 0.7rem 0.9rem; min-height: 56px; line-height: 1.3; transition: transform .08s; }
+  .bins button.wide { grid-column: 1 / -1; }
+  .bins button:hover { transform: translateY(-1px); }
+  .bins button:disabled { opacity: .55; cursor: default; transform: none; }
+  .bins button b { display: block; color: var(--c); font-size: 15px; }
+  .bins button span { display: block; font-size: 12.5px; color: var(--text-2); margin-top: 0.15rem; }
+  .fb { margin-top: 1rem; border-radius: var(--radius); padding: 1rem 1.2rem; border: 1px solid; }
+  .fb.ok { background: var(--good-soft); border-color: color-mix(in srgb, var(--good) 40%, transparent); }
+  .fb.no { background: var(--bad-soft); border-color: color-mix(in srgb, var(--bad) 40%, transparent); }
+  .fb .verdict { font-weight: 600; margin-bottom: 0.4rem; }
+  .fb.ok .verdict { color: var(--good); }
+  .fb.no .verdict { color: var(--bad); }
+  .fb .why { margin-bottom: 0.5rem; }
+  .fb .fix { font-size: 13.5px; color: var(--text-2); border-top: 1px dashed var(--border); padding-top: 0.5rem; margin-top: 0.5rem; }
+  .fb .fix b { color: var(--text); font-weight: 600; }
+  .actions { display: flex; gap: 0.6rem; margin-top: 1rem; flex-wrap: wrap; }
+  .btn { border: 1px solid var(--fill); background: var(--fill); color: var(--on-fill); border-radius: 999px; padding: 0.55rem 1.2rem; font-weight: 500; font-size: 14.5px; min-height: 44px; }
+  .btn.ghost { background: transparent; color: var(--text); border-color: var(--border); }
+  .btn:disabled { opacity: .45; cursor: default; }
+
+  .summary .row { display: grid; grid-template-columns: 1fr auto; gap: 0.5rem 1rem; align-items: center; padding: 0.55rem 0; border-bottom: 1px solid var(--border-light); font-size: 14.5px; }
+  .summary .row:last-child { border-bottom: 0; }
+  .summary .row .n { font-weight: 600; white-space: nowrap; }
+  .missed li { margin: 0.5rem 0 0.5rem 1.1rem; font-size: 14.5px; }
+  .review-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.8rem; margin-top: 0.8rem; }
+  .review-grid .col { background: var(--bg-card); border: 1px solid var(--border-light); border-top: 4px solid var(--c); border-radius: var(--radius); padding: 0.9rem 1rem; }
+  .review-grid .col.wide { grid-column: 1 / -1; }
+  .review-grid .col h4 { color: var(--c); font-size: 13px; margin-top: 0; }
+  .review-grid .col li { font-size: 13.5px; margin: 0.3rem 0 0.3rem 1.1rem; }
+
+  /* stepwise quiz */
+  .q { border: 1px solid var(--border-light); background: var(--bg-card); border-radius: var(--radius); padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; box-shadow: var(--shadow); }
+  .q .prompt { font-weight: 500; margin-bottom: 0.6rem; }
+  .q .ill { font-size: 12px; color: var(--text-muted); margin: -0.4rem 0 0.9rem; }
+  .opts { display: grid; gap: 0.5rem; }
+  .opts button { text-align: left; border: 1px solid var(--border); background: var(--bg); color: var(--text); border-radius: 8px; padding: 0.65rem 0.9rem; font-size: 14.5px; line-height: 1.4; min-height: 44px; }
+  .opts button:hover:not(:disabled) { border-color: var(--text-2); }
+  .opts button:disabled { cursor: default; }
+  .opts button.correct { background: var(--good-soft); border-color: var(--good); }
+  .opts button.wrong { background: var(--bad-soft); border-color: var(--bad); }
+  .opts button.dim { opacity: .55; }
+  .expl { margin-top: 0.8rem; font-size: 14.5px; padding: 0.8rem 1rem; border-radius: 8px; background: var(--bg-inset); display: none; }
+  .expl.show { display: block; }
+  .expl b { font-weight: 600; }
+  .step { margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed var(--border); }
+  .step[hidden] { display: none; }
+  .tally { font-size: 13.5px; color: var(--text-2); margin-top: 1rem; font-weight: 500; }
+
+  /* audit */
+  .audit fieldset { border: 0; padding: 0; margin: 0 0 1rem; }
+  .audit legend { font-weight: 500; margin-bottom: 0.5rem; }
+  .audit .choices { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .audit .choices label { border: 1px solid var(--border); border-radius: 999px; padding: 0.4rem 0.9rem; background: var(--bg); cursor: pointer; font-size: 14px; min-height: 40px; display: inline-flex; align-items: center; gap: 0.4rem; }
+  .audit .choices label:has(input:checked) { background: var(--fill); color: var(--on-fill); border-color: var(--fill); }
+  .audit input[type="radio"], .audit input[type="checkbox"] { accent-color: var(--sound); }
+  .audit .checks label { display: flex; gap: 0.6rem; align-items: flex-start; padding: 0.45rem 0; font-size: 14.5px; cursor: pointer; }
+  .audit .checks input { margin-top: 0.35rem; flex: 0 0 auto; }
+  .audit .sub { margin: 0.6rem 0 0 0; padding: 0.9rem 1rem; background: var(--bg-inset); border-radius: 8px; }
+  .audit .sub[hidden] { display: none; }
+  .audit h3 { margin-top: 0.4rem; }
+  .verdicts { display: grid; gap: 0.6rem; margin-top: 0.5rem; }
+  .verdict-row { display: grid; grid-template-columns: auto 1fr; gap: 0.8rem; align-items: start; padding: 0.8rem 1rem; border-radius: 8px; border: 1px solid var(--border-light); background: var(--bg-card); }
+  .verdict-row .pill { font-size: 12px; font-weight: 600; padding: 0.2rem 0.6rem; border-radius: 999px; white-space: nowrap; margin-top: 0.15rem; }
+  .pill.full { background: var(--good-soft); color: var(--good); }
+  .pill.none { background: var(--bad-soft); color: var(--bad); }
+  .pill.fix { background: var(--cred-soft); color: var(--cred); }
+  .pill.na { background: var(--bg-inset); color: var(--text-2); }
+  .verdict-row .t { font-weight: 600; font-size: 14.5px; }
+  .verdict-row .d { font-size: 14px; color: var(--text-2); margin-top: 0.15rem; }
+  pre.tpl { white-space: pre-wrap; font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; background: var(--bg-inset); border-radius: 8px; padding: 0.9rem 1rem; border: 1px solid var(--border-light); }
+
+  details.made { margin-top: 2.5rem; font-size: 13.5px; color: var(--text-2); }
+  details.made summary { cursor: pointer; color: var(--text-muted); }
+  details.made p { margin-top: 0.6rem; }
+  footer { text-align: center; padding: 2rem 1rem; font-size: 12px; color: var(--text-muted); border-top: 1px solid var(--border-light); margin-top: 2rem; }
+
+  #audit-out { scroll-margin-top: 5rem; }
+  @media (max-width: 720px) {
+    nav.tabs { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+    nav.tabs button { flex: 0 0 auto; }
+    .reasons, .review-grid, .finds, .terms, .fields { grid-template-columns: 1fr; }
+    .bins { grid-template-columns: 1fr; }
+    .arc { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .stream .meta { grid-template-columns: 1fr; }
+    .g-axis, .g-row { grid-template-columns: 6.5rem 1fr; }
+    .g-legend { margin-left: 0; }
+    .site-header { padding: 2rem 1.25rem 1.75rem; }
+    .card, .src, .q { padding: 1.1rem 1.1rem; }
+    .blade .body { padding: 0 1.1rem 1.1rem 1.1rem; }
+    .blade > summary { padding: 0.9rem 1.1rem; }
+  }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .bar > i, .bins button, .entry mark { transition: none; } }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="crumb"><a href="../../">Pedagogy Tools</a> · <a href="../">Research &amp; Sources</a></div>
+  <h1>Pathfinding the Historical Texts</h1>
+  <p class="sub">Reading pre-Flexner American herbal medicine without leaving the ancestors on the shelf.</p>
+  <p class="course">For a monograph or piece of research with a historical-use section</p>
+</header>
+
+<main id="main" class="wrap">
+
+<nav class="tabs" role="tablist" aria-label="Sections">
+  <button role="tab" aria-selected="true" aria-controls="v-why" id="t-why" data-view="why"><span class="n">1</span>Why read them</button>
+  <button role="tab" aria-selected="false" aria-controls="v-map" id="t-map" data-view="map"><span class="n">2</span>The map</button>
+  <button role="tab" aria-selected="false" aria-controls="v-kit" id="t-kit" data-view="kit"><span class="n">3</span>The toolkit</button>
+  <button role="tab" aria-selected="false" aria-controls="v-decode" id="t-decode" data-view="decode"><span class="n">4</span>Decode an entry</button>
+  <button role="tab" aria-selected="false" aria-controls="v-trap" id="t-trap" data-view="trap"><span class="n">5</span>Spot the trap</button>
+  <button role="tab" aria-selected="false" aria-controls="v-audit" id="t-audit" data-view="audit"><span class="n">6</span>Check your section</button>
+</nav>
+
+<!-- ===================== 1. WHY READ THEM ===================== -->
+<section class="view active" id="v-why" role="tabpanel" aria-labelledby="t-why">
+  <h2>Why the old books still matter</h2>
+  <p class="lede">The botanic, Physiomedical and Eclectic literature of the United States, together with the official pharmacy books of the same era, is the largest written record of how practitioners on this continent used plants, from roughly the 1790s into the 1930s. Almost none of it was ever tested the way a modern trial tests a drug. Read with a purely biomedical stance, almost all of it gets thrown out. Read in its era, much of it holds up, and the parts that don't still teach you something.</p>
+
+  <div class="card" id="stance" data-mode="">
+    <div class="eyebrow">Try it: one entry, two stances</div>
+    <p class="small muted" style="margin-bottom:.6rem">Read the entry, then choose a stance and see what each one keeps.</p>
+    <div class="entry">
+      <span class="hw">Calendula.</span> — Marigold. The flowers and leaves. <em>Preparations:</em> Tincture; Specific Medicine. Locally, the tincture <mark data-n="1">diluted with three or four parts of water</mark> is applied to <mark data-n="2">lacerated and contused wounds; it lessens pain and swelling, checks suppuration</mark>, and disposes the wound to heal <mark data-n="3">by first intention</mark>, leaving little scar. Internally it <mark data-n="4">has been given in</mark> chronic catarrhal states of the stomach. <mark data-n="5">Dose of the tincture, gtt. v to xx.</mark>
+      <cite>Composite entry written for this exercise in the style of an Eclectic materia medica of the 1880s. Not a quotation; do not cite it.</cite>
+    </div>
+    <div class="stance-toggle" role="group" aria-label="Choose a stance">
+      <button type="button" class="c-dismiss" data-mode="bio" aria-pressed="false">Purely biomedical stance</button>
+      <button type="button" class="c-sound" data-mode="ctx" aria-pressed="false">Read in its era</button>
+    </div>
+    <div id="stance-out" aria-live="polite"></div>
+  </div>
+
+  <h3 class="sec">Why read them at all</h3>
+  <div class="reasons">
+    <div class="reason"><h3>Missing trials are a funding record</h3><p>A clinical trial answers one PICO question (population, intervention, comparison, outcome) that someone paid to ask. Most plant uses in the period literature were never put to that test, because nobody funded that particular question in the 1970s, or since. Here, absence of evidence records a funding decision, not a negative result. Practitioners often report clinical results that run well ahead of the published evidence; calendula on wounds is a common example. When the historical record and the modern evidence disagree, ask first whether the gap lies between what works and what doesn’t, or between what was funded and what wasn’t.</p></div>
+    <div class="reason"><h3>The older layers drop out first</h3><p>Databases, curricula and guidelines index what has been studied. Plant knowledge with a thin evidence base is the knowledge most likely to vanish from them, even when generations of practitioners relied on it. A purely biomedical stance does not refute that knowledge. It leaves it on the shelf.</p></div>
+    <div class="reason"><h3>Local systems are brittle</h3><p>Herbs keep their usefulness even where a standard of care exists, because supply chains, access and cost fail, sometimes for a whole region at once. Knowing what people used, and how, before the modern pharmacy existed is part of a resilient practice.</p></div>
+    <div class="reason"><h3>The Eclectics are the bridge</h3><p>The Eclectic physicians wrote during a boom in printing and publishing, so their record is large and searchable, though weighted towards Western-centric authors. Their founding premise was to adopt any intervention that worked, which is where the name comes from. That let them take up new plants without forcing them into one energetic system or healing narrative. Their texts are often the cleanest systematic summary connecting that era to the present. They still need checking.</p></div>
+    <div class="reason"><h3>Mostly right</h3><p>These authors worked before modern spectroscopic and chromatographic analysis. They described what they could see, smell and taste, and they were often close. An observation can be accurate while the explanation attached to it is wrong. The 1905 King’s and the 1918 U.S. Dispensatory both describe German chamomile oil as a deep blue and attribute the colour to a principle they call azulene or caerulein. They were close. The formula assigned to it was wrong, and nobody knew that the blue compound, now called chamazulene, forms from matricin during distillation. Mostly right, in the sense of Douglas Adams’s “Mostly Harmless”: not a safe basis for practice or formulation on its own, but a rich garden of knowledge once you read it within its era, its bias, and its mistaken priors about human health.</p></div>
+    <div class="reason"><h3>They did the best they could with the tools they had</h3><p>That is true of healers in every era, the present included. Read for era bias and mistaken priors, such as heroic dosing and theories of disease later abandoned, and read with respect rather than contempt. Present-day priors will look dated too.</p></div>
+    <div class="reason"><h3>You are the judge now</h3><p>Herbal claims now circulate algorithmically, copied from site to site and summary to summary, usually without a source. Someone has to decide whether a claim is any good, and that someone is you. Many of those claims began in the period texts. Going back to the text shows what was actually said, about whom, in what preparation, and at what dose.</p></div>
+    <div class="reason"><h3>Flexner is a phase transition, not a date</h3><p>The Flexner Report (1910) and what followed reshaped American medical education and closed most sectarian schools; the last Eclectic college closed in 1939. Call sources written after that transition <em>post-Flexner</em>, not “modern”. They belong in the relevance discussion, where you compare them with the period record. They are not the historical record themselves.</p></div>
+    <div class="reason"><h3>Ask who is missing from the page</h3><p>Many cultures practised medicine in early America, but the record that survives in print is dominated by Euro-American authors. Samuel Thomson’s system borrowed heavily from Native American herbal traditions, and the Eclectics popularised plants Indigenous healers already used, echinacea and black cohosh among them. Root doctors and healers of the African diaspora rarely appear in the dispensatories at all. Name that bias when you write.</p></div>
+    <div class="reason"><h3>Know what they are good for</h3><p>The period texts are strong evidence for indication patterns, preparation and pharmacy, how plants were combined, and decades of clinical observation. They are weak evidence for setting dose limits or safety thresholds. Don’t set an upper limit from historical anecdote, and heroic-era or drop-dose ranges often shouldn’t be copied into today’s practice.</p></div>
+  </div>
+
+  <div class="callout c-record">
+    <div class="eyebrow">What this section is for</div>
+    <p>Ethnobotany and Traditional Ecological Knowledge record how a people used a plant. A historical-use section tells a different story: the plant’s <b>adoption</b> into American medicine. When did it come in, and through whom? What did Thomsonian, Physiomedical, Eclectic and regular practitioners use it for, in what preparation, at what dose? The most common way this section goes wrong is an ethnobotany essay with no adoption story.</p>
+  </div>
+
+  <div class="actions"><button class="btn" data-go="map">Next: the map →</button></div>
+</section>
+
+<!-- ===================== 2. THE MAP ===================== -->
+<section class="view" id="v-map" role="tabpanel" aria-labelledby="t-map">
+  <h2>Who wrote what, and when</h2>
+  <p class="lede">Before you search, know the terrain: the arc most plants follow, the streams of practice that wrote about them, and where the books live now.</p>
+
+  <h3 class="sec">The arc of a plant</h3>
+  <p class="small muted">Most plants in the American record follow this path. Tap a stage to see what to look for. The second stage is the heart of the section.</p>
+  <div class="arc" id="arc" role="group" aria-label="Stages of a plant's history"></div>
+  <div class="arc-panel" id="arc-panel" aria-live="polite"></div>
+
+  <h3 class="sec">The streams</h3>
+  <p class="small muted">Tap a stream for its key texts, what it is good for, what to watch for, and how it writes a dose. Bars show approximate active years.</p>
+  <div class="gantt" id="gantt"></div>
+  <div id="streams"></div>
+
+  <h3 class="sec">Where the books live</h3>
+  <p class="small muted">Most of these texts are out of copyright and scanned or transcribed online. Bookmark the ones you use; the dosing work comes back to them.</p>
+  <div class="finds">
+    <a href="https://www.henriettes-herb.com/eclectic/index.html" target="_blank" rel="noopener"><b>Henriette’s Herbal</b><span>Transcriptions of King’s American Dispensatory, Felter, Ellingwood, Scudder, the Specific Medicines list, the 1911 British Pharmaceutical Codex, and more. Searchable by plant.</span></a>
+    <a href="https://www.swsbm.com/HOMEPAGE/HomePage.html" target="_blank" rel="noopener"><b>Southwest School of Botanical Medicine</b><span>Michael Moore’s archive. Scroll down for scanned classic texts as PDFs.</span></a>
+    <a href="https://www.hathitrust.org/" target="_blank" rel="noopener"><b>HathiTrust Digital Library</b><span>Full page scans of many editions, including the U.S. Dispensatory and Thomson. Good for checking an edition’s front matter.</span></a>
+    <a href="https://archive.org/" target="_blank" rel="noopener"><b>Internet Archive</b><span>Scans of dispensatories, pharmacopoeias and journals. Search the title plus the year.</span></a>
+    <a href="https://www.biodiversitylibrary.org/" target="_blank" rel="noopener"><b>Biodiversity Heritage Library</b><span>Botanical and pharmacognosy literature, including older names for your plant.</span></a>
+    <a href="https://lloydlibrary.org/" target="_blank" rel="noopener"><b>Lloyd Library and Museum</b><span>Cincinnati library founded by the Lloyd brothers; a major collection on botany, pharmacy and Eclectic medicine.</span></a>
+  </div>
+
+  <div class="callout c-prec">
+    <div class="eyebrow">Two habits that pay off</div>
+    <p><b>Cite the book, not the website.</b> A scan site is where you found the text, not who wrote it. Cite the author, the original year and the edition; the site goes on the retrieval line. These are dated books, so never write “n.d.”: the title page gives the year. For a modern reprint, give both years, for example (Felter &amp; Lloyd, 1898/1983).</p>
+    <p><b>Read one plant across editions.</b> King’s dispensatory ran through many editions, from the 1850s to Felter and Lloyd’s revision (1898; 19th edition 1905). Reading the same entry in two or three of them shows what was added, dropped or corrected, which is the knowledge changing in front of you.</p>
+  </div>
+
+  <div class="actions"><button class="btn" data-go="kit">Next: the toolkit →</button></div>
+</section>
+
+<!-- ===================== 3. THE TOOLKIT ===================== -->
+<section class="view" id="v-kit" role="tabpanel" aria-labelledby="t-kit">
+  <h2>The Swiss-army knife</h2>
+  <p class="lede">The period texts were written for readers who already knew the conventions. Authors stated what was unusual and left the defaults unsaid. Each blade below recovers one of those defaults. If you can’t recover one, say so in your section; saying so is part of the precision.</p>
+  <div id="kit"></div>
+  <div class="actions"><button class="btn" data-go="decode">Next: decode an entry →</button></div>
+</section>
+
+<!-- ===================== 4. DECODE AN ENTRY ===================== -->
+<section class="view" id="v-decode" role="tabpanel" aria-labelledby="t-decode">
+  <h2>Decode an entry</h2>
+  <p class="lede">Each entry below is a composite written for this exercise in the style of a period text. None is a quotation, and the numbers in them are for decoding practice, not dosing guidance. Work through the steps; each one opens when you answer the last.</p>
+  <div id="decode"></div>
+</section>
+
+<!-- ===================== 5. SPOT THE TRAP ===================== -->
+<section class="view" id="v-trap" role="tabpanel" aria-labelledby="t-trap">
+  <h2>Spot the trap</h2>
+  <p class="lede">Each card is a sentence someone might write in a historical-use section. Decide whether it is a sound reading or which trap it falls into. You get the reason either way, and the fix. The sentences are composites: the authors and books named are real, but the claims attributed to them are invented for the exercise.</p>
+  <div id="sorter"></div>
+</section>
+
+<!-- ===================== 6. CHECK YOUR SECTION ===================== -->
+<section class="view" id="v-audit" role="tabpanel" aria-labelledby="t-audit">
+  <h2>Check your section</h2>
+  <p class="lede">Answer for the historical-use section you are working on. The result checks what such a section needs and gives you the one fix for each gap, with templates to adapt. Nothing here is saved or sent anywhere.</p>
+  <div id="audit" class="audit"></div>
+</section>
+
+<details class="made">
+  <summary>How this was made, and what the examples are</summary>
+  <p>Built as a single HTML file with no dependencies beyond Google Fonts. The arguments come from an instructor’s feedback on the historical-use sections of graduate herbal monographs. The history of the streams follows David Winston’s conference paper <em>Simple Remedies to Specific Medicines: The Path From Thomson to the Physiomedicalists and the Eclectics</em> (2018 version; earlier versions in <em>Clinics in Dermatology</em>, 1999). The pharmacy conventions, unit values and short quotations in the toolkit were checked against period texts: <em>King’s American Dispensatory</em> (19th edition, 1905), the botanical sections of the <em>Dispensatory of the United States</em> (1918) as extracted by the Southwest School of Botanical Medicine, the <em>National Formulary</em> (1906), Scudder’s <em>Specific Medication and Specific Medicines</em> (1870) and Fyfe’s <em>Specific Diagnosis and Specific Medication</em> (1909).</p>
+  <p>The Calendula entry, the entries in “Decode an entry” and the sentences in “Spot the trap” are composites, not quotations, and should not be copied into a reference list. Their numbers are for practice, not dosing. Generated with Claude from an instructor’s materials. If you are using this for a class, that class’s own guidance is the authority wherever the two disagree.</p>
+</details>
+
+</main>
+
+<footer>Built with Claude &middot; No external dependencies beyond Google Fonts</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ------------------------------------------------------------------
+     helpers
+  ------------------------------------------------------------------ */
+  function $(sel, root) { return (root || document).querySelector(sel); }
+  function $$(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
+  function el(tag, attrs, children) {
+    var e = document.createElement(tag);
+    if (attrs) Object.keys(attrs).forEach(function (k) {
+      if (k === 'class') e.className = attrs[k];
+      else if (k === 'html') e.innerHTML = attrs[k];
+      else if (k === 'text') e.textContent = attrs[k];
+      else if (k.indexOf('on') === 0) e.addEventListener(k.slice(2), attrs[k]);
+      else if (attrs[k] === false || attrs[k] == null) {}
+      else e.setAttribute(k, attrs[k] === true ? '' : attrs[k]);
+    });
+    (children || []).forEach(function (c) { if (c == null) return; e.appendChild(typeof c === 'string' ? document.createTextNode(c) : c); });
+    return e;
+  }
+  function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function fmt(n, d) { if (!isFinite(n)) return '–'; var p = Math.pow(10, d == null ? 2 : d); return String(Math.round(n * p) / p); }
+
+  /* ------------------------------------------------------------------
+     tabs
+  ------------------------------------------------------------------ */
+  var VIEWS = ['why', 'map', 'kit', 'decode', 'trap', 'audit'];
+  var tabs = $$('nav.tabs button');
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function show(view, focusHeading) {
+    tabs.forEach(function (b) { b.setAttribute('aria-selected', b.dataset.view === view ? 'true' : 'false'); b.tabIndex = b.dataset.view === view ? 0 : -1; });
+    $$('section.view').forEach(function (s) { s.classList.toggle('active', s.id === 'v-' + view); });
+    try { if (history.replaceState) history.replaceState(null, '', '#' + view); } catch (e) {}
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    if (focusHeading) { var h2 = $('#v-' + view + ' > h2'); if (h2) { h2.tabIndex = -1; h2.focus({ preventScroll: true }); } }
+  }
+  tabs.forEach(function (b, i) {
+    b.addEventListener('click', function () { show(b.dataset.view); });
+    b.addEventListener('keydown', function (e) {
+      var j = e.key === 'ArrowRight' ? i + 1 : e.key === 'ArrowLeft' ? i - 1 : e.key === 'Home' ? 0 : e.key === 'End' ? tabs.length - 1 : null;
+      if (j == null) return;
+      e.preventDefault(); j = (j + tabs.length) % tabs.length; show(tabs[j].dataset.view); tabs[j].focus();
+    });
+  });
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest('[data-go]'); if (t) show(t.dataset.go, true);
+  });
+  tabs.forEach(function (b) { b.tabIndex = b.getAttribute('aria-selected') === 'true' ? 0 : -1; });
+  var initial = (location.hash || '').replace('#', '');
+  if (VIEWS.indexOf(initial) >= 0) show(initial);
+
+  /* ------------------------------------------------------------------
+     1. TWO STANCES
+  ------------------------------------------------------------------ */
+  var STANCE = {
+    bio: {
+      notes: [
+        ['1', 'Unstandardised preparation, strength not stated. Discarded.'],
+        ['2', 'No adequate controlled trial of this indication. Discarded.'],
+        ['3', 'Obsolete terminology. Discarded.'],
+        ['4', 'Anecdotal report. Discarded.'],
+        ['5', 'A dose with no pharmacokinetic data. Discarded.']
+      ],
+      verdict: 'What this stance keeps: nothing. The entry gets filed under “traditional use”, and the wound-healing picture drops out of view until someone funds an adequate trial.'
+    },
+    ctx: {
+      notes: [
+        ['1', 'A preparation and a dilution. The tincture’s own strength isn’t stated; find the book’s convention to recover how much herb is in the lotion.'],
+        ['2', 'A specific clinical picture (torn and bruised wounds, a tendency to suppurate) that you can test against your own practice and the modern literature.'],
+        ['3', 'A period surgical term to define from a source: healing by first intention means the wound edges unite directly, without suppuration or granulation.'],
+        ['4', '“Has been given in” is weaker than a stated indication. Note the author’s own level of confidence.'],
+        ['5', 'A drop dose, a different paradigm from a cup of infusion. Record it as written, with its convention, and don’t copy it as a modern dose.']
+      ],
+      verdict: 'What this stance keeps: an indication to test, a preparation to decode, a term to define, a confidence level to report, and a record that practitioners observed this effect for decades before the first small trials.'
+    }
+  };
+  (function buildStance() {
+    var box = $('#stance'), out = $('#stance-out');
+    $$('.stance-toggle button', box).forEach(function (b) {
+      b.addEventListener('click', function () {
+        var m = b.dataset.mode; box.dataset.mode = m;
+        $$('.stance-toggle button', box).forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+        var s = STANCE[m], cls = m === 'bio' ? 'c-dismiss' : 'c-sound';
+        out.innerHTML = '';
+        var notes = el('div', { class: 'notes' });
+        s.notes.forEach(function (n) { notes.appendChild(el('div', { class: 'note ' + cls }, [el('span', { class: 'k' }, [n[0]]), el('span', {}, [n[1]])])); });
+        out.appendChild(notes);
+        out.appendChild(el('p', { class: 'verdict-line' }, [s.verdict]));
+      });
+    });
+  })();
+
+  /* ------------------------------------------------------------------
+     2. THE MAP
+  ------------------------------------------------------------------ */
+  var ARC = [
+    { s: 'Stage 1', t: 'Use before the books', body: 'Indigenous, folk and culture-of-origin use. This belongs mainly to the ethnobotany and TEK section. Here it gets a sentence or two, enough to set up how the plant came into American practice.' },
+    { s: 'Stage 2', t: 'Adoption into American practice', heart: true, body: 'When the plant entered American medicine and through whom: Thomsonian, Physiomedical, Eclectic, the regular pharmacopoeia and dispensatories, domestic medicine. What did each stream use it for, in what preparation, at what dose? Was it official (in the U.S. Pharmacopoeia or National Formulary), and when? This is the heart of the section and needs at least three period texts.' },
+    { s: 'Stage 3', t: 'The gap', body: 'After the Flexner transition the botanic and Eclectic schools closed, and many plants were later dropped from the official compendia. If you can find when your plant left the official books, note it. The silence that follows is part of the story.' },
+    { s: 'Stage 4', t: 'Revival and modern monographs', body: 'The herbal revival and modern monographs and reviews. These are post-Flexner sources. They belong in your relevance discussion, where you set them against what the period texts said. They are not the historical record.' }
+  ];
+  (function buildArc() {
+    var host = $('#arc'), panel = $('#arc-panel');
+    function pick(i) {
+      $$('button', host).forEach(function (b, j) { b.setAttribute('aria-pressed', i === j ? 'true' : 'false'); });
+      panel.innerHTML = ''; panel.appendChild(el('b', {}, [ARC[i].t + '. '])); panel.appendChild(document.createTextNode(ARC[i].body));
+    }
+    ARC.forEach(function (a, i) {
+      host.appendChild(el('button', { type: 'button', class: a.heart ? 'heart' : '', 'aria-pressed': 'false', onclick: function () { pick(i); } }, [el('span', { class: 's' }, [a.s]), a.t]));
+    });
+    pick(1);
+  })();
+
+  var Y0 = 1790, Y1 = 1945;
+  function pct(y) { return (100 * (y - Y0) / (Y1 - Y0)) + '%'; }
+  var STREAMS = [
+    { key: 'thom', cls: 'c-cred', name: 'Thomsonian', from: 1810, to: 1850,
+      intro: 'Samuel Thomson (1769–1843), a New Hampshire farmer, built a botanic system as a safer alternative to the bleeding, calomel and purging of the regular doctors. He learned local herbs as a child and borrowed heavily from Native American traditions, sweat baths and New England folk practice. Families bought the right to practise it. The movement splintered into many neo-Thomsonian sects.',
+      texts: ['Thomson, <em>New Guide to Health; or Botanic Family Physician</em> (1822; many later editions)', 'Smith, <em>The Botanic Physician</em> (1830)', 'Howard, <em>An Improved System of Botanic Medicine</em> (1836)', 'Mattson, <em>The American Vegetable Practice</em> (1841)', 'Kost, <em>Elements of Materia Medica and Therapeutics</em> (1858)'],
+      good: 'The earliest systematised botanic practice in the United States, and domestic use: what ordinary households did.',
+      watch: 'One theory for every disease (“heat is life, cold is death”), heroic emetic “courses” built around lobelia, and an open hostility to medical education.',
+      dose: 'Household measures: teaspoonfuls of powder, cups of tea, named compounds such as Composition Powder. Ratios are rare.' },
+    { key: 'phys', cls: 'c-record', name: 'Physiomedical', from: 1836, to: 1911,
+      intro: 'Founded by Alva Curtis (1797–1881), who broke with Thomson over medical education, and shaped by William H. Cook (1832–1899). Physiomedicalists used a large materia medica of non-toxic herbs and read the body in tissue states: J. M. Thurston described six. The movement was small in the United States but continued in Britain well into the twentieth century.',
+      texts: ['Curtis, <em>A Synopsis of a Course of Lectures on Medical Science</em> (1846)', 'Cook, <em>The Physio-Medical Dispensatory</em> (1869)', 'Lyle, <em>Physio-Medical Therapeutics, Materia Medica and Pharmacy</em> (1897)', 'Thurston, <em>The Philosophy of Physio-Medicalism</em> (1900)'],
+      good: 'The reasoning behind each herb in tissue-state terms (irritation, constriction, relaxation, torpor, depression, atrophy), and a materia medica chosen to be non-toxic.',
+      watch: 'A sectarian theory of vital force, and the rule that nothing which “impairs the vitality of tissues” may be used, which shaped which plants appear at all.',
+      dose: 'Tinctures, infusions and powders in apothecary units; energetic rationale given more space than dose.' },
+    { key: 'ecl', cls: 'c-sound', name: 'Eclectic', from: 1825, to: 1939,
+      intro: 'Wooster Beach’s Reformed medicine became Eclectic medicine by the late 1840s. After near-collapse in the 1860s, John M. Scudder revived it with <em>specific medication</em>: small doses of high-quality single remedies matched to a specific symptom picture. The pharmacist John Uri Lloyd made the medicines. The golden era ran from about 1875 to 1895; the last Eclectic college closed in 1939.',
+      texts: ['Beach, <em>The American Practice of Medicine</em> (1833)', 'King, <em>The American Dispensatory</em> (from the 1850s; many editions)', 'Scudder, <em>Specific Medication and Specific Medicines</em> (1870); <em>Specific Diagnosis</em> (1874)', 'Felter &amp; Lloyd, <em>King’s American Dispensatory</em> (1898; 19th edition 1905)', 'Ellingwood, <em>A Systematic Treatise on Materia Medica and Therapeutics</em> (1902); <em>American Materia Medica, Therapeutics and Pharmacognosy</em> (1919)', 'Fyfe, <em>Specific Diagnosis and Specific Medication</em> (1909)', 'Jones, <em>Definite Medication</em> (1911)', 'Felter, <em>The Eclectic Materia Medica, Pharmacology and Therapeutics</em> (1922)'],
+      good: 'Specific indications (symptom pictures), Lloyd’s pharmacy, and the plants the Eclectics brought into wide use: echinacea, black cohosh, night-blooming cereus, wild indigo, fringe tree, red root, cascara and kava among them.',
+      watch: 'Western-centric authorship, the resinoid episode of the 1850s, and the movement’s resistance to bacteriology and vaccination.',
+      dose: 'Drops of specific medicines, often stirred into water and given by the teaspoonful; ranges are wide because the dose was titrated to the patient.' },
+    { key: 'reg', cls: 'c-prec', name: 'Regular pharmacy', from: 1820, to: 1945,
+      intro: 'The orthodox (“regular”) profession’s official books: the U.S. Pharmacopoeia (first 1820, revised about every ten years), the National Formulary (first 1888), and the dispensatories that commented on both. They record which plants were official, the preparations made from them, and their strengths.',
+      texts: ['<em>Pharmacopoeia of the United States</em> (1820 onward)', 'Wood &amp; Bache, <em>The Dispensatory of the United States</em> (1833 onward; 20th ed. 1918, edited by Wood, Remington &amp; Sadtler)', '<em>National Formulary</em> (1888; 3rd ed. 1906; 4th ed. 1916)', 'Hare, Caspari &amp; Rusby, <em>National Standard Dispensatory</em> (2nd ed. 1908)', 'Culbreth, <em>A Manual of Materia Medica and Pharmacology</em> (1917)'],
+      good: 'Whether your plant was official and when it was dropped, the defined strengths of official preparations, and pharmacognosy: identification, parts used, adulterants.',
+      watch: 'The regular profession’s scepticism of sectarian claims, which can understate a plant’s use in practice; earlier editions belong to the era of heroic medicine.',
+      dose: 'Official preparations with defined strengths, in apothecary units and later in metric.' }
+  ];
+  var MARKS = [{ y: 1910, label: 'Flexner Report, 1910' }, { y: 1939, label: 'Last Eclectic college closes, 1939' }];
+
+  (function buildGantt() {
+    var g = $('#gantt'), sh = $('#streams');
+    var axis = el('div', { class: 'g-axis', 'aria-hidden': 'true' }, [el('span'), el('div', { class: 'scale' })]);
+    [1800, 1850, 1900, 1940].forEach(function (y) { axis.querySelector('.scale').appendChild(el('span', { style: 'left:' + pct(y) }, [String(y)])); });
+    g.appendChild(axis);
+    var panels = {};
+    function toggle(key) {
+      STREAMS.forEach(function (s) {
+        var open = s.key === key && panels[s.key].hidden;
+        panels[s.key].hidden = !open;
+        $('#lab-' + s.key).setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    }
+    STREAMS.forEach(function (s) {
+      var track = el('div', { class: 'g-track', onclick: function () { toggle(s.key); }, 'aria-hidden': 'true' }, [el('div', { class: 'g-bar', style: 'left:' + pct(s.from) + ';width:calc(' + pct(s.to) + ' - ' + pct(s.from) + ')' })]);
+      MARKS.forEach(function (m) { track.appendChild(el('div', { class: 'g-mark', style: 'left:' + pct(m.y) })); });
+      g.appendChild(el('div', { class: 'g-row ' + s.cls }, [
+        el('button', { type: 'button', class: 'lab', id: 'lab-' + s.key, 'aria-expanded': 'false', 'aria-controls': 'st-' + s.key, onclick: function () { toggle(s.key); } }, [s.name]),
+        track
+      ]));
+      var p = el('div', { class: 'stream ' + s.cls, id: 'st-' + s.key, hidden: true }, [
+        el('h3', {}, [s.name + ' (c. ' + s.from + '–' + (s.key === 'reg' ? 'present' : s.to) + ')']),
+        el('p', { html: s.intro }),
+        el('h4', { class: 'eyebrow', style: 'margin-top:.8rem' }, ['Key texts']),
+        el('ul', { class: 'texts' }),
+        el('div', { class: 'meta' }, [
+          el('div', {}, [el('b', {}, ['Good for']), s.good]),
+          el('div', {}, [el('b', {}, ['Watch for']), s.watch]),
+          el('div', {}, [el('b', {}, ['How it writes a dose']), s.dose])
+        ])
+      ]);
+      s.texts.forEach(function (t) { p.querySelector('ul').appendChild(el('li', { html: t })); });
+      panels[s.key] = p; sh.appendChild(p);
+    });
+    var leg = el('div', { class: 'g-legend' });
+    MARKS.forEach(function (m) { leg.appendChild(el('span', {}, [el('i'), m.label])); });
+    g.appendChild(leg);
+  })();
+
+  /* ------------------------------------------------------------------
+     3. THE TOOLKIT
+  ------------------------------------------------------------------ */
+  /* unit values: US apothecaries' system. Drop is a convention, not a unit. */
+  var UNITS = {
+    minim:  { label: 'minim (♏︎)', ml: 0.0616 },
+    fldr:   { label: 'fluid drachm (ƒʒ)', ml: 3.697 },
+    floz:   { label: 'fluid ounce (ƒ℥)', ml: 29.57 },
+    drop:   { label: 'drop (gtt.)', ml: 0.05, conv: true },
+    grain:  { label: 'grain (gr.)', g: 0.0648 },
+    scruple:{ label: 'scruple (℈)', g: 1.296 },
+    dr:     { label: 'drachm (ʒ)', g: 3.888, fl: 'fldr' },
+    oz:     { label: 'ounce (℥)', g: 31.10, fl: 'floz' }
+  };
+
+  function roman(s) {
+    s = s.replace(/j/g, 'i');
+    var half = 0;
+    if (/ss$/.test(s)) { half = 0.5; s = s.replace(/ss$/, ''); }
+    if (s === '') return half ? half : null;
+    if (!/^[ivxlc]+$/.test(s)) return null;
+    var v = { i: 1, v: 5, x: 10, l: 50, c: 100 }, total = 0;
+    for (var i = 0; i < s.length; i++) { var a = v[s[i]], b = v[s[i + 1]] || 0; total += a < b ? -a : a; }
+    return total + half;
+  }
+  function parseDose(raw) {
+    var s = String(raw || '').replace(/\uFE0E/g, '').toLowerCase().replace(/\s+/g, '').replace(/(\d)\.(\d)/g, '$1§$2').replace(/\./g, '').replace(/§/g, '.');
+    if (!s) return null;
+    var map = [
+      [/^(drops?|guttae?|gtts|gtt)(?=[ivxlcj\d]|ss)/, 'drop'], [/^(fluiddrachms?|fluidrachms?|fluiddrams?|fluidrams?|fldrams?|fldr|flʒ|ƒʒ|fʒ)/, 'fldr'], [/^(fluidounces?|floz|fl℥|ƒ℥|f℥)/, 'floz'],
+      [/^(minims?|min|♏|m)(?=[ivxlcj\d]|ss)/, 'minim'], [/^(scruples?|scr|℈)/, 'scruple'], [/^(drachms?|drams?|dr|ʒ)/, 'dr'], [/^(ounces?|oz|℥)/, 'oz'], [/^(grains?|gr)/, 'grain']
+    ];
+    for (var i = 0; i < map.length; i++) {
+      var m = s.match(map[i][0]);
+      if (m) {
+        var rest = s.slice(m[0].length), n = null;
+        if (/^\d+(\.\d+)?$/.test(rest)) n = parseFloat(rest);
+        else if (/^\d+(\.\d+)?ss$/.test(rest)) n = parseFloat(rest) + 0.5;
+        else n = roman(rest);
+        if (n == null) return { err: 'Read the unit as ' + UNITS[map[i][1]].label + ' but couldn’t read the number “' + rest + '”. Use Roman numerals (i, v, x, with ss for a half) or digits.' };
+        return { unit: map[i][1], n: n };
+      }
+    }
+    return { err: 'No unit found at the start. Begin with gtt., ♏︎, ƒʒ, ƒ℥, ʒ, ℥, ℈ or gr., followed by the number.' };
+  }
+  function describe(p) {
+    var u = UNITS[p.unit], parts = [];
+    if (u.ml != null) {
+      parts.push(el('p', { class: 'big' }, [fmt(p.n, 2) + ' × ' + u.label + ' ≈ ' + fmt(p.n * u.ml, 2) + ' mL']));
+      if (u.conv) parts.push(el('p', {}, ['Drop size is a convention, not a unit: about 20 drops to the mL is a common modern rule of thumb, but drops vary with the liquid (alcoholic tinctures form smaller drops than water) and with the dropper. Don’t treat a drop as a minim: ' + fmt(p.n, 2) + ' minims would be ' + fmt(p.n * UNITS.minim.ml, 2) + ' mL.']));
+    } else {
+      parts.push(el('p', { class: 'big' }, [fmt(p.n, 2) + ' × ' + u.label + ' ≈ ' + (p.n * u.g < 1 ? fmt(p.n * u.g * 1000, 0) + ' mg' : fmt(p.n * u.g, 2) + ' g')]));
+      if (u.fl) parts.push(el('p', {}, ['The same symbol was used for the fluid measure. If the text is measuring a liquid, read it as ' + UNITS[u.fl].label + ': ' + fmt(p.n, 2) + ' × ' + UNITS[u.fl].label + ' ≈ ' + fmt(p.n * UNITS[u.fl].ml, 2) + ' mL. Liquids were measured; powders and crude drugs were weighed.']));
+    }
+    return parts;
+  }
+
+  var TERMS = [
+    ['Dropsy', 'Oedema: abnormal accumulation of fluid in the tissues or body cavities, often from heart, kidney or liver failure.'],
+    ['Bright’s disease', 'A historical umbrella for kidney disease with protein in the urine (nephritis and related conditions).'],
+    ['Catarrh', 'Inflammation of a mucous membrane with excess discharge of mucus; not limited to the nose.'],
+    ['Ague', 'An intermittent fever with chills and sweats, usually malaria.'],
+    ['Scrofula', 'Tuberculosis of the lymph nodes of the neck; used loosely for chronic glandular swelling.'],
+    ['Chlorosis', '“Green sickness”: iron-deficiency anaemia, described mainly in young women.'],
+    ['Consumption, phthisis', 'Pulmonary tuberculosis.'],
+    ['La grippe', 'Influenza.'],
+    ['Torpor', 'Sluggish, underactive function of an organ (“torpor of the liver”); a functional description, not a laboratory finding.'],
+    ['Sthenic, asthenic', 'States of excess or overactivity (sthenic) and of deficiency or weakness (asthenic).'],
+    ['Alterative', 'A remedy believed to gradually restore healthy function, often by improving elimination; the “blood purifier” of the period.'],
+    ['First intention', 'Healing in which wound edges unite directly, without suppuration or granulation.'],
+    ['Aperient', 'A mild laxative.'],
+    ['Flux', 'Diarrhoea; “bloody flux” is dysentery.']
+  ];
+
+  (function buildKit() {
+    var host = $('#kit'), n = 0;
+    function blade(title, sub, body, open) {
+      n++;
+      var d = el('details', { class: 'blade', open: !!open }, [
+        el('summary', {}, [el('span', { class: 'no' }, [String(n)]), el('span', { class: 't' }, [title, el('small', {}, [sub])])]),
+        el('div', { class: 'body' })
+      ]);
+      var b = d.querySelector('.body');
+      (Array.isArray(body) ? body : [body]).forEach(function (x) { b.appendChild(typeof x === 'string' ? el('div', { html: x }) : x); });
+      host.appendChild(d);
+      return b;
+    }
+
+    /* 1 missing ratio */
+    blade('The missing ratio is usually an unstated convention', 'Silence in a dose line often means “the default applies”. Find the default.',
+      '<p>A period dose line such as “Fluid extract, ʒss to ʒi” gives no strength because readers already knew it. Defaults existed for most preparations, but they changed by edition, school and maker, and authors often noted the strength only when a herb was a special case.</p>' +
+      '<ul>' +
+      '<li><b>Fluid extracts: 1:1.</b> From the 1880 Pharmacopoeia on, 1000 g of drug made 1000 mL; earlier, one troy ounce made one fluid ounce, which King’s calls a difference “of no consequence”. The 1918 U.S. Dispensatory: one mil of fluidextract “closely represents the activity of one gramme” of the dried drug.</li>' +
+      '<li><b>Tinctures: it depends on the year and the book.</b> The 1890 Pharmacopoeia made tinctures at 20, 15, 10 or 5 g per 100 mL. The 1900 and 1916 revisions put almost all of them into two classes, 20 g and 10 g per 100 mL (1:5 and 1:10), with potent drugs at 10 g following the Brussels Conference of 1902. A book printed after a revision can still follow the older one: the 1905 King’s gives the 1890 strengths, and makes its unofficial tinctures at 125 g per 1000 mL (1:8).</li>' +
+      '<li><b>Specific medicines: no fixed ratio in the texts.</b> These were Lloyd Brothers’ preparations. Scudder asked for medicines made “ounce for ounce” (one troy ounce of crude drug to one fluid ounce), and Fyfe often gives the same dose range for a specific medicine as for the fluid extract. If you treat one as roughly fluid-extract strength, say that it is an assumption.</li>' +
+      '</ul>' +
+      '<p><b>How to find the default in your book:</b></p><ol>' +
+      '<li>Read the preface and front matter. They rarely explain the dose lines, but they tell you the edition and the pharmacopoeia the book follows.</li>' +
+      '<li>Read the general articles on fluid extracts and tinctures, and the appendix tables, before the plant entry.</li>' +
+      '<li>Note which pharmacopoeia the book actually follows, which may not be the one in force when it was printed.</li>' +
+      '<li>Assume doses are adult doses unless the text says otherwise; many books carry an age-dosing table in the appendix.</li>' +
+      '<li>Look for where the author flags an exception; that tells you what the rule was.</li>' +
+      '<li>If you can’t find it, write “strength not stated; convention not located in [book]” rather than guessing.</li></ol>' +
+      '<p>When you can recover the convention, the dose maps back to an amount of whole herb, and the period record becomes comparable with a modern monograph instead of quietly turning into lost knowledge.</p>' +
+      '<div class="eg"><b>Trap:</b> importing a modern ratio, such as the 1:5 on a modern tincture label, into a period dose. Modern labels state their ratio because conventions are no longer shared. Period texts didn’t, and their defaults were not always the modern ones.</div>', true);
+
+    /* 2 ratio arithmetic */
+    var b2 = blade('Ratio arithmetic', 'A ratio turns a volume back into an amount of herb.',
+      '<p>A ratio of 1:<i>n</i> means 1 g of herb per <i>n</i> mL of finished liquid, so each mL holds 1/<i>n</i> g. A 1:1 holds 1 g/mL, a 1:2 holds 0.5 g/mL, a 1:5 holds 0.2 g/mL and a 1:10 holds 0.1 g/mL. A 1:5 is therefore 2.5 times weaker than a 1:2.</p>');
+    var rq = el('div', { class: 'tool' }, [el('div', { class: 'eyebrow' }, ['Quick check'])]);
+    var rf = el('div', { class: 'fields' }, [
+      el('label', {}, ['Volume (mL)', el('input', { type: 'number', min: '0', step: 'any', value: '3', id: 'rq-v', inputmode: 'decimal' })]),
+      el('label', {}, ['Ratio 1:n, enter n', el('input', { type: 'number', min: '0.1', step: 'any', value: '5', id: 'rq-n', inputmode: 'decimal' })])
+    ]);
+    var ro = el('div', { class: 'out', 'aria-live': 'polite' });
+    rq.appendChild(rf); rq.appendChild(ro); b2.appendChild(rq);
+    function rqCalc() {
+      var v = parseFloat($('#rq-v').value), nn = parseFloat($('#rq-n').value);
+      ro.innerHTML = '';
+      if (!(v >= 0) || !(nn > 0)) { ro.appendChild(el('p', {}, ['Enter a volume and a ratio.'])); return; }
+      var g = v / nn;
+      ro.appendChild(el('p', { class: 'big' }, [fmt(v, 2) + ' mL of a 1:' + fmt(nn, 2) + ' ≈ ' + (g < 1 ? fmt(g * 1000, 0) + ' mg' : fmt(g, 2) + ' g') + ' of herb']));
+    }
+    rf.addEventListener('input', rqCalc); rqCalc();
+
+    /* 3 apothecary units */
+    var b3 = blade('Apothecary units and notation', 'Read gtt. xx, ƒʒii, ℥iv and ʒss without guessing.',
+      '<p>Doses are written as a unit symbol followed by a lower-case Roman numeral: <b>ʒii</b> is two drachms, <b>℥iv</b> four ounces, <b>gtt. x</b> ten drops. <b>ss</b> (from <i>semis</i>) means a half, so <b>ʒss</b> is half a drachm and <b>ʒiss</b> one and a half. A final <b>i</b> is often written as <b>j</b> (<b>ʒij</b> = 2). The same symbols served for weight and for fluid measure; an ƒ in front marks fluid, but many prescriptions left it off for liquids.</p>' +
+      '<table class="t"><thead><tr><th>Symbol</th><th>Unit</th><th>Equivalent</th></tr></thead><tbody>' +
+      '<tr><td class="sym">♏︎</td><td>minim</td><td>1/60 fluid drachm ≈ 0.06 mL</td></tr>' +
+      '<tr><td class="sym">ƒʒ</td><td>fluid drachm</td><td>60 minims ≈ 3.7 mL</td></tr>' +
+      '<tr><td class="sym">ƒ℥</td><td>fluid ounce</td><td>8 fluid drachms ≈ 29.6 mL</td></tr>' +
+      '<tr><td class="sym">gr.</td><td>grain</td><td>≈ 65 mg</td></tr>' +
+      '<tr><td class="sym">℈</td><td>scruple</td><td>20 grains ≈ 1.3 g</td></tr>' +
+      '<tr><td class="sym">ʒ</td><td>drachm (weight)</td><td>3 scruples = 60 grains ≈ 3.9 g</td></tr>' +
+      '<tr><td class="sym">℥</td><td>ounce (apothecaries’)</td><td>8 drachms = 480 grains ≈ 31.1 g</td></tr>' +
+      '<tr><td class="sym">gtt.</td><td>drop (<i>gutta</i>)</td><td>Not a fixed unit; varies with liquid and dropper (often taken as about 0.05 mL)</td></tr>' +
+      '</tbody></table>' +
+      '<p><b>A drop is not a minim.</b> King’s says so directly: “Drops are frequently supposed to be equal to minims, but this is not the case,” and the same fluid gives different drops “according to the size or form of the edge of the vessel.” Yet a later table in the same appendix notes “a drop here is considered equal to a minim.” Read each table’s own note.</p>' +
+      '<p><b>Household measures were looser still.</b> King’s puts a teaspoon at “about 50 minims or 1 fluid drachm” and a tablespoon at 3½ to 4 fluid drachms, adding “these are very uncertain.” The 1918 Dispensatory uses 3.75 mL per teaspoonful and 15 mL per tablespoonful. A period teaspoon is smaller than the modern 5 mL one.</p>');
+    var cv = el('div', { class: 'tool' }, [el('div', { class: 'eyebrow' }, ['Notation reader']), el('p', { class: 'small' }, ['Type a dose as written. Examples: gtt. xx, ƒʒii, ℥iv, ʒss, gr. x, ♏︎xv, ℈i.'])]);
+    var inp = el('input', { type: 'text', id: 'cv-in', value: 'ƒʒii', 'aria-label': 'Dose as written', autocomplete: 'off', spellcheck: 'false' });
+    cv.appendChild(el('div', { class: 'rowin' }, [inp]));
+    var keys = el('div', { class: 'symkeys', role: 'group', 'aria-label': 'Insert a symbol' });
+    ['ʒ', '℥', '℈', '♏︎', 'ƒ', 'ss'].forEach(function (k) {
+      keys.appendChild(el('button', { type: 'button', 'aria-label': 'Insert ' + k, onclick: function () { inp.value += k; inp.focus(); cvCalc(); } }, [k]));
+    });
+    keys.appendChild(el('button', { type: 'button', 'aria-label': 'Clear', onclick: function () { inp.value = ''; inp.focus(); cvCalc(); } }, ['⌫']));
+    cv.appendChild(keys);
+    var co = el('div', { class: 'out', 'aria-live': 'polite' }); cv.appendChild(co); b3.appendChild(cv);
+    function cvCalc() {
+      co.innerHTML = '';
+      var p = parseDose(inp.value);
+      if (!p) { co.appendChild(el('p', {}, ['Type a dose above.'])); return; }
+      if (p.err) { co.appendChild(el('p', { class: 'warn' }, [p.err])); return; }
+      describe(p).forEach(function (x) { co.appendChild(x); });
+    }
+    inp.addEventListener('input', cvCalc); cvCalc();
+
+    /* 4 implied frequency */
+    blade('Implied frequency', 'When a text gives a dose but no schedule.',
+      '<p>Many entries give a dose and leave the frequency to the practitioner, who set it by the case. A common pattern in Eclectic practice:</p><ul>' +
+      '<li><b>Acute</b> conditions: every 10 to 30 minutes, widening as the case improved.</li>' +
+      '<li><b>Subacute</b>: every 1 to 3 hours.</li>' +
+      '<li><b>Chronic</b>: three or four times a day.</li>' +
+      '<li><b>Potent or specific agents</b>: drop doses, stopped at the first sign of over-action.</li></ul>' +
+      '<p>When you report a period dose, separate what the text states from what you inferred, and say how you checked the strength of the preparation and its menstruum.</p>');
+
+    /* 5 Rx decoder */
+    var b5 = blade('The prescription in water', 'Drops in a glass of water, a teaspoonful every hour: how much herb is that?',
+      '<p>Specific medication stirred a few drops of a concentrated preparation into a few ounces of water and gave the mixture by the teaspoonful. Scudder wrote in 1870 that his prescriptions were “uniformly made with water as a vehicle,” in “such proportion that the dose will be a teaspoonful.” The drops written in the prescription are the drops in the glass, not the drops in each spoonful. Decode the prescription before you compare it with anything modern.</p>' +
+      '<div class="eg"><b>The form, as King’s prints it for adonis:</b> “℞ Specific adonis gtt. x to xx, water ℥iv. Mix. Dose, 1 teaspoonful every 2 or 3 hours.”</div>');
+    var rx = el('div', { class: 'tool' }, [el('div', { class: 'eyebrow' }, ['Decoder'])]);
+    var rxf = el('div', { class: 'fields' }, [
+      el('label', {}, ['Drops of the preparation in the mixture', el('input', { type: 'number', min: '0', step: 'any', value: '20', id: 'rx-drops', inputmode: 'decimal' })]),
+      el('label', {}, ['Water (fluid ounces)', el('input', { type: 'number', min: '0', step: 'any', value: '4', id: 'rx-water', inputmode: 'decimal' })]),
+      el('label', {}, ['Each dose', el('select', { id: 'rx-spoon' }, [
+        el('option', { value: '3.75', selected: true }, ['Teaspoonful, period (≈ 1 ƒʒ, 3.75 mL)']),
+        el('option', { value: '5' }, ['Teaspoonful, modern (5 mL)']),
+        el('option', { value: '15' }, ['Tablespoonful (15 mL)'])
+      ])]),
+      el('label', {}, ['Doses per day', el('input', { type: 'number', min: '0', step: '1', value: '8', id: 'rx-n', inputmode: 'numeric' })]),
+      el('label', {}, ['Strength of the preparation', el('select', { id: 'rx-ratio' }, [
+        el('option', { value: '1' }, ['1:1 (fluid extract; assumed for a specific medicine)']),
+        el('option', { value: '2' }, ['1:2']),
+        el('option', { value: '5' }, ['1:5']),
+        el('option', { value: '10' }, ['1:10']),
+        el('option', { value: '0' }, ['Not known'])
+      ])]),
+      el('label', {}, ['Drops per mL (dropper-dependent)', el('input', { type: 'number', min: '1', step: 'any', value: '20', id: 'rx-dpm', inputmode: 'decimal' })])
+    ]);
+    var rxo = el('div', { class: 'out', 'aria-live': 'polite' });
+    rx.appendChild(rxf); rx.appendChild(rxo); b5.appendChild(rx);
+    function rxCalc() {
+      var drops = parseFloat($('#rx-drops').value), w = parseFloat($('#rx-water').value), spoon = parseFloat($('#rx-spoon').value),
+          nd = parseFloat($('#rx-n').value), ratio = parseFloat($('#rx-ratio').value), dpm = parseFloat($('#rx-dpm').value);
+      rxo.innerHTML = '';
+      if (!(drops >= 0) || !(w > 0) || !(dpm > 0) || !(spoon > 0)) { rxo.appendChild(el('p', {}, ['Fill in the drops, the water and the drops per mL.'])); return; }
+      var prepMl = drops / dpm, total = w * UNITS.floz.ml + prepMl, frac = spoon / total;
+      var dPer = drops * frac, mlPer = prepMl * frac, bottle = total / spoon;
+      rxo.appendChild(el('p', {}, ['The mixture is about ' + fmt(total, 0) + ' mL, enough for about ' + fmt(bottle, 0) + ' doses' + (nd > 0 ? ' (' + fmt(bottle / nd, 1) + ' days at ' + fmt(nd, 0) + ' a day).' : '.')]));
+      rxo.appendChild(el('p', { class: 'big' }, ['Each dose holds about ' + fmt(dPer, 2) + ' drops (' + fmt(mlPer, 3) + ' mL) of the preparation.']));
+      if (ratio > 0) {
+        var gPer = mlPer / ratio;
+        rxo.appendChild(el('p', {}, ['At 1:' + ratio + ', that is about ' + fmt(gPer * 1000, 1) + ' mg of herb per dose' + (nd > 0 ? ', or about ' + fmt(gPer * 1000 * nd, 0) + ' mg a day.' : '.')]));
+      } else {
+        rxo.appendChild(el('p', {}, ['Strength not known, so the herb equivalent can’t be calculated. Report the dose as written and say the convention wasn’t located.']));
+      }
+      rxo.appendChild(el('p', { class: 'small muted' }, ['Compare a modern gram-dose infusion of several grams of dried herb a day. These are different paradigms, not two opinions about the same intervention.']));
+    }
+    rxf.addEventListener('input', rxCalc); rxf.addEventListener('change', rxCalc); rxCalc();
+
+    /* 6 drop dose vs gram dose */
+    blade('Drop dose and gram dose are different medicines', 'Don’t average them.',
+      '<p>A drop-dose specific medicine (a fraction of a drop up to a few dozen drops of a concentrated preparation, titrated to the patient) and a gram-dose decoction (several grams of dried herb a day) reflect different theories of how the plant acts. When two traditions dose the same plant orders of magnitude apart, they are effectively prescribing different medicines. Report both, name the paradigm, and don’t average them into one “range”.</p>');
+
+    /* 7 names */
+    blade('Names drift', 'A plant searched under the wrong name produces a false absence.',
+      '<p>Period texts often file a plant under its <b>drug name</b>, usually the genus of an older binomial, rather than its current botanical name. Search under every name the plant has had.</p>' +
+      '<table class="t"><thead><tr><th>Period drug name</th><th>Other names</th><th>Plant</th></tr></thead><tbody>' +
+      '<tr><td><i>Macrotys</i></td><td><i>Cimicifuga racemosa</i>; now <i>Actaea racemosa</i></td><td>Black cohosh</td></tr>' +
+      '<tr><td><i>Leptandra</i></td><td><i>Leptandra virginica</i>; now <i>Veronicastrum virginicum</i></td><td>Culver’s root</td></tr>' +
+      '<tr><td><i>Xanthoxylum</i></td><td><i>Zanthoxylum americanum</i></td><td>Prickly ash</td></tr>' +
+      '<tr><td><i>Hydrastis</i></td><td><i>Hydrastis canadensis</i></td><td>Goldenseal</td></tr>' +
+      '<tr><td><i>Ulmus fulva</i></td><td>now <i>Ulmus rubra</i></td><td>Slippery elm</td></tr>' +
+      '</tbody></table>' +
+      '<p>Common names collide too: “winter cherry” has been used for more than one plant. Pair every common name with a binomial.</p>' +
+      '<p><b>Name clues.</b> The epithet <i>officinalis</i> marks a plant kept in the apothecary’s <i>officina</i>, its workroom and store: a sign of long European medical use. In a dose line, “official” means the preparation was listed in the U.S. Pharmacopoeia the book follows (marked U.S.P.) or, after 1906, the National Formulary (N.F.).</p>');
+
+    /* 8 archaic terms */
+    var b8 = blade('Archaic terms', 'Would a modern clinician use the word unprompted? If not, define it.',
+      '<p>Define each period term from a medical dictionary or a history-of-medicine text, and cite it; don’t guess from context. Then push past the definition. Indications that look scattered often share one underlying physiology; the period’s “bad blood”, for example, is often read today as lymphatic and hepatic stagnation. Name that physiology if you can.</p>' +
+      '<p class="small muted">Tap a term to check yourself. These are working glosses; cite a source for the ones you use.</p>');
+    var tg = el('div', { class: 'terms' });
+    TERMS.forEach(function (t) { tg.appendChild(el('details', {}, [el('summary', {}, [t[0]]), el('p', {}, [t[1]])])); });
+    b8.appendChild(tg);
+
+    /* 9 specific indications */
+    blade('Specific indications are pictures, not diagnoses', 'Translate the picture; don’t map it onto a diagnosis code.',
+      '<p>Specific medication matched a remedy to a symptom picture read from the pulse, tongue, skin, secretions and tissue state: “full, bounding pulse”, “dusky, purplish discoloration”, “tongue broad, pale and moist”. A picture like this can occur across several modern diagnoses, and one modern diagnosis can include people the picture doesn’t fit. Describe the picture in modern clinical language; don’t claim it equals a disease.</p>');
+
+    /* 10 resinoids */
+    blade('Resinoids and “active principles” are not the herb', 'The Eclectic resinoid episode is the cautionary tale.',
+      '<p>From about 1850, Eclectic pharmacy precipitated “resinoids” or “concentrations” out of alcoholic tinctures. King’s credits podophyllin, macrotin and irisin to John King, and leptandrin to William S. Merrell. By 1905 King’s judged that such products contain “one or more, but not all, of the therapeutic virtues” of the drug, and that most had been dropped in favour of liquid preparations; podophyllin is still used in dermatology. Manufacturers had made resinoids from almost the whole materia medica, and many proved close to inert. The episode nearly sank the Eclectic movement, and it is part of why Lloyd set out to make reliable whole-plant medicines.</p>' +
+      '<p>An entry for a resinoid, an alkaloid or another isolated principle is not an entry for the whole herb. Don’t transfer its dose or its action to the plant.</p>');
+
+    /* 11 biphasic */
+    blade('Biphasic is not automatically hormesis', 'Small dose one way, large dose the other.',
+      '<p>Period authors, Ellingwood among them, recorded plants that act one way in small doses and the opposite way in large ones. That is a <b>biphasic dose response</b>, and it is often mislabelled as hormesis.</p><ul>' +
+      '<li><b>Biphasic response:</b> the effect changes with dose. It can be idiosyncratic to the person, or a function of the ratios of the plant’s constituents.</li>' +
+      '<li><b>Hormesis:</b> one particular kind of biphasic response, in which a small exposure provokes a systemic, adaptive response that prepares the body for further exposure and leaves the system more resilient.</li></ul>' +
+      '<p>Every hormetic response is biphasic; most biphasic responses in the period texts show no such adaptive benefit. Don’t call it hormesis unless the text shows that benefit. When a text says “in small doses … in large doses …”, record both effects and, if given, the dose at which the effect turns.</p>');
+
+    /* 12 silence */
+    blade('Read the silence', 'Absent, thin, or searched under the wrong name: three different situations.',
+      '<ul><li><b>It arrived late.</b> Ashwagandha (<i>Withania somnifera</i>) appears in neither the 1905 King’s nor the 1918 U.S. Dispensatory. Only a relative, <i>W. coagulans</i>, gets a line, as a vegetable rennet. Many other Ayurvedic and Chinese herbs entered American practice after this era. Take the fallback: state the absence and the names you searched, then describe the plant’s use in a formal system or written tradition of its culture of origin, from three sources, read as that tradition’s own knowledge.</li>' +
+      '<li><b>It was everywhere.</b> Kitchen herbs can be thin in the medical books. King’s gives rosemary about half a page and calls it “seldom used in this country, except as a perfume for ointments, liniments” and the like. That describes physicians’ practice. Whether every household already had it in the kitchen is a question the medical books may not answer, so check domestic medicine and say what the thin coverage may and may not mean.</li>' +
+      '<li><b>You searched the wrong name.</b> Before concluding the plant is absent, search every synonym, older binomial and drug name (blade 7).</li></ul>');
+  })();
+
+  /* ------------------------------------------------------------------
+     4. DECODE AN ENTRY
+  ------------------------------------------------------------------ */
+  var ENTRIES = [
+    { label: 'Eclectic, c. 1900',
+      html: '<span class="hw">Macrotys.</span> — Black Cohosh. <em>Preparations:</em> Specific Medicine Macrotys; Tincture; Fluid Extract. <em>Dose of the specific medicine,</em> gtt. i to xx. <em>Specific indications:</em> Muscular pain of a dull, tensive, aching character; soreness of the muscles, as if bruised; rheumatic pains, worse in damp weather; uterine pain with tenderness. Rx Specific Macrotys gtt. xx, Aqua ℥iv. M. Sig.: a teaspoonful every two hours. In full doses it may cause headache, which is a signal to lessen the dose.',
+      steps: [
+        { q: 'Which plant is “Macrotys”?', opts: [
+          ['Actaea racemosa (black cohosh), formerly Cimicifuga racemosa', true],
+          ['Caulophyllum thalictroides (blue cohosh)', false],
+          ['Actaea rubra (red baneberry)', false],
+          ['A different plant; Macrotys is a separate genus', false]],
+          why: 'Macrotys is the period drug name for black cohosh, which has also been Cimicifuga racemosa and is now Actaea racemosa. Search under all three, and pair the common name with the binomial: “cohosh” covers more than one plant.' },
+        { q: 'The dose “gtt. i to xx” is a dose of what?', opts: [
+          ['The specific medicine, because the dose line names it', true],
+          ['The tincture, because tinctures are the usual drop-dose preparation', false],
+          ['The fluid extract, because fluid extracts are listed', false],
+          ['The dried root, in grains', false]],
+          why: 'A dose belongs to the preparation it names, and most period dose lines do name it. King’s on Roman chamomile: “Dose of the oil, 5 to 15 drops on sugar; specific anthemis, 1 to 5 drops.” If a line doesn’t name one, the front matter rarely says which preparation is meant, so report which one you assumed and why.' },
+        { q: 'In the prescription, roughly how much specific medicine is in each teaspoonful?', opts: [
+          ['About one drop or less', true],
+          ['About five drops', false],
+          ['Twenty drops', false],
+          ['It can’t be estimated without the ratio', false]],
+          why: 'Twenty drops in four fluid ounces (about 118 mL) makes about 119 mL of mixture. A 3.7 to 5 mL teaspoon holds 1/32 to 1/24 of it: 0.6 to 0.84 of a drop. The ratio is needed to convert that to herb, not to count the drops. Try it in the decoder on the toolkit tab.' },
+        { q: '“Dull, tensive, aching … worse in damp weather” is best read as:', opts: [
+          ['A specific indication: a symptom picture to match', true],
+          ['A diagnosis equivalent to fibromyalgia', false],
+          ['A claim about the plant’s mechanism', false],
+          ['A safety warning', false]],
+          why: 'It is a picture, not a diagnosis. Translate it into modern clinical language, and don’t equate it with any single condition.' },
+        { q: 'The headache line tells you:', opts: [
+          ['A sign of over-action that the author used to set the dose', true],
+          ['That the plant is hormetic', false],
+          ['That the plant is contraindicated in anyone with headaches', false],
+          ['Nothing useful, since it is anecdotal', false]],
+          why: 'Period texts titrated by response and named the sign of too much. Record it as an observed dose-related effect. It is not hormesis, and it does not by itself set a modern safety limit.' }
+      ] },
+    { label: 'Botanic and Eclectic, mid-1800s to c. 1900',
+      html: '<span class="hw">Lobelia.</span> — Indian Tobacco. Official. In small and frequently repeated doses it relaxes spasm, and is given in spasmodic asthma, spasmodic croup and whooping-cough; in full doses it nauseates and vomits, and in Thomsonian practice it was the chief emetic of the “course”. <em>Preparations:</em> Tincture; Acetum Lobeliae; Specific Medicine. <em>Dose of the tincture,</em> gtt. v to xxx.',
+      steps: [
+        { q: 'Relaxing spasm in small doses, causing vomiting in full doses. What is this?', opts: [
+          ['A dose-dependent (biphasic) response: the dose decides which effect you get', true],
+          ['Hormesis', false],
+          ['An idiosyncratic reaction', false],
+          ['A contradiction that makes the entry unreliable', false]],
+          why: 'Strictly, relaxation and vomiting are two different effects rather than one effect reversing, but the point is the same: the dose decides what you get. Nothing here shows the adaptive, resilience-building response that would make it hormesis. Record both effects and the doses at which they occur.' },
+        { q: '“Official” here means:', opts: [
+          ['Listed in the U.S. Pharmacopoeia the book follows (and, after 1906, also the National Formulary)', true],
+          ['Approved by a federal regulator as safe and effective', false],
+          ['Recommended by the author', false],
+          ['Required by law for this use', false]],
+          why: 'Official meant listed in the U.S. Pharmacopoeia; after the 1906 Pure Food and Drugs Act the National Formulary counted too. Check which edition the book follows, which may be older than the one in force. Note when your plant was official and when it was dropped.' },
+        { q: 'The tincture’s strength isn’t stated. The right move is:', opts: [
+          ['Find the convention in this book’s front matter or pharmacy articles, or the pharmacopoeia in force; if it can’t be found, say so', true],
+          ['Assume 1:5, like a modern tincture', false],
+          ['Assume 1:1, like a fluid extract', false],
+          ['Leave the dose out of the section', false]],
+          why: 'Silence usually means a default the reader was expected to know. Recover it from the book, or report the dose as written with “strength not stated”. Don’t import a modern ratio.' },
+        { q: 'For practice today, this entry is best used for:', opts: [
+          ['The indication pattern and the dose-direction warning, with today’s dose and safety set from modern sources and training', true],
+          ['Its dose range, gtt. v to xxx, as a safe range', false],
+          ['Nothing, since Thomsonian emetic practice is obsolete', false],
+          ['Proof that the plant is safe, given long use', false]],
+          why: 'The period text is strong on indication and on the observed turn from relaxant to emetic. It is weak for setting limits. Long use is not proof of safety, and dismissing the whole entry discards real clinical observation.' },
+        { q: '“Spasmodic croup” refers to:', opts: [
+          ['A childhood condition with a barking cough and laryngeal spasm, often at night', true],
+          ['A form of asthma in adults', false],
+          ['Pulmonary tuberculosis', false],
+          ['A digestive cramp', false]],
+          why: 'Croup is still a modern word, and that is the trap. Period writers separated spasmodic (“false”) croup from membranous (“true”) croup, which was often laryngeal diphtheria. Define the term from a cited period source so the reader knows which one the text means.' }
+      ] },
+    { label: 'Official pharmacy, c. 1900–1918',
+      html: '<span class="hw">Taraxacum.</span> U.S.P. — Dandelion. The root, gathered in autumn. A mild tonic, diuretic and aperient, much employed in torpor of the liver, in chronic derangement of the digestive organs, and in dropsy dependent on hepatic obstruction. <em>Fluidextractum Taraxaci,</em> U.S.P.; dose, ƒʒi to ƒʒii.',
+      steps: [
+        { q: 'What strength is the fluid extract?', opts: [
+          ['1:1: by pharmacopoeial convention each fluid unit represents one weight unit of root', true],
+          ['1:5, the usual tincture strength', false],
+          ['1:10', false],
+          ['Unknown, because it isn’t stated', false]],
+          why: 'Fluid extracts were a 1:1 convention, which is why the entry doesn’t state it. Confirm it in the book’s pharmacy section the first time you use a new source.' },
+        { q: 'Convert ƒʒi to ƒʒii to metric and to root:', opts: [
+          ['About 3.7 to 7.4 mL, representing about 3.7 to 7.4 g of root', true],
+          ['About 1 to 2 mL, representing 1 to 2 g of root', false],
+          ['About 30 to 60 mL', false],
+          ['About 0.06 to 0.12 mL', false]],
+          why: 'A fluid drachm is about 3.7 mL. At 1:1, each mL represents about 1 g of root. The 30 to 60 mL answer confuses the drachm with the ounce; 0.06 mL is a minim.' },
+        { q: '“Torpor of the liver” means:', opts: [
+          ['Sluggish, underactive function, a functional description rather than a laboratory finding', true],
+          ['Cirrhosis', false],
+          ['Hepatitis', false],
+          ['Gallstones', false]],
+          why: 'Torpor describes function, not a lesion. Don’t translate it into a specific modern liver disease.' },
+        { q: 'Which part of this entry survives into practice today?', opts: [
+          ['The bitter-digestive and diuretic picture; treating fluid accumulation from liver disease with dandelion does not', true],
+          ['All of it, including treating dropsy from hepatic obstruction', false],
+          ['None of it', false],
+          ['Only the dose', false]],
+          why: '“Dropsy dependent on hepatic obstruction” describes ascites from serious liver disease, which needs medical care today. Name what survives, what was dropped, and what changed in between: here, the understanding of liver failure and the treatments available for it.' }
+      ] },
+    { label: 'A plant that isn’t there',
+      html: 'You search <em>King’s American Dispensatory</em>, the <em>Dispensatory of the United States</em> and Ellingwood for ashwagandha, under <em>Withania somnifera</em>, its older name <em>Physalis somnifera</em>, and the common names you know. Nothing.',
+      steps: [
+        { q: 'What do you do?', opts: [
+          ['State the absence and the names searched, then describe its use from three sources in a formal tradition of its culture of origin, read as that tradition’s knowledge', true],
+          ['Cite recent review papers on ashwagandha’s traditional use as the historical record', false],
+          ['Cite a 1990s American herbal as the historical source', false],
+          ['Leave the section out', false]],
+          why: 'The fallback exists for exactly this case: historical use outside the American record, from the tradition that wrote it down. Recent reviews and post-Flexner herbals belong in the relevance discussion, not the history.' },
+        { q: 'Why does the absence statement list the names you searched?', opts: [
+          ['It shows the absence is real and not a naming mismatch, and lets a reader repeat the search', true],
+          ['It makes the section longer', false],
+          ['Absence statements are a formality', false],
+          ['It proves the plant was never used in America', false]],
+          why: 'A false absence from a wrong name is the most common search error. Listing the names makes the claim checkable. It shows only that the plant isn’t in those books, not that nobody in America ever used it.' }
+      ] }
+  ];
+  (function buildDecode() {
+    var host = $('#decode');
+    var total = 0, right = 0, done = 0;
+    ENTRIES.forEach(function (en) { total += en.steps.length; });
+    var tally = el('p', { class: 'tally', 'aria-live': 'polite' }, ['0 of ' + total + ' steps answered']);
+    ENTRIES.forEach(function (en, ei) {
+      var q = el('div', { class: 'q' });
+      q.appendChild(el('div', { class: 'eyebrow' }, ['Entry ' + (ei + 1) + ' · ' + en.label]));
+      q.appendChild(el('div', { class: 'entry', html: en.html }));
+      q.appendChild(el('p', { class: 'ill' }, ['Composite written for this exercise. Not a quotation; numbers for practice only.']));
+      var prev = null;
+      en.steps.forEach(function (st, si) {
+        var s = el('div', { class: si ? 'step' : '', hidden: si > 0 });
+        s.appendChild(el('div', { class: 'prompt' }, [(si + 1) + '. ' + st.q]));
+        var o = el('div', { class: 'opts' }), ex = el('div', { class: 'expl', role: 'status' });
+        var items = shuffle(st.opts.map(function (x, k) { return { label: x[0], ok: x[1], k: k }; }));
+        items.forEach(function (it) {
+          o.appendChild(el('button', { type: 'button', 'data-k': String(it.k), onclick: function () {
+            if (s.dataset.done) return; s.dataset.done = '1';
+            $$('button', o).forEach(function (b) {
+              b.disabled = true;
+              var kk = Number(b.dataset.k), isOk = st.opts[kk][1];
+              if (isOk) b.classList.add('correct'); else if (kk === it.k) b.classList.add('wrong'); else b.classList.add('dim');
+            });
+            ex.innerHTML = '<b>' + (it.ok ? 'Right.' : 'Not that.') + '</b> ';
+            ex.appendChild(document.createTextNode(st.why));
+            ex.classList.add('show');
+            done++; if (it.ok) right++;
+            tally.textContent = done + ' of ' + total + ' steps answered · ' + right + ' right';
+            var nx = s.nextElementSibling; if (nx && nx.classList.contains('step')) nx.hidden = false;
+          } }, [it.label]));
+        });
+        s.appendChild(o); s.appendChild(ex); q.appendChild(s);
+        prev = s;
+      });
+      host.appendChild(q);
+    });
+    host.appendChild(tally);
+    host.appendChild(el('div', { class: 'actions' }, [el('button', { class: 'btn ghost', type: 'button', 'data-go': 'trap' }, ['Next: spot the trap →'])]));
+  })();
+
+  /* ------------------------------------------------------------------
+     5. SPOT THE TRAP
+  ------------------------------------------------------------------ */
+  var BINS = {
+    sound:   { key: 'sound',   cls: 'c-sound',   label: 'Sound reading',     sub: 'In its era, with its conventions, honestly reported' },
+    dismiss: { key: 'dismiss', cls: 'c-dismiss', label: 'Dismissal trap',    sub: 'Biomedical-only stance, presentism, no evidence read as no effect' },
+    cred:    { key: 'cred',    cls: 'c-cred',    label: 'Credulity trap',    sub: 'Adopted wholesale, no era context, limits set from anecdote' },
+    prec:    { key: 'prec',    cls: 'c-prec',    label: 'Precision trap',    sub: 'Convention, unit, name, chemistry, picture or silence misread' },
+    record:  { key: 'record',  cls: 'c-record',  label: 'Wrong-record trap', sub: 'Not the historical record, or not cited as one' }
+  };
+  var BIN_ORDER = ['sound', 'dismiss', 'cred', 'prec', 'record'];
+  var CARDS = [
+    { id: 'calnotrial', bin: 'dismiss', text: 'Trials of calendula for wound healing are few and small, so its historical use as a wound herb reflects folk belief.',
+      why: 'Thin trial evidence is mostly a funding record, not a negative result. The period texts record decades of clinical observation of the wound picture.',
+      fix: 'Report the period use, then what the modern evidence does and doesn’t cover, and where practitioner observation runs ahead of it.' },
+    { id: 'germ', bin: 'dismiss', text: 'These nineteenth-century physicians did not understand germ theory, so their recommendations can be set aside.',
+      why: 'Presentism. A mistaken theory doesn’t erase an accurate observation, and they did the best they could with the tools they had.',
+      fix: 'Name the period theory, separate it from the observed effect, and judge the observation on its own.' },
+    { id: 'ellold', bin: 'dismiss', text: 'Ellingwood is unreliable because he wrote in 1919, before modern pharmacology.',
+      why: 'Dating a source isn’t evaluating it. Ellingwood is valued for close clinical observation, which is exactly what modern pharmacology often lacks for a plant.',
+      fix: 'Use him for the indication pattern and clinical detail; put modern pharmacology beside him in the relevance discussion.' },
+    { id: 'notrcts', bin: 'dismiss', text: 'Because the indications in King’s have never been tested in randomised trials, they are not relevant to modern practice.',
+      why: 'Untested is not disproved. This leaves the knowledge on the shelf because no one funded the question.',
+      fix: 'Say which indications are untested and that the gap reflects what was funded, then discuss what practitioners report.' },
+    { id: 'saferange', bin: 'cred', text: 'King’s gives the specific medicine at gtt. v to xx, so this is the safe dose range for clients today.',
+      why: 'Period ranges come from a different paradigm and preparation, often titrated to over-action. They are weak evidence for setting limits.',
+      fix: 'Report the period dose as written with its convention, and set today’s dose and safety from modern sources and clinical training.' },
+    { id: 'tbtoday', bin: 'cred', text: 'Because the Eclectics used it for consumption, the herb is a treatment for tuberculosis today.',
+      why: 'No era context. The disease, its diagnosis and its treatment have all changed since.',
+      fix: 'Say what was used and for what, then what changed in between, and what (if anything) of the old indication survives.' },
+    { id: 'longuse', bin: 'cred', text: 'Its long traditional use proves the herb is safe.',
+      why: 'Long use is evidence of tolerability at the doses and in the populations that used it, not proof of safety in every case.',
+      fix: 'State what the record shows about use, then take safety from modern safety sources.' },
+    { id: 'ratio15', bin: 'prec', text: 'King’s gives a tincture dose of 10 to 30 drops; at the standard 1:5 strength, that is 0.1 to 0.3 g of herb.',
+      why: 'It assumes a ratio instead of finding the book’s. The 1905 King’s follows the 1890 Pharmacopoeia, whose tinctures ran from 1:5 to 1:20, and makes its unofficial tinctures at 1:8.',
+      fix: 'Find the book’s convention for tinctures, or report the dose as written with “strength not stated”.' },
+    { id: 'hormesis', bin: 'prec', text: 'Ellingwood describes the herb as stimulating in small doses and depressing in large doses, an example of hormesis.',
+      why: 'Stimulating at small doses and depressing at large ones is a biphasic response. Hormesis is a particular kind, in which a small exposure provokes an adaptive response that leaves the system more resilient, and nothing in the text shows that.',
+      fix: 'Call it biphasic, record both effects and, if given, the dose at which it turns. Reserve “hormesis” for evidence of the adaptive benefit.' },
+    { id: 'berberine', bin: 'prec', text: 'The Eclectics prescribed the root for its berberine content, which lowers blood sugar.',
+      why: 'A later discovery projected back into the history. The period authors were not treating modern type 2 diabetes, and the hypoglycaemic action came much later.',
+      fix: 'Report what they used it for, in their terms. Put the berberine findings in the relevance discussion as a later development.' },
+    { id: 'minim', bin: 'prec', text: 'The dose is 20 drops, which is 1 mL, the same as 20 minims.',
+      why: 'A drop isn’t a minim. Twenty minims is about 1.2 mL; twenty drops depends on the liquid and the dropper.',
+      fix: 'Convert minims as a measured volume; treat drops as approximate and say so.' },
+    { id: 'resinoid', bin: 'prec', text: 'Macrotin was given in fractions of a grain, so the whole root can be given at the same dose.',
+      why: 'A resinoid is a concentrated precipitate, not the herb. Its dose and action don’t transfer to the whole plant.',
+      fix: 'Keep resinoid and whole-herb entries separate, and say which one a dose belongs to.' },
+    { id: 'pulse', bin: 'prec', text: 'The specific indication “full, bounding pulse with flushed face” corresponds to hypertension.',
+      why: 'A symptom picture mapped onto a single diagnosis. The picture fits many situations, and hypertension often has no such signs.',
+      fix: 'Describe the picture in modern clinical language without equating it to a disease.' },
+    { id: 'rosemary', bin: 'prec', text: 'Rosemary gets only a short entry in the Eclectic texts, which shows that Americans rarely used it.',
+      why: 'Silence misread. Thin coverage in the medical books describes physicians’ practice, not household use, and kitchen herbs are often thin because they were too ordinary to write up.',
+      fix: 'Report what the texts say, check domestic medicine, and say what the thin coverage may and may not mean.' },
+    { id: 'review', bin: 'record', text: 'According to a 2019 review in Phytotherapy Research, the Eclectics used the root for “bad blood”.',
+      why: 'A modern review is a secondhand summary. The historical record is the Eclectic text itself.',
+      fix: 'Follow the review’s citation to the Eclectic text, read the entry, and cite that.' },
+    { id: 'henriette', bin: 'record', text: 'Henriette’s Herbal (n.d.) lists the plant as an alterative.',
+      why: 'A scan or transcription site cited as the author, with no date. The book has an author, an edition and a year.',
+      fix: 'Cite the book with its original year; the site goes on the retrieval line.' },
+    { id: 'ethnoonly', bin: 'record', text: 'A historical-use section built on Moerman’s ethnobotany database, a USDA plant guide and a field study of tribal use.',
+      why: 'All three are ethnobotany. There is no adoption story: nothing on how American practitioners took the plant up.',
+      fix: 'Keep a sentence of ethnobotany to set the scene, then build the section on three period texts from the American streams.' },
+    { id: 'grieve', bin: 'record', text: 'The historical use is drawn from Grieve’s A Modern Herbal (1931) and a 2003 herbal textbook.',
+      why: 'Both are post-Flexner. Useful orientation, but they retell the history secondhand.',
+      fix: 'Use them to find leads, then cite the period texts they draw on. Move them to the relevance discussion.' },
+    { id: 'adoption', bin: 'sound', text: 'Eclectic physicians took the plant up from Indigenous practice by the 1850s; King’s dispensatory and later Felter and Lloyd list it for several indications, while the U.S. Dispensatory treats its value with more caution.',
+      why: 'An adoption story across more than one stream, with the regular view set beside the sectarian one.',
+      fix: 'Nothing to fix. Add years and editions to each citation.' },
+    { id: 'absence', bin: 'sound', text: 'The plant was not found in King’s, the U.S. Dispensatory or Ellingwood under <i>Withania somnifera</i>, <i>Physalis somnifera</i>, ashwagandha or winter cherry; its history is drawn from three classical texts of its culture of origin.',
+      why: 'An honest, checkable absence statement followed by the fallback.',
+      fix: 'Nothing to fix. Frame the classical texts as that tradition’s own knowledge.' },
+    { id: 'convnote', bin: 'sound', text: 'The 1918 Dispensatory gives the fluid extract at ƒʒi. At 1:1, about 3.7 mL represents about 3.7 g of dried root.',
+      why: 'Convention recovered, units converted, and the dose mapped back to whole herb.',
+      fix: 'Nothing to fix. Cite where you confirmed the convention.' },
+    { id: 'alterative', bin: 'sound', text: 'In the period’s terms the herb was a “stimulating alterative”; much of that picture would now be described as supporting lymphatic and hepatic function, though the theory of impure blood behind it has been abandoned.',
+      why: 'The period term is kept, translated, and its theory separated from its observation.',
+      fix: 'Nothing to fix. Cite a source for the definition of alterative.' }
+  ];
+  var sorter = { order: [], i: 0, results: {}, host: $('#sorter') };
+  function tag(k) { var b = BINS[k]; return el('span', { class: 'tag ' + b.cls }, [b.label]); }
+  function startSorter(subset) { sorter.order = shuffle(subset || CARDS); sorter.i = 0; sorter.results = {}; renderCard(!!subset || startSorter.ran); startSorter.ran = true; }
+  function sorterScore() { var r = 0, d = 0; Object.keys(sorter.results).forEach(function (id) { d++; if (sorter.results[id].ok) r++; }); return { right: r, done: d }; }
+  function renderCard(focus) {
+    var host = sorter.host; host.innerHTML = '';
+    if (sorter.i >= sorter.order.length) return renderSummary();
+    var c = sorter.order[sorter.i], sc = sorterScore();
+    host.appendChild(el('div', { class: 'progress' }, [
+      el('span', {}, ['Card ' + (sorter.i + 1) + ' of ' + sorter.order.length]),
+      el('div', { class: 'bar' }, [el('i', { style: 'width:' + (100 * sorter.i / sorter.order.length) + '%' })]),
+      el('span', { class: 'score' }, [sc.right + ' / ' + sc.done + ' correct'])
+    ]));
+    var src = el('div', { class: 'src' }, [el('div', { class: 'kind' }, ['A sentence from a historical-use section']), el('p', { class: 'stmt' }, ['“' + c.text + '”'])]);
+    var bins = el('div', { class: 'bins', role: 'group', 'aria-label': 'Choose a bin' });
+    BIN_ORDER.forEach(function (k, i) {
+      var b = BINS[k];
+      bins.appendChild(el('button', { class: b.cls + (i === 0 ? ' wide' : ''), type: 'button', onclick: function () { answer(c, k); } }, [el('b', {}, [b.label]), el('span', {}, [b.sub])]));
+    });
+    src.appendChild(bins); host.appendChild(src);
+    if (focus) { var st = $('.stmt', host); st.tabIndex = -1; st.focus(); }
+  }
+  function answer(c, chosen) {
+    var ok = chosen === c.bin, host = sorter.host;
+    sorter.results[c.id] = { ok: ok, chosen: chosen };
+    $$('.bins button', host).forEach(function (b) { b.disabled = true; });
+    var fb = el('div', { class: 'fb ' + (ok ? 'ok' : 'no'), role: 'status' }, [
+      el('div', { class: 'verdict' }, [ok ? 'Right. This is ' : 'Not this one. This is ', tag(c.bin), ok ? '' : ' (you chose ' + BINS[chosen].label + ').']),
+      el('p', { class: 'why' }, [c.why]),
+      el('div', { class: 'fix' }, [el('b', {}, ['The fix. ']), c.fix])
+    ]);
+    var next = el('div', { class: 'actions' }, [el('button', { class: 'btn', type: 'button', onclick: function () { sorter.i++; renderCard(true); } }, [sorter.i + 1 < sorter.order.length ? 'Next card →' : 'See your results →'])]);
+    $('.src', host).appendChild(fb); $('.src', host).appendChild(next);
+    next.querySelector('button').focus();
+  }
+  function renderSummary() {
+    var host = sorter.host; host.innerHTML = '';
+    var sc = sorterScore(), byBin = {}, missed = [];
+    BIN_ORDER.forEach(function (k) { byBin[k] = { total: 0, right: 0 }; });
+    sorter.order.forEach(function (c) { var r = sorter.results[c.id]; byBin[c.bin].total++; if (r && r.ok) byBin[c.bin].right++; else missed.push(c); });
+    var pctv = Math.round(100 * sc.right / sorter.order.length);
+    var head = el('div', { class: 'card summary' }, [
+      el('h3', {}, [sc.right + ' of ' + sorter.order.length + ' sorted correctly (' + pctv + '%)']),
+      el('p', { class: 'muted small' }, [pctv === 100 ? 'Every sentence landed in its bin.' : 'The breakdown shows where the confusion sits. Precision traps are the easiest to miss, because they sound careful.'])
+    ]);
+    BIN_ORDER.forEach(function (k) {
+      if (!byBin[k].total) return;
+      head.appendChild(el('div', { class: 'row' }, [el('span', {}, [tag(k), ' ', el('span', { class: 'muted small' }, [BINS[k].sub])]), el('span', { class: 'n' }, [byBin[k].right + ' / ' + byBin[k].total])]));
+    });
+    host.appendChild(head);
+    if (missed.length) {
+      var m = el('div', { class: 'card' }, [el('h3', {}, ['What you missed']), el('ul', { class: 'missed' })]);
+      missed.forEach(function (c) {
+        var r = sorter.results[c.id];
+        m.querySelector('ul').appendChild(el('li', {}, ['“' + c.text + '” is ', tag(c.bin), r ? ' (you chose ' + BINS[r.chosen].label + ')' : '', '. ', el('span', { class: 'muted' }, [c.fix])]));
+      });
+      host.appendChild(m);
+    }
+    var rev = el('div', { class: 'card' }, [el('h3', {}, ['All sentences, sorted']), el('p', { class: 'muted small' }, ['Where every card belongs, for review.'])]);
+    var grid = el('div', { class: 'review-grid' });
+    BIN_ORDER.forEach(function (k, i) {
+      var col = el('div', { class: 'col ' + BINS[k].cls + (i === 0 ? ' wide' : '') }, [el('h4', {}, [BINS[k].label]), el('ul')]);
+      CARDS.filter(function (c) { return c.bin === k; }).forEach(function (c) { col.querySelector('ul').appendChild(el('li', {}, [c.text])); });
+      grid.appendChild(col);
+    });
+    rev.appendChild(grid); host.appendChild(rev);
+    host.appendChild(el('div', { class: 'actions' }, [
+      missed.length ? el('button', { class: 'btn', type: 'button', onclick: function () { startSorter(missed); } }, ['Retry the ' + missed.length + ' you missed']) : null,
+      el('button', { class: 'btn ghost', type: 'button', onclick: function () { startSorter(); } }, ['Start over with all ' + CARDS.length]),
+      el('button', { class: 'btn ghost', type: 'button', 'data-go': 'audit' }, ['Next: check your section →'])
+    ]));
+  }
+  startSorter();
+
+  /* ------------------------------------------------------------------
+     6. CHECK YOUR SECTION
+  ------------------------------------------------------------------ */
+  var T_CONV = 'The [text, year] gives the dose as [dose as written] without stating the strength of the [preparation]. [The book’s general article on X / its front matter / the pharmacopoeia in force] gives [convention], so this corresponds to about [herb equivalent].\n\nOr, if not found:\nThe [text, year] gives the dose as [dose as written]. The strength of the [preparation] is not stated, and no convention was located in the book’s front matter or pharmacy sections; the dose is reported as written and not converted to a herb equivalent.';
+  var T_ABS = '[Binomial] was not located in [text 1, year], [text 2, year] or [text 3, year], searched under [current name, older binomials, drug name, common names]. Its historical use is therefore described from [tradition]’s own texts: [source 1], [source 2] and [source 3], read as that tradition’s knowledge rather than as American practice.';
+  var T_REL = 'Of the period indications, [X] persists in current practice, and [modern source] [supports / has not tested] it. [Y] has been dropped, because [a theory of disease later abandoned / a safer or more effective option / a change in the disease or its diagnosis]. [Z] remains untested; the gap reflects what has and has not been funded, and practitioner reports ([what was seen, how often, in what circumstances]) suggest it merits study.';
+  (function buildAudit() {
+    var host = $('#audit');
+    function radios(name, legend, opts) {
+      var fs = el('fieldset', {}, [el('legend', {}, [legend]), el('div', { class: 'choices' })]);
+      opts.forEach(function (o) { fs.querySelector('.choices').appendChild(el('label', {}, [el('input', { type: 'radio', name: name, value: o.v }), o.l])); });
+      return fs;
+    }
+    function checks(name, items) {
+      var d = el('div', { class: 'checks' });
+      items.forEach(function (t, i) { d.appendChild(el('label', {}, [el('input', { type: 'checkbox', name: name, value: String(i) }), t])); });
+      return d;
+    }
+    var card = el('div', { class: 'card' });
+    card.appendChild(el('h3', {}, ['Sources']));
+    card.appendChild(radios('r1', 'How many texts from before the Flexner transition carry your history?', [
+      { v: 'three', l: 'Three or more' }, { v: 'few', l: 'One or two' }, { v: 'absent', l: 'None: the plant isn’t in the American record' }, { v: 'later', l: 'None: I used later sources' }]));
+    var subAbs = el('div', { class: 'sub', hidden: true }, [radios('r1a', 'Does the section name the texts and names you searched, state the absence, and describe the plant’s use from three sources in a formal tradition of its culture of origin?', [{ v: 'yes', l: 'Yes' }, { v: 'part', l: 'Partly' }, { v: 'no', l: 'No' }])]);
+    card.appendChild(subAbs);
+
+    card.appendChild(el('h3', {}, ['Adoption story']));
+    card.appendChild(radios('r2', 'Does the section say when and through whom the plant entered American practice, and what each stream used it for?', [
+      { v: 'yes', l: 'Yes, across more than one stream' }, { v: 'one', l: 'For one stream only' }, { v: 'no', l: 'No: it is mostly ethnobotany' }, { v: 'na', l: 'Not applicable (fallback)' }]));
+
+    card.appendChild(el('h3', {}, ['Archaic terms']));
+    card.appendChild(radios('r3', 'Where you use a period term a modern clinician wouldn’t use unprompted, is it defined?', [
+      { v: 'cited', l: 'Yes, from a cited dictionary or history text' }, { v: 'guess', l: 'Yes, in my own words, no source' }, { v: 'no', l: 'Not all of them' }, { v: 'none', l: 'There are none' }]));
+
+    card.appendChild(el('h3', {}, ['Doses']));
+    card.appendChild(radios('r4', 'For each period dose you report:', [
+      { v: 'conv', l: 'Preparation and convention identified, or flagged as not found' }, { v: 'copied', l: 'Copied as written' }, { v: 'modern', l: 'Converted with a modern ratio' }, { v: 'none', l: 'I report no doses' }]));
+
+    card.appendChild(el('h3', {}, ['Relevance today']));
+    card.appendChild(radios('r5', 'Your relevance discussion:', [
+      { v: 'full', l: 'Says which uses survive, which were dropped, and what changed' }, { v: 'verdict', l: 'Gives a verdict (still relevant, or not)' }, { v: 'extreme', l: 'Dismisses the texts, or adopts them wholesale' }, { v: 'missing', l: 'Isn’t there yet' }]));
+
+    card.appendChild(el('h3', {}, ['Citations']));
+    card.appendChild(radios('r6', 'Each period text is cited as:', [
+      { v: 'book', l: 'The book, with its original year' }, { v: 'site', l: 'The website, or n.d.' }]));
+
+    card.appendChild(el('h3', {}, ['Habits that make the section hold up']));
+    card.appendChild(checks('gen', [
+      'I name the era’s context and bias (who wrote, who is missing, which theories have been abandoned).',
+      'Post-Flexner and modern sources sit in the relevance discussion, not in the history.',
+      'Quotations are short and colourful; the rest is in my own words.',
+      'The section is in monograph register: no “I”, and a table of uses where it helps.']));
+    card.appendChild(el('div', { class: 'actions' }, [el('button', { class: 'btn', type: 'button', id: 'audit-run' }, ['Check my section'])]));
+    host.appendChild(card);
+    var out = el('div', { id: 'audit-out' }); host.appendChild(out);
+
+    host.addEventListener('change', function (e) { if (e.target.name === 'r1') subAbs.hidden = e.target.value !== 'absent'; });
+    function val(name) { var r = host.querySelector('input[name="' + name + '"]:checked'); return r ? r.value : null; }
+    function ticked(name) { return host.querySelectorAll('input[name="' + name + '"]:checked').length; }
+    function row(pill, title, desc) {
+      var labels = { full: 'Covered', none: 'Not covered', fix: 'Covered, with a fix', na: 'Answer above' };
+      return el('div', { class: 'verdict-row' }, [el('span', { class: 'pill ' + pill }, [labels[pill]]), el('div', {}, [el('div', { class: 't' }, [title]), el('div', { class: 'd', html: desc })])]);
+    }
+    $('#audit-run', host).addEventListener('click', function () {
+      out.innerHTML = '';
+      var res = el('div', { class: 'card' }, [el('h3', {}, ['What your section has']), el('p', { class: 'muted small' }, ['Read from your own answers. If this is for a class, that class’s own guidance decides.'])]);
+      var v = el('div', { class: 'verdicts' }); res.appendChild(v);
+      var tpl = [];
+      var r1 = val('r1'), r2 = val('r2'), r3 = val('r3'), r4 = val('r4'), r5 = val('r5'), r6 = val('r6');
+
+      if (!r1) v.appendChild(row('na', 'Sources', 'Choose an answer above.'));
+      else if (r1 === 'three') v.appendChild(row('full', 'Sources', 'Three period texts can carry an adoption story across streams.'));
+      else if (r1 === 'few') v.appendChild(row('fix', 'Sources', 'Add texts until there are at least three. King’s American Dispensatory, the U.S. Dispensatory, Ellingwood, Felter and Scudder are the usual next places to look; search every name the plant has had.'));
+      else if (r1 === 'later') v.appendChild(row('none', 'Sources', 'Later sources retell the history secondhand. Follow their citations back to the period texts and cite those. Move the later sources to the relevance discussion.'));
+      else {
+        var a = val('r1a');
+        if (a === 'yes') v.appendChild(row('full', 'Sources', 'The fallback, done honestly: a checkable absence and three sources from the culture of origin.'));
+        else if (a) { v.appendChild(row(a === 'part' ? 'fix' : 'none', 'Sources', 'State the absence with the books and names you searched, then describe the plant’s use from three sources in a formal tradition of its culture of origin. Template below.')); tpl.push(['Absence statement to adapt', T_ABS]); }
+        else v.appendChild(row('na', 'Sources', 'Answer the fallback question above.'));
+      }
+
+      if (!r2) v.appendChild(row('na', 'Adoption story', 'Choose an answer above.'));
+      else if (r2 === 'yes') v.appendChild(row('full', 'Adoption story', 'The section tells how the plant came into American practice.'));
+      else if (r2 === 'na') v.appendChild(r1 === 'absent' ? row('full', 'Adoption story', 'Not needed when the plant is outside the American record; the fallback tells its history instead.') : row('fix', 'Adoption story', '“Not applicable” fits only when the plant is absent from the American record. You reported period sources, so tell the adoption story.'));
+      else if (r2 === 'one') v.appendChild(row('fix', 'Adoption story', 'Add a second stream. If the Eclectics used it, what did the U.S. Dispensatory or the Physiomedicalists say? Was it official, and when?'));
+      else v.appendChild(row('none', 'Adoption story', 'An ethnobotany essay is a different section. Keep a sentence of it to set the scene, then build this one on when and through whom the plant entered American practice.'));
+
+      if (!r3) v.appendChild(row('na', 'Archaic terms', 'Choose an answer above.'));
+      else if (r3 === 'cited' || r3 === 'none') v.appendChild(row('full', 'Archaic terms', r3 === 'none' ? 'Nothing to define. If you quote period indications later, define them as you go.' : 'Defined and sourced. If several indications look scattered, try naming the physiology they share.'));
+      else if (r3 === 'guess') v.appendChild(row('fix', 'Archaic terms', 'Add a source for each definition: a medical dictionary or a history-of-medicine text.'));
+      else v.appendChild(row('none', 'Archaic terms', 'Define every period term a modern clinician wouldn’t use unprompted, from a cited source.'));
+
+      if (!r4) v.appendChild(row('na', 'Doses', 'Choose an answer above.'));
+      else if (r4 === 'conv' || r4 === 'none') v.appendChild(row('full', 'Doses', r4 === 'none' ? 'No doses reported. When you reach the dosing section, these texts come back.' : 'Read with their conventions, and gaps stated honestly.'));
+      else if (r4 === 'copied') { v.appendChild(row('fix', 'Doses', 'Say which preparation each dose belongs to and what its strength was, or that the convention wasn’t found. Template below.')); tpl.push(['Convention statement to adapt', T_CONV]); }
+      else { v.appendChild(row('none', 'Doses', 'A modern ratio doesn’t belong in a period dose. Recover the book’s convention, or report the dose as written. Template below.')); tpl.push(['Convention statement to adapt', T_CONV]); }
+
+      if (!r5) v.appendChild(row('na', 'Relevance today', 'Choose an answer above.'));
+      else if (r5 === 'full') v.appendChild(row('full', 'Relevance today', 'Survived, dropped, and what changed in between: that is the discussion.'));
+      else if (r5 === 'verdict') { v.appendChild(row('fix', 'Relevance today', 'A verdict needs its reasons. Which indications survive, which were dropped, and what changed in between? Template below.')); tpl.push(['Relevance paragraph to adapt', T_REL]); }
+      else { v.appendChild(row('none', 'Relevance today', r5 === 'extreme' ? 'Dismissal and wholesale adoption are both traps. Read the texts in their era, then sort what survives from what doesn’t. Template below.' : 'Add a relevance discussion. Template below.')); tpl.push(['Relevance paragraph to adapt', T_REL]); }
+
+      if (!r6) v.appendChild(row('na', 'Citations', 'Choose an answer above.'));
+      else if (r6 === 'book') v.appendChild(row('full', 'Citations', 'A reader can find the book and the edition you used.'));
+      else v.appendChild(row('none', 'Citations', 'Cite the author, original year, title and edition; put the scan site on the retrieval line. For a modern reprint, give both years, for example (Felter &amp; Lloyd, 1898/1983).'));
+
+      var g = ticked('gen');
+      res.appendChild(el('p', { class: 'small muted', style: 'margin-top:.9rem' }, [g === 4 ? 'All four habits are in place.' : (4 - g) + ' of the four habits ' + (4 - g === 1 ? 'is' : 'are') + ' missing. None changes your sources; all four change whether a reader can trust the section.']));
+      tpl.forEach(function (t) { res.appendChild(el('h4', { style: 'margin-top:1.1rem' }, [t[0]])); res.appendChild(el('pre', { class: 'tpl' }, [t[1]])); });
+      out.appendChild(res);
+      out.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+    });
+  })();
+})();
+</script>
+</body>
+</html>
