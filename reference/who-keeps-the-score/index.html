@@ -1,0 +1,1561 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Who Keeps the Score</title>
+<meta name="description" content="Chronic pain after a crushed wrist, for herbal practitioners: pain narratives, the receptors herbal claims target, posology, and a case triage.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%235b3a8c'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23c3d16b'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Literata:ital,opsz,wght@0,7..72,400..650;1,7..72,400..500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#eef0ed; --paper-2:#e3e7e3; --paper-3:#d4dad5; --card:#f6f7f5;
+  --ink:#241a33; --ink-2:#4b415c; --ink-3:#686078;
+  --rule:#c2c8c4;
+  --violet:#5b3a8c; --carmine:#a3283f; --olive:#56620f; --ochre:#a8770a; --cool:#2d5d88;
+  --violet-wash:#e5ddf1; --carmine-wash:#f4dfe3; --olive-wash:#e6ebcf; --ochre-wash:#f3e7c9; --cool-wash:#dce7f1;
+  --on-violet:#ffffff;
+  --font-ui:"Archivo", "Arial Narrow", system-ui, sans-serif;
+  --font-body:"Literata", Georgia, "Times New Roman", serif;
+  --measure:66ch;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#19141f; --paper-2:#221b2a; --paper-3:#2e2638; --card:#1e1826;
+    --ink:#ece7f2; --ink-2:#c3bad0; --ink-3:#a39bb2;
+    --rule:#3b3247;
+    --violet:#b9a2e6; --carmine:#f08397; --olive:#c3d16b; --ochre:#e4bd57; --cool:#93bde6;
+    --violet-wash:#2f2542; --carmine-wash:#3a1f29; --olive-wash:#2a2f17; --ochre-wash:#352a12; --cool-wash:#1b2a39;
+    --on-violet:#19141f;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#19141f; --paper-2:#221b2a; --paper-3:#2e2638; --card:#1e1826;
+  --ink:#ece7f2; --ink-2:#c3bad0; --ink-3:#a39bb2;
+  --rule:#3b3247;
+  --violet:#b9a2e6; --carmine:#f08397; --olive:#c3d16b; --ochre:#e4bd57; --cool:#93bde6;
+  --violet-wash:#2f2542; --carmine-wash:#3a1f29; --olive-wash:#2a2f17; --ochre-wash:#352a12; --cool-wash:#1b2a39;
+  --on-violet:#19141f;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:64px}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-body);font-size:1.0625rem;line-height:1.62;font-optical-sizing:auto}
+a{color:var(--violet);text-decoration-thickness:1px;text-underline-offset:3px}
+a:hover{text-decoration-thickness:2px}
+:focus-visible{outline:3px solid var(--violet);outline-offset:2px;border-radius:3px}
+button,select,input{font:inherit;color:inherit}
+p{margin:0 0 1em}
+.wrap{max-width:1160px;margin:0 auto;padding:0 24px}
+.prose{max-width:var(--measure)}
+h1,h2,h3,h4{font-family:var(--font-ui);line-height:1.08;margin:0;color:var(--ink)}
+h2{font-size:clamp(2.1rem,5vw,3.5rem);font-weight:780;font-variation-settings:"wdth" 112;letter-spacing:-.012em;margin-bottom:22px}
+h3{font-size:1.4rem;font-weight:720;font-variation-settings:"wdth" 104;margin:40px 0 10px}
+h4{font-size:1.02rem;font-weight:700;font-variation-settings:"wdth" 100;margin:0 0 6px}
+.small{font-size:.9rem;color:var(--ink-2)}
+.cite{white-space:nowrap}
+sub{font-size:.72em}
+
+/* top bar */
+.topbar{position:sticky;top:0;z-index:30;background:var(--paper);border-bottom:1px solid var(--rule)}
+@supports (backdrop-filter:blur(4px)){.topbar{background:color-mix(in srgb,var(--paper) 90%,transparent);backdrop-filter:blur(8px)}}
+.topbar .wrap{display:flex;align-items:center;gap:22px;height:54px}
+.brand{font-family:var(--font-ui);font-weight:800;font-variation-settings:"wdth" 118;font-size:1rem;color:var(--ink);text-decoration:none;white-space:nowrap}
+.navlinks{display:flex;gap:20px;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0}
+.navlinks::-webkit-scrollbar{display:none}
+.navlinks a{font-family:var(--font-ui);font-size:.92rem;color:var(--ink-2);text-decoration:none;white-space:nowrap;padding:14px 0 12px;border-bottom:3px solid transparent}
+.navlinks a[aria-current="true"]{color:var(--ink);border-bottom-color:var(--violet)}
+.theme-btn{flex:none;border:1px solid var(--rule);background:var(--card);border-radius:999px;padding:5px 12px;font-family:var(--font-ui);font-size:.85rem;cursor:pointer}
+
+/* hero */
+.hero{padding:clamp(36px,7vw,88px) 0 40px}
+.slot-line{font-family:var(--font-ui);font-weight:800;margin:0 0 26px;letter-spacing:-.02em;line-height:.96}
+.slot-line .l1,.slot-line .l3{display:block;font-size:clamp(2rem,6.4vw,4.6rem);font-variation-settings:"wdth" 70;color:var(--ink)}
+.reel-window{display:block;overflow:hidden;padding:.06em 0 .1em;margin:.02em 0}
+.reel{display:inline-block;font-size:min(10vw,7.4rem);font-variation-settings:"wdth" 116;color:var(--violet);line-height:1}
+.reel.tick{animation:tick .11s ease-out}
+@keyframes tick{from{transform:translateY(-45%);opacity:.2}to{transform:none;opacity:1}}
+.picker{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 30px}
+.pick{border:1px solid var(--rule);background:var(--card);border-radius:999px;padding:6px 14px;font-family:var(--font-ui);font-size:.95rem;cursor:pointer;color:var(--ink-2)}
+.pick[aria-pressed="true"]{border-color:var(--violet);color:var(--ink);box-shadow:inset 0 -3px 0 var(--violet)}
+.btn{border:0;border-radius:999px;padding:8px 18px;font-family:var(--font-ui);font-weight:700;font-size:.98rem;cursor:pointer;background:var(--violet);color:var(--on-violet)}
+.btn.ghost{background:transparent;color:var(--violet);border:1.5px solid var(--violet)}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:40px;align-items:start}
+.lede{font-size:1.18rem;line-height:1.55;max-width:58ch}
+.case{background:var(--card);border:1px solid var(--rule);border-left:6px solid var(--carmine);border-radius:4px 10px 10px 4px;padding:18px 20px 8px}
+.case h2{font-size:1.18rem;font-variation-settings:"wdth" 100;margin:0 0 12px;letter-spacing:0}
+.case dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:0 0 10px;font-size:.98rem}
+.case dt{font-family:var(--font-ui);font-weight:700;color:var(--ink-3);font-size:.88rem;padding-top:2px}
+.case dd{margin:0}
+
+/* sections */
+.sec{padding:72px 0 36px;border-top:1px solid var(--rule)}
+.sec-intro{display:grid;grid-template-columns:minmax(0,var(--measure));gap:0}
+
+/* intro */
+.intro-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:40px;align-items:start}
+.book{border:1px solid var(--rule);border-top:6px solid var(--violet);background:var(--card);border-radius:4px 4px 10px 10px;padding:20px 22px 16px}
+.book .bt{font-family:var(--font-body);font-style:italic;font-size:1.5rem;line-height:1.2;font-weight:500}
+.book .bs{font-family:var(--font-body);font-style:italic;color:var(--ink-2);margin:6px 0 12px;line-height:1.35}
+.book .ba{font-family:var(--font-ui);font-size:.95rem;color:var(--ink-2)}
+.book .links{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0 4px}
+.book .links a{font-family:var(--font-ui);font-weight:700;text-decoration:none;border:1.5px solid var(--violet);border-radius:999px;padding:6px 16px}
+.book .links a:hover{background:var(--violet-wash)}
+.tour{list-style:none;counter-reset:t;padding:0;margin:18px 0 0;max-width:900px}
+.tour li{counter-increment:t;display:grid;grid-template-columns:3.2rem minmax(0,1fr);gap:14px;border-top:1px solid var(--rule);padding:16px 0 6px}
+.tour li::before{content:counter(t);font-family:var(--font-ui);font-weight:800;font-size:2.1rem;line-height:1;color:var(--violet);font-variation-settings:"wdth" 112}
+.tour h3{margin:0 0 6px;font-size:1.25rem}
+.tour h3 a{color:var(--ink);text-decoration-color:var(--violet)}
+
+/* keepers */
+.keeper-grid{display:grid;grid-template-columns:minmax(260px,380px) minmax(0,1fr);gap:36px;align-items:start;margin-top:26px}
+.ring-fig{margin:0}
+.ring-fig svg{width:100%;height:auto;display:block}
+.ring-fig figcaption{font-size:.9rem;color:var(--ink-2);margin-top:8px;max-width:40ch}
+.node{cursor:pointer}
+.node circle{fill:var(--card);stroke:var(--ink-3);stroke-width:1.5}
+.node text{font-family:var(--font-ui);font-size:12.5px;font-variation-settings:"wdth" 80;font-weight:650;fill:var(--ink);text-anchor:middle;pointer-events:none}
+.node.nb circle{stroke:var(--violet);stroke-width:2.5}
+.node.on circle{fill:var(--violet);stroke:var(--violet)}
+.node.on text{fill:var(--on-violet)}
+.node:focus-visible{outline:none}
+.node:focus-visible circle{stroke:var(--violet);stroke-width:4}
+.edge{stroke:var(--rule);stroke-width:1.6;fill:none}
+.edge.hot{stroke:var(--violet);stroke-width:3}
+
+.label{border:1.5px solid var(--ink);outline:1px solid var(--ink);outline-offset:3px;background:var(--card);padding:18px 20px 14px;border-radius:1px;margin:4px}
+.label h3{margin:0 0 4px;font-size:1.55rem;font-variation-settings:"wdth" 108}
+.label .sub{font-size:.92rem;color:var(--ink-3);margin-bottom:12px;font-style:italic}
+.label .row{display:grid;grid-template-columns:8.6em 1fr;gap:12px;border-top:1px solid var(--rule);padding:9px 0}
+.label .k{font-family:var(--font-ui);font-weight:700;font-size:.86rem;color:var(--ink-3);padding-top:3px}
+.label .v{font-size:1rem}
+.label .note{font-size:.9rem;color:var(--ink-2);border-top:1px solid var(--rule);padding-top:9px;margin:0}
+
+.bridges{margin-top:30px}
+.bridges ul{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px 26px}
+.bridges li{border-left:3px solid var(--violet);padding:2px 0 2px 12px}
+.bridges li b{font-family:var(--font-ui);font-weight:700}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 16px}
+.chip{border:1px solid var(--rule);background:var(--card);border-radius:6px;padding:7px 12px;font-family:var(--font-ui);font-size:.93rem;cursor:pointer;text-align:left;color:var(--ink)}
+.chip[aria-pressed="true"]{border-color:var(--violet);background:var(--violet-wash)}
+.verdict{border-radius:6px;padding:16px 18px;background:var(--card);border:1px solid var(--rule);border-left-width:6px;min-height:72px;max-width:80ch}
+.verdict.v-ok{border-left-color:var(--olive)}
+.verdict.v-bridge{border-left-color:var(--ochre)}
+.verdict.v-bad{border-left-color:var(--carmine)}
+.verdict .vh{font-family:var(--font-ui);font-weight:760;font-size:1.12rem;margin-bottom:6px}
+.verdict p{margin:0 0 .6em}
+.verdict p:last-child{margin:0}
+
+/* receptor bench */
+.bench-tools{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 10px}
+.bench-fig{margin:0;background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:10px}
+.bench-fig svg{display:block;width:100%;height:auto}
+.bench-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+@media (max-width:700px){.bench-scroll svg{min-width:680px}.bench-hint{display:block}}
+.bench-hint{display:none;font-family:var(--font-ui);font-size:.82rem;color:var(--ink-3);margin:2px 4px 6px}
+.zone-label{font-family:var(--font-ui);font-size:13px;font-weight:700;fill:var(--ink-3);font-variation-settings:"wdth" 90}
+.mk{cursor:pointer}
+.mk .shape{stroke-width:2}
+.mk text{font-family:var(--font-ui);font-size:13px;font-weight:650;fill:var(--ink);paint-order:stroke;stroke:var(--card);stroke-width:4px;stroke-linejoin:round;pointer-events:none}
+.mk.dim{opacity:.18}
+.mk.on .shape{stroke:var(--ink);stroke-width:3.5}
+.mk:focus-visible{outline:none}
+.mk:focus-visible .shape{stroke:var(--ink);stroke-width:4}
+.r-transduce{fill:var(--carmine-wash);stroke:var(--carmine)}
+.r-sensitize{fill:var(--ochre-wash);stroke:var(--ochre)}
+.r-transmit{fill:var(--violet-wash);stroke:var(--violet)}
+.r-inhibit{fill:var(--olive-wash);stroke:var(--olive)}
+.r-modulate{fill:var(--cool-wash);stroke:var(--cool)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-family:var(--font-ui);font-size:.9rem;color:var(--ink-2);margin:10px 4px 2px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend svg{width:16px;height:16px}
+.rlist{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0}
+.rlist button{border:1px solid var(--rule);background:transparent;border-radius:4px;padding:3px 9px;font-family:var(--font-ui);font-size:.85rem;cursor:pointer;color:var(--ink-2)}
+.rlist button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.rlist button.dim{opacity:.4}
+.rdetail{margin-top:18px;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:28px;background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:20px 22px}
+.rdetail h3{margin:0 0 2px;font-size:1.7rem}
+.rdetail .kind{font-family:var(--font-ui);color:var(--ink-3);font-size:.92rem;margin-bottom:12px}
+.rdetail dl{margin:0}
+.rdetail dt{font-family:var(--font-ui);font-weight:700;font-size:.86rem;color:var(--ink-3);margin-top:10px}
+.rdetail dd{margin:2px 0 0}
+.ptable{width:100%;border-collapse:collapse;font-size:.95rem}
+.ptable th{font-family:var(--font-ui);font-weight:700;font-size:.82rem;color:var(--ink-3);text-align:left;border-bottom:1.5px solid var(--ink-3);padding:4px 6px 4px 0}
+.ptable td{border-bottom:1px solid var(--rule);padding:7px 6px 7px 0;vertical-align:top}
+.tag{display:inline-block;font-family:var(--font-ui);font-size:.78rem;font-weight:700;border-radius:3px;padding:1px 6px;white-space:nowrap}
+.tag.cells{background:var(--cool-wash);color:var(--cool)}
+.tag.animals{background:var(--ochre-wash);color:var(--ink-2)}
+.tag.people{background:var(--olive-wash);color:var(--olive)}
+.teach{margin-top:14px;padding:12px 14px;background:var(--violet-wash);border-radius:6px;font-size:.98rem}
+.teach b{font-family:var(--font-ui)}
+
+.handtest{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:28px;margin-top:10px;align-items:start}
+.toggles{display:grid;gap:8px}
+.tog{display:flex;align-items:center;gap:10px;font-family:var(--font-ui);font-size:.96rem;cursor:pointer}
+.tog input{width:20px;height:20px;accent-color:var(--violet)}
+.stims{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.percept{background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:16px 18px;min-height:150px}
+.percept .what{font-family:var(--font-ui);font-weight:800;font-size:1.6rem;font-variation-settings:"wdth" 110;margin-bottom:6px}
+.percept .what.pain{color:var(--carmine)}
+.percept .what.calm{color:var(--olive)}
+.meter{height:10px;border-radius:5px;background:var(--paper-3);overflow:hidden;margin:4px 0 12px}
+.meter i{display:block;height:100%;background:linear-gradient(90deg,var(--ochre),var(--carmine));transition:width .25s}
+
+/* posology */
+.calc{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:30px;background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:22px;margin-top:12px}
+.field{display:grid;gap:4px;margin-bottom:12px}
+.field label{font-family:var(--font-ui);font-weight:700;font-size:.88rem;color:var(--ink-2)}
+.field .hint{font-size:.84rem;color:var(--ink-3)}
+.field select,.field input[type=number]{border:1px solid var(--rule);background:var(--paper);border-radius:6px;padding:7px 9px;width:100%}
+.field input[type=range]{width:100%;accent-color:var(--violet)}
+.inline{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.out-big{font-family:var(--font-ui);font-weight:800;font-size:clamp(2.2rem,5vw,3.3rem);font-variation-settings:"wdth" 108;line-height:1;font-variant-numeric:tabular-nums}
+.out-big small{font-size:.38em;font-weight:650;color:var(--ink-2);font-variation-settings:"wdth" 100}
+.pct-line{font-family:var(--font-ui);font-size:1.1rem;margin:6px 0 12px}
+.dosebar{position:relative;height:34px;background:var(--paper-3);border-radius:4px;margin:8px 0 22px}
+.dosebar .fill{position:absolute;left:0;top:0;bottom:0;background:var(--violet);border-radius:4px 0 0 4px;transition:width .25s}
+.dosebar .ref{position:absolute;top:-6px;bottom:-6px;width:3px;background:var(--olive)}
+.dosebar .ref span{position:absolute;top:40px;transform:translateX(-50%);white-space:nowrap;font-family:var(--font-ui);font-size:.8rem;color:var(--olive);font-weight:700}
+.facts{list-style:none;padding:0;margin:0;font-size:.97rem}
+.facts li{display:flex;justify-content:space-between;gap:14px;border-top:1px solid var(--rule);padding:7px 0}
+.facts li b{font-family:var(--font-ui);font-variant-numeric:tabular-nums;white-space:nowrap}
+.calc-verdict{margin-top:12px;padding:12px 14px;border-radius:6px;background:var(--ochre-wash);font-size:.98rem}
+.drops{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:24px;align-items:start;margin-top:8px}
+.droptable{width:100%;border-collapse:collapse;font-family:var(--font-ui);font-variant-numeric:tabular-nums}
+.droptable th,.droptable td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--rule)}
+.droptable th{font-size:.82rem;color:var(--ink-3)}
+.narr{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:0}
+.narr li{display:grid;grid-template-columns:12.5em 1fr;gap:16px;border-top:1px solid var(--rule);padding:12px 0}
+.narr .nh{font-family:var(--font-ui);font-weight:760}
+.mtag{display:inline-block;margin-top:5px;font-family:var(--font-ui);font-size:.8rem;font-weight:700;padding:1px 7px;border-radius:3px}
+.mtag.ok{background:var(--olive-wash);color:var(--olive)}
+.mtag.mid{background:var(--ochre-wash);color:var(--ink-2)}
+.mtag.bad{background:var(--carmine-wash);color:var(--carmine)}
+.rule-callout{margin:46px 0 10px;padding:30px 0 26px;border-top:6px solid var(--ink);border-bottom:1px solid var(--ink)}
+.rule-callout .big{font-family:var(--font-ui);font-weight:800;font-size:clamp(2rem,5.6vw,4rem);font-variation-settings:"wdth" 86;line-height:1;letter-spacing:-.02em;margin:0 0 18px;max-width:18ch}
+.rule-callout .cols{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.translator{display:grid;grid-template-columns:minmax(220px,300px) minmax(0,1fr);gap:28px;margin-top:12px;align-items:start}
+.translator .chips{flex-direction:column;align-items:stretch;margin:0}
+
+/* phenotype */
+.pheno{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:30px;align-items:start;margin-top:18px}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 18px}
+fieldset{border:0;border-top:1.5px solid var(--ink-3);margin:0 0 14px;padding:8px 0 0}
+legend{font-family:var(--font-ui);font-weight:760;font-size:1rem;padding:0 8px 0 0}
+.find{display:flex;gap:10px;align-items:flex-start;padding:5px 0;font-size:.98rem;cursor:pointer;line-height:1.4}
+.find input{width:19px;height:19px;margin-top:2px;flex:none;accent-color:var(--violet)}
+.find .cat{font-family:var(--font-ui);font-size:.78rem;color:var(--ink-3);white-space:nowrap}
+.readout{position:sticky;top:70px;background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:18px 20px;max-height:calc(100vh - 86px);overflow:auto}
+.readout h4{margin-top:14px}
+.readout h4:first-child{margin-top:0}
+.bud{display:grid;grid-template-columns:auto repeat(4,1fr);gap:4px;font-family:var(--font-ui);font-size:.78rem;margin:6px 0 8px}
+.bud .rh{color:var(--ink-3);font-weight:700;padding:5px 6px 5px 0}
+.bud .cell{border:1px solid var(--rule);border-radius:4px;padding:5px 4px;text-align:center;color:var(--ink-3)}
+.bud .cell.lit{background:var(--violet);border-color:var(--violet);color:var(--on-violet);font-weight:700}
+.status{font-family:var(--font-ui);font-weight:760;font-size:1.05rem;padding:6px 10px;border-radius:5px;display:inline-block;margin:2px 0 4px}
+.status.met{background:var(--carmine-wash);color:var(--carmine)}
+.status.notmet{background:var(--paper-2);color:var(--ink-2)}
+.mech{display:grid;grid-template-columns:7.5em 1fr;gap:6px 10px;align-items:center;font-family:var(--font-ui);font-size:.9rem;margin:6px 0 4px}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:3px}
+.steps i{height:12px;border-radius:2px;background:var(--paper-3)}
+.steps i.lit{background:var(--violet)}
+.mech .lvl{grid-column:2;font-size:.82rem;color:var(--ink-2);margin-top:-3px}
+.lic{padding-left:18px;margin:6px 0 0;font-size:.96rem}
+.lic li{margin-bottom:7px}
+.lic li.flag{color:var(--carmine);font-weight:600}
+
+/* reading map */
+.layers{margin-top:20px;border-top:1.5px solid var(--ink-3)}
+.layer{display:grid;grid-template-columns:minmax(150px,15em) minmax(120px,190px) minmax(0,1fr);gap:16px;padding:10px 0;border-bottom:1px solid var(--rule);align-items:start}
+.layer .ln{font-family:var(--font-ui);font-weight:700;font-size:.96rem}
+.sq{display:flex;flex-wrap:wrap;gap:3px;padding-top:4px}
+.sq i{width:12px;height:12px;border-radius:2px}
+.sq i.c{background:var(--violet)}
+.sq i.a{border:2px solid var(--olive);background:transparent}
+.sq i.none{width:auto;height:auto;font-style:normal;font-family:var(--font-ui);font-size:.8rem;color:var(--carmine);font-weight:700}
+.layer .gap{font-size:.95rem}
+.layer details{margin-top:4px;font-size:.88rem;color:var(--ink-2)}
+.layer summary{cursor:pointer;font-family:var(--font-ui);font-size:.84rem;color:var(--violet)}
+.refs{margin-top:34px;display:grid;grid-template-columns:1fr 1fr;gap:34px}
+.refs ol{list-style:none;padding:0;margin:0}
+.refs li{padding-left:1.6em;text-indent:-1.6em;margin-bottom:9px;font-size:.92rem;line-height:1.48;word-break:break-word}
+.refs li:target{background:var(--ochre-wash);border-radius:3px}
+footer{border-top:1px solid var(--rule);margin-top:50px;padding:26px 0 50px;font-size:.9rem;color:var(--ink-2)}
+
+@media (max-width:900px){
+  .intro-grid,.hero-grid,.keeper-grid,.rdetail,.handtest,.calc,.drops,.translator,.pheno,.rule-callout .cols,.refs{grid-template-columns:minmax(0,1fr)}
+  .ptable .cite{white-space:normal}
+  .rdetail{padding:16px}
+  .readout{position:static;max-height:none}
+  .translator .chips{flex-direction:row;flex-wrap:wrap}
+  .layer{grid-template-columns:minmax(0,1fr)}
+  .narr li{grid-template-columns:1fr;gap:4px}
+}
+@media (max-width:520px){
+  .wrap{padding:0 16px}
+  .brand{display:none}
+  .label .row{grid-template-columns:1fr;gap:2px}
+  .inline{grid-template-columns:1fr}
+  .bud{font-size:.7rem}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .reel.tick{animation:none}
+  .meter i,.dosebar .fill{transition:none}
+}
+@media print{
+  .topbar,.picker,.bench-tools,.presets,.theme-btn{display:none}
+  .sec{break-inside:auto}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="#top">Who keeps the score</a>
+    <nav class="navlinks" aria-label="Sections">
+      <a href="#intro">Introduction</a>
+      <a href="#keepers">Pain narratives</a>
+      <a href="#bench">Receptor bench</a>
+      <a href="#dose">Dose makes the claim</a>
+      <a href="#wrist">Phenotype the wrist</a>
+      <a href="#reading">Reading map</a>
+    </nav>
+    <button class="theme-btn" id="themeBtn" type="button">Dark mode</button>
+  </div>
+</header>
+
+<main id="top">
+<section class="hero">
+  <div class="wrap">
+    <h1 class="slot-line" aria-label="Who keeps the score?">
+      <span class="l1" aria-hidden="true">The</span>
+      <span class="reel-window" aria-hidden="true"><span class="reel" id="reel">tissue</span></span>
+      <span class="l3" aria-hidden="true">keeps the score.</span>
+    </h1>
+    <div class="picker" role="group" aria-label="Choose who keeps the score" id="picker"></div>
+    <div class="hero-grid">
+      <div>
+        <p class="lede">A crushed wrist still hurts seven months later. Every explanation you write for that pain is a claim about where the score is being kept, and every herb, dose and referral you choose afterwards has to answer to that claim.</p>
+        <p><a href="#intro">Start with the introduction</a>, or <a href="#keepers" id="readKeeper">read the case for the tissue</a>.</p>
+      </div>
+      <aside class="case" aria-labelledby="caseH">
+        <h2 id="caseH">R., seven months after a crushed wrist</h2>
+        <dl>
+          <dt>Who</dt><dd>41, right-handed, self-employed carpenter.</dd>
+          <dt>Injury</dt><dd>Right wrist caught in a hydraulic press: distal radius fracture with soft-tissue crush. Plate fixation on day 6.</dd>
+          <dt>Course</dt><dd>Week-one pain scores of 8 to 9 out of 10. Out of the cast at 6 weeks; fracture united on X-ray at 10 weeks.</dd>
+          <dt>Now</dt><dd>Burning, aching pain over the back of the hand and wrist, worse at night and in the cold. Grip is weak and R. avoids using the hand. Sleep is broken. Not working.</dd>
+        </dl>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="intro" aria-labelledby="introH">
+  <div class="wrap">
+    <h2 id="introH">Where the title comes from</h2>
+    <div class="intro-grid">
+      <div class="prose">
+        <p>The title borrows from Bessel van der Kolk's <i>The Body Keeps the Score</i>, a seminal work on trauma and its healing. The book's title is a claim about location: trauma is held in the body as well as the mind, and healing has to engage both.</p>
+        <p>Chronic pain poses the same question with more candidates. When a crushed wrist still hurts months after the bone has healed, the score could be kept in the injured tissue, the nerve endings, the spinal cord, the brain, the person's expectations, the immune system, the history of the injury, or the world the person lives in. Most real cases involve several. A useful formulation says which ones, how they connect, and what that means for the remedy, the dose and the referral.</p>
+        <p>This page supports that work. It is written for herbal practitioners and students who reach for a biopsychosocial explanation of chronic pain and then have to turn it into a plan a colleague, a co-managing physician or the patient could check.</p>
+      </div>
+      <aside class="book" aria-label="The book that inspired the title">
+        <div class="bt">The Body Keeps the Score</div>
+        <div class="bs">Brain, Mind, and Body in the Healing of Trauma</div>
+        <div class="ba">Bessel van der Kolk. Viking, 2014; Penguin paperback, 2015.</div>
+        <div class="links"><a href="https://www.amazon.com/dp/0143127748" rel="noopener">Amazon</a><a href="https://www.abebooks.com/servlet/SearchResults?isbn=9780143127741" rel="noopener">AbeBooks</a></div>
+        <p class="small" style="margin:10px 0 0">Plain links with no affiliate codes. AbeBooks lists new and used copies from independent booksellers.</p>
+      </aside>
+    </div>
+
+    <h2 id="tourH" style="margin-top:60px">How the tools fit together</h2>
+    <div class="prose">
+      <p>One case runs through everything: R., a carpenter whose right wrist was crushed in a hydraulic press seven months ago. Work through the tools in order the first time; after that, open whichever one your question needs. Every factual claim links to its source, and every added source was checked against PubMed or the publisher's record in October 2026.</p>
+    </div>
+    <ol class="tour">
+      <li><div><h3><a href="#keepers">Who keeps the score?</a></h3><p>Choose where you think R.'s pain is being kept. Read what that stance claims, what it predicts, what it cannot explain, and the documented mechanisms linking it to other levels. Then run the commit test: pick a common herbal intervention and see whether your stance supports it, needs a stated bridge, or does not connect to it at all.</p></div></li>
+      <li><div><h3><a href="#bench">The receptor bench</a></h3><p>Look up the molecules that mechanistic claims point at: what each one detects, what sensitizes it, which drugs act there, and which plant compounds have measured activity, each tagged by whether the evidence comes from cells, animals or people. The hand test shows how peripheral and central sensitization differ at the bedside.</p></div></li>
+      <li><div><h3><a href="#dose">Dose makes the claim</a></h3><p>Turn a prescription into the amount of active marker it actually delivers and set that against the dose behind the evidence you are citing. The section also covers drop arithmetic, the reasons small doses get prescribed, and a translator that turns energetic readings into predictions you can test.</p></div></li>
+      <li><div><h3><a href="#wrist">Phenotype the wrist</a></h3><p>Tick the findings you would elicit, or load an example, and see the profile: the CRPS criteria, the nociceptive, neuropathic and nociplastic components, any red flags, and which kinds of intervention each component supports.</p></div></li>
+      <li><div><h3><a href="#reading">Reading map</a></h3><p>A coverage map built from a real reading list that herbal students assembled for this case, showing where it ran thin and the verified readings that fill each gap.</p></div></li>
+    </ol>
+  </div>
+</section>
+
+<section class="sec" id="keepers" aria-labelledby="keepersH">
+  <div class="wrap">
+    <h2 id="keepersH">Who keeps the score?</h2>
+    <div class="prose">
+      <p>Herbal pain formulations often reach for "biopsychosocial" and then write three separate paragraphs: one on tissue, one on stress, one on work, each with its own herb. That arrangement never answers the first question a formulation has to answer: where is this pain being generated and kept going? The 2020 IASP definition is the place to start. It separates pain, a personal experience, from nociception, the neural encoding of noxious events, and it says either can occur without the other (<a class="cite" href="#ref-raja2020">Raja et al., 2020</a>).</p>
+      <p>Each keeper below is a live research program. Choose one and read what it claims, what it predicts for R., and what it cannot explain. The lines in the ring are documented mechanisms that connect two levels. A biopsychosocial account worth the name is built out of those lines (<a class="cite" href="#ref-cormack2023">Cormack et al., 2023</a>).</p>
+    </div>
+    <div class="keeper-grid">
+      <figure class="ring-fig">
+        <svg id="ring" viewBox="0 0 360 360" role="group" aria-label="Eight places pain can be said to be kept. Select one."></svg>
+        <figcaption>Each line is a documented link between two levels. Highlighted lines run from the keeper you chose.</figcaption>
+      </figure>
+      <article class="label" id="keeperLabel" aria-live="polite"></article>
+    </div>
+    <div class="bridges">
+      <h3>Bridges from here</h3>
+      <ul id="bridgeList"></ul>
+    </div>
+    <div>
+      <h3>Commit test</h3>
+      <p class="prose">Pick an intervention that often turns up in herbal pain plans. The verdict depends on the keeper chosen above. An intervention is licensed when it acts where your stance says the score is kept. It needs a stated bridge when it acts one documented link away. It is incoherent as written when nothing connects the two directly.</p>
+      <div class="chips" id="ivChips" role="group" aria-label="Interventions"></div>
+      <div class="verdict" id="verdict" aria-live="polite"><p class="small">Choose an intervention to see whether your stance supports it.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="bench" aria-labelledby="benchH">
+  <div class="wrap">
+    <h2 id="benchH">The receptor bench</h2>
+    <div class="prose">
+      <p>A mechanistic claim names a molecule, a place and an exposure. The bench lays out the main molecules on the path from R.'s injured hand to the spinal dorsal horn and up into the brain. Select one to see what it detects, how it signals, what sensitizes it, and which plant compounds have measured activity there. The evidence tag says what kind of evidence it is: cells, animals or people.</p>
+    </div>
+    <div class="bench-tools" role="group" aria-label="Filter receptors" id="benchFilters"></div>
+    <figure class="bench-fig">
+      <span class="bench-hint">Swipe sideways to see the whole pathway, or use the list below.</span><div class="bench-scroll"><svg id="benchSvg" viewBox="0 0 1000 420" role="group" aria-label="Pain pathway with selectable receptors"></svg></div>
+      <div class="legend" id="legend"></div>
+    </figure>
+    <div class="rlist" id="rlist" role="group" aria-label="All receptors as a list"></div>
+    <div class="rdetail" id="rdetail" aria-live="polite"></div>
+
+    <h3>Test the hand</h3>
+    <div class="prose">
+      <p>Switch states on and off, then apply a stimulus to the back of R.'s hand. Around an injury, heat and pinprick both hurt more where the damage is (primary hyperalgesia). In the wider zone around it only mechanical stimuli are amplified (secondary hyperalgesia), because that amplification happens in the spinal cord (<a class="cite" href="#ref-woolf2011">Woolf, 2011</a>). That difference is a quick bedside clue to where the score is being kept.</p>
+    </div>
+    <div class="handtest">
+      <div>
+        <div class="toggles">
+          <label class="tog"><input type="checkbox" id="tPeri"> Peripheral sensitization (inflamed terminal)</label>
+          <label class="tog"><input type="checkbox" id="tCent"> Central sensitization and disinhibition</label>
+          <label class="tog"><input type="checkbox" id="tDesc"> Weak descending inhibition (poor sleep, high threat)</label>
+        </div>
+        <div class="stims" role="group" aria-label="Stimulus">
+          <button class="chip" data-stim="none" aria-pressed="true">Nothing, hand at rest</button>
+          <button class="chip" data-stim="warm" aria-pressed="false">Warm probe, 40 °C</button>
+          <button class="chip" data-stim="brush" aria-pressed="false">Light brush, away from scar</button>
+          <button class="chip" data-stim="pin" aria-pressed="false">Pinprick, away from scar</button>
+        </div>
+      </div>
+      <div class="percept" id="percept" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="dose" aria-labelledby="doseH">
+  <div class="wrap">
+    <h2 id="doseH">Dose makes the claim</h2>
+    <div class="prose">
+      <p>Posology is the whole prescription: dose, frequency, duration, preparation and route. A dose is therapeutic for a mechanism when it plausibly puts enough active compound at the target for long enough. Subtherapeutic means short of that, for that mechanism. The same ten drops can be therapeutic for a bitter reflex on the tongue and subtherapeutic for prostaglandin synthesis in a wrist.</p>
+      <p>Strength is half of every dose. "2 mL of willow bark" means nothing until the ratio is written down: 2 mL of a 1:5 tincture carries the extract of 0.4 g of bark, and 2 mL of a 1:2 liquid extract carries 1 g.</p>
+    </div>
+
+    <h3>Strength calculator</h3>
+    <div class="calc" id="calc">
+      <div>
+        <div class="field">
+          <label for="cHerb">Herb</label>
+          <select id="cHerb">
+            <option value="willow">Willow bark (Salix spp.)</option>
+            <option value="turmeric">Turmeric rhizome (Curcuma longa)</option>
+            <option value="custom">Your own herb and marker</option>
+          </select>
+          <span class="hint" id="cHerbHint"></span>
+        </div>
+        <div class="field">
+          <label for="cPrep">Preparation</label>
+          <select id="cPrep">
+            <option value="0.2">Tincture 1:5 (0.2 g herb per mL)</option>
+            <option value="0.333">Tincture 1:3 (0.33 g per mL)</option>
+            <option value="0.5">Liquid extract 1:2 (0.5 g per mL)</option>
+            <option value="1">Fluid extract 1:1 (1 g per mL)</option>
+            <option value="dry">Dried herb (tea, powder, capsules)</option>
+          </select>
+          <span class="hint">Tincture ratios are herb to solvent: 1:5 means 1 g of dried herb per 5 mL of solvent. The 1:2 liquid extract is a common practitioner standard; the European Pharmacopoeia's liquid extract is 1:1.</span>
+        </div>
+        <div class="inline">
+          <div class="field">
+            <label for="cAmt">Amount per dose</label>
+            <input type="number" id="cAmt" min="0" step="0.1" value="2">
+          </div>
+          <div class="field">
+            <label for="cUnit">Unit</label>
+            <select id="cUnit">
+              <option value="ml">mL</option>
+              <option value="drops">drops</option>
+            </select>
+          </div>
+        </div>
+        <div class="inline">
+          <div class="field">
+            <label for="cFreq">Doses per day</label>
+            <input type="number" id="cFreq" min="1" step="1" value="3">
+          </div>
+          <div class="field" id="cDpmWrap">
+            <label for="cDpm">Drops per mL</label>
+            <input type="number" id="cDpm" min="10" max="80" step="1" value="30">
+          </div>
+        </div>
+        <div class="field">
+          <label for="cPct">Marker content of the dried herb: <span id="cPctOut"></span></label>
+          <input type="range" id="cPct" min="0.2" max="12" step="0.1" value="1.5">
+          <span class="hint" id="cPctHint"></span>
+        </div>
+        <div class="field">
+          <label for="cExt">Fraction of marker that reaches the preparation: <span id="cExtOut"></span></label>
+          <input type="range" id="cExt" min="10" max="100" step="5" value="100">
+          <span class="hint">Set to 100% this is generous to the preparation. Real extraction is lower.</span>
+        </div>
+        <div class="inline">
+          <div class="field">
+            <label for="cRef">Reference daily dose (mg)</label>
+            <input type="number" id="cRef" min="1" step="1" value="240">
+          </div>
+          <div class="field" id="cEtohWrap">
+            <label for="cEtoh">Ethanol in the liquid (% v/v)</label>
+            <input type="number" id="cEtoh" min="0" max="96" step="1" value="40">
+          </div>
+        </div>
+        <p class="hint small" id="cRefHint"></p>
+      </div>
+      <div aria-live="polite">
+        <div class="small" id="cMarkerName">Salicin delivered per day</div>
+        <div class="out-big" id="cOut">0 <small>mg</small></div>
+        <div class="pct-line" id="cPctLine"></div>
+        <div class="dosebar" aria-hidden="true"><div class="fill" id="cFill"></div><div class="ref" id="cRefMark"><span>reference</span></div></div>
+        <ul class="facts" id="cFacts"></ul>
+        <div class="calc-verdict" id="cVerdict"></div>
+      </div>
+    </div>
+
+    <h3>Drop arithmetic</h3>
+    <div class="drops">
+      <div class="prose">
+        <p>A drop is a volume that depends on the dropper and the liquid. A pharmacopoeial dropper is calibrated so that 20 drops of water make about 1 mL. Ethanolic tinctures have lower surface tension and form smaller drops, so the same count delivers less. Prescribe in mL, or measure your dropper.</p>
+        <div class="field" style="max-width:220px">
+          <label for="dN">Drops prescribed</label>
+          <input type="number" id="dN" min="1" step="1" value="10">
+        </div>
+      </div>
+      <table class="droptable" aria-describedby="dropCap">
+        <caption id="dropCap" class="small" style="text-align:left;caption-side:bottom;padding-top:8px">The same count across plausible drop sizes, as volume and as dried herb equivalent in a 1:5 tincture.</caption>
+        <thead><tr><th scope="col">Drops per mL</th><th scope="col">Volume</th><th scope="col">Herb equivalent (1:5)</th></tr></thead>
+        <tbody id="dropBody"></tbody>
+      </table>
+    </div>
+
+    <h3>Why drop doses get prescribed</h3>
+    <div class="prose"><p>Small doses have several rationales. Some carry a mechanism and some do not. The tag says which.</p></div>
+    <ul class="narr" id="narr"></ul>
+
+    <div class="rule-callout" role="note" aria-labelledby="ruleH">
+      <p class="big" id="ruleH">If you use energetics, keep the mechanism.</p>
+      <div class="cols">
+        <p>Energetic language is a compressed clinical description. Heat, cold, damp, dry, tension and laxity named observable tissue states long before receptors had names, and the physiomedicalists and eclectics who handed the vocabulary down argued from the physiology of their day (<a class="cite" href="#ref-wood2004">Wood, 2004</a>). Ellingwood's 1919 entry on lobelia sets out "Physiological Action" and "Specific Symptomatology" on the same page and gives toxic signs alongside the dose (<a class="cite" href="#ref-ellingwood1919">Ellingwood, 1919</a>).</p>
+        <p>Drop the mechanism and the energetic claim stops being checkable. A colleague, a physician co-managing R., or a reviewer cannot tell a careful observation from a guess, and the authority you reached for goes with it. Keep both: state the tissue state, the physiological bridge you think it names, the prediction that would prove you wrong, and a dose that can reach the target.</p>
+      </div>
+    </div>
+
+    <h3>Energetics translator</h3>
+    <div class="prose"><p>Pick the reading you would make of R.'s wrist. Each one is turned into a bridging hypothesis you can test. Several land squarely on the CRPS criteria used in the next section.</p></div>
+    <div class="translator">
+      <div class="chips" id="enChips" role="group" aria-label="Energetic readings"></div>
+      <article class="label" id="enLabel" aria-live="polite"></article>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="wrist" aria-labelledby="wristH">
+  <div class="wrap">
+    <h2 id="wristH">Phenotype the wrist</h2>
+    <div class="prose">
+      <p>Before choosing an herb, name what kind of pain R. has. Three mechanistic descriptors are in use. Nociceptive pain arises from actual or threatened damage to non-neural tissue. Neuropathic pain comes from a lesion or disease of the somatosensory nervous system. Nociplastic pain arises from altered nociception without clear evidence of either (<a class="cite" href="#ref-kosek2016">Kosek et al., 2016</a>). They can coexist in one person.</p>
+      <p>A crushed wrist raises a question herbal pain formulations rarely ask: is this complex regional pain syndrome (CRPS)? In 1,549 people treated without surgery for a wrist fracture, 3.8% developed CRPS, and pain above 5 out of 10 in the first week was the warning sign (<a class="cite" href="#ref-moseley2014">Moseley et al., 2014</a>). R. had surgery and reported 8 to 9. Tick the findings you would elicit, or load an example presentation, and watch the profile and the licensed interventions change.</p>
+    </div>
+    <div class="presets" role="group" aria-label="Example presentations" id="presets"></div>
+    <div class="pheno">
+      <form id="findings" onsubmit="return false"></form>
+      <aside class="readout" id="readout" aria-live="polite"></aside>
+    </div>
+    <p class="small prose" style="margin-top:18px">The criteria follow the Budapest clinical criteria (<a class="cite" href="#ref-harden2010">Harden et al., 2010</a>) with the Valencia update (<a class="cite" href="#ref-goebel2021">Goebel et al., 2021</a>), the neuropathic grading system (<a class="cite" href="#ref-finnerup2016">Finnerup et al., 2016</a>), and the nociplastic criteria (<a class="cite" href="#ref-kosek2021">Kosek et al., 2021</a>). This is a teaching tool. It does not diagnose anyone.</p>
+  </div>
+</section>
+
+<section class="sec" id="reading" aria-labelledby="readingH">
+  <div class="wrap">
+    <h2 id="readingH">Reading map</h2>
+    <div class="prose">
+      <p>This map comes from a real reading list: 74 sources that herbal students assembled to explain R.'s pain. It is strong on sleep and pain, on wrist fracture outcomes, and on molecular reviews of chronification. It is thin where a coherent account has to start: what pain is as distinct from nociception, how mechanisms are classified, where the theories came from, how the receptor biology works, and the diagnosis this case most needs ruled in or out. CRPS does not appear once, though a crushed wrist is close to its textbook setting.</p>
+      <p>Each square is one reference. Filled squares come from the student list; outlined squares were added to fill the gap. A reference can count in more than one layer.</p>
+    </div>
+    <div class="legend" style="margin-top:12px"><span><svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="2" fill="var(--violet)"/></svg>Student list</span><span><svg viewBox="0 0 16 16"><rect x="3" y="3" width="10" height="10" rx="2" fill="none" stroke="var(--olive)" stroke-width="2"/></svg>Added here</span></div>
+    <div class="layers" id="layers"></div>
+    <div class="refs">
+      <div>
+        <h3>Added to fill the gaps</h3>
+        <ol id="refsAdded"></ol>
+      </div>
+      <div>
+        <h3>From the student list, cited on this page</h3>
+        <ol id="refsClass"></ol>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Written for herbal practitioners and students working through chronic pain after injury. Every added reading was checked against PubMed or the publisher's record in October 2026. Educational material only; it is not clinical guidance for any individual.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------- references ---------- */
+const REFS = {
+  /* added to fill gaps */
+  raja2020:{s:"Raja et al., 2020",g:"a",apa:"Raja, S. N., Carr, D. B., Cohen, M., Finnerup, N. B., Flor, H., Gibson, S., Keefe, F. J., Mogil, J. S., Ringkamp, M., Sluka, K. A., Song, X.-J., Stevens, B., Sullivan, M. D., Tutelman, P. R., Ushida, T., & Vader, K. (2020). The revised International Association for the Study of Pain definition of pain: Concepts, challenges, and compromises. <i>Pain, 161</i>(9), 1976–1982.",doi:"10.1097/j.pain.0000000000001939"},
+  kosek2016:{s:"Kosek et al., 2016",g:"a",apa:"Kosek, E., Cohen, M., Baron, R., Gebhart, G. F., Mico, J.-A., Rice, A. S. C., Rief, W., & Sluka, A. K. (2016). Do we need a third mechanistic descriptor for chronic pain states? <i>Pain, 157</i>(7), 1382–1386.",doi:"10.1097/j.pain.0000000000000507"},
+  kosek2021:{s:"Kosek et al., 2021",g:"a",apa:"Kosek, E., Clauw, D., Nijs, J., Baron, R., Gilron, I., Harris, R. E., Mico, J.-A., Rice, A. S. C., & Sterling, M. (2021). Chronic nociplastic pain affecting the musculoskeletal system: Clinical criteria and grading system. <i>Pain, 162</i>(11), 2629–2634.",doi:"10.1097/j.pain.0000000000002324"},
+  fitzcharles2021:{s:"Fitzcharles et al., 2021",g:"a",apa:"Fitzcharles, M.-A., Cohen, S. P., Clauw, D. J., Littlejohn, G., Usui, C., & Häuser, W. (2021). Nociplastic pain: Towards an understanding of prevalent pain conditions. <i>The Lancet, 397</i>(10289), 2098–2110.",doi:"10.1016/S0140-6736(21)00392-5"},
+  treede2019:{s:"Treede et al., 2019",g:"a",apa:"Treede, R.-D., Rief, W., Barke, A., Aziz, Q., Bennett, M. I., Benoliel, R., Cohen, M., Evers, S., Finnerup, N. B., First, M. B., Giamberardino, M. A., Kaasa, S., Korwisi, B., Kosek, E., Lavand'homme, P., Nicholas, M., Perrot, S., Scholz, J., Schug, S., . . . Wang, S.-J. (2019). Chronic pain as a symptom or a disease: The IASP Classification of Chronic Pain for the International Classification of Diseases (ICD-11). <i>Pain, 160</i>(1), 19–27.",doi:"10.1097/j.pain.0000000000001384"},
+  melzackwall1965:{s:"Melzack & Wall, 1965",g:"a",apa:"Melzack, R., & Wall, P. D. (1965). Pain mechanisms: A new theory. <i>Science, 150</i>(3699), 971–979.",doi:"10.1126/science.150.3699.971"},
+  melzack2001:{s:"Melzack, 2001",g:"a",apa:"Melzack, R. (2001). Pain and the neuromatrix in the brain. <i>Journal of Dental Education, 65</i>(12), 1378–1382.",doi:"10.1002/j.0022-0337.2001.65.12.tb03497.x"},
+  engel1977:{s:"Engel, 1977",g:"a",apa:"Engel, G. L. (1977). The need for a new medical model: A challenge for biomedicine. <i>Science, 196</i>(4286), 129–136.",doi:"10.1126/science.847460"},
+  gatchel2007:{s:"Gatchel et al., 2007",g:"a",apa:"Gatchel, R. J., Peng, Y. B., Peters, M. L., Fuchs, P. N., & Turk, D. C. (2007). The biopsychosocial approach to chronic pain: Scientific advances and future directions. <i>Psychological Bulletin, 133</i>(4), 581–624.",doi:"10.1037/0033-2909.133.4.581"},
+  cormack2023:{s:"Cormack et al., 2023",g:"a",apa:"Cormack, B., Stilwell, P., Coninx, S., & Gibson, J. (2023). The biopsychosocial model is lost in translation: From misrepresentation to an enactive modernization. <i>Physiotherapy Theory and Practice, 39</i>(11), 2273–2288.",doi:"10.1080/09593985.2022.2080130"},
+  vlaeyen2000:{s:"Vlaeyen & Linton, 2000",g:"a",apa:"Vlaeyen, J. W. S., & Linton, S. J. (2000). Fear-avoidance and its consequences in chronic musculoskeletal pain: A state of the art. <i>Pain, 85</i>(3), 317–332.",doi:"10.1016/S0304-3959(99)00242-0"},
+  tabor2017:{s:"Tabor et al., 2017",g:"a",apa:"Tabor, A., Thacker, M. A., Moseley, G. L., & Körding, K. P. (2017). Pain: A statistical account. <i>PLOS Computational Biology, 13</i>(1), Article e1005142.",doi:"10.1371/journal.pcbi.1005142"},
+  wiech2016:{s:"Wiech, 2016",g:"a",apa:"Wiech, K. (2016). Deconstructing the sensation of pain: The influence of cognitive processes on pain perception. <i>Science, 354</i>(6312), 584–587.",doi:"10.1126/science.aaf8934"},
+  basbaum2009:{s:"Basbaum et al., 2009",g:"a",apa:"Basbaum, A. I., Bautista, D. M., Scherrer, G., & Julius, D. (2009). Cellular and molecular mechanisms of pain. <i>Cell, 139</i>(2), 267–284.",doi:"10.1016/j.cell.2009.09.028"},
+  ossipov2014:{s:"Ossipov et al., 2014",g:"a",apa:"Ossipov, M. H., Morimura, K., & Porreca, F. (2014). Descending pain modulation and chronification of pain. <i>Current Opinion in Supportive and Palliative Care, 8</i>(2), 143–151.",doi:"10.1097/SPC.0000000000000055"},
+  ji2016:{s:"Ji et al., 2016",g:"a",apa:"Ji, R.-R., Chamessian, A., & Zhang, Y.-Q. (2016). Pain regulation by non-neuronal cells and inflammation. <i>Science, 354</i>(6312), 572–577.",doi:"10.1126/science.aaf8924"},
+  costigan2009:{s:"Costigan et al., 2009",g:"a",apa:"Costigan, M., Scholz, J., & Woolf, C. J. (2009). Neuropathic pain: A maladaptive response of the nervous system to damage. <i>Annual Review of Neuroscience, 32</i>, 1–32.",doi:"10.1146/annurev.neuro.051508.135531"},
+  hashmi2013:{s:"Hashmi et al., 2013",g:"a",apa:"Hashmi, J. A., Baliki, M. N., Huang, L., Baria, A. T., Torbey, S., Hermann, K. M., Schnitzer, T. J., & Apkarian, A. V. (2013). Shape shifting pain: Chronification of back pain shifts brain representation from nociceptive to emotional circuits. <i>Brain, 136</i>(9), 2751–2768.",doi:"10.1093/brain/awt211"},
+  caterina1997:{s:"Caterina et al., 1997",g:"a",apa:"Caterina, M. J., Schumacher, M. A., Tominaga, M., Rosen, T. A., Levine, J. D., & Julius, D. (1997). The capsaicin receptor: A heat-activated ion channel in the pain pathway. <i>Nature, 389</i>(6653), 816–824.",doi:"10.1038/39807"},
+  julius2013:{s:"Julius, 2013",g:"a",apa:"Julius, D. (2013). TRP channels and pain. <i>Annual Review of Cell and Developmental Biology, 29</i>, 355–384.",doi:"10.1146/annurev-cellbio-101011-155833"},
+  jordt2004:{s:"Jordt et al., 2004",g:"a",apa:"Jordt, S.-E., Bautista, D. M., Chuang, H.-H., McKemy, D. D., Zygmunt, P. M., Högestätt, E. D., Meng, I. D., & Julius, D. (2004). Mustard oils and cannabinoids excite sensory nerve fibres through the TRP channel ANKTM1. <i>Nature, 427</i>(6971), 260–265.",doi:"10.1038/nature02282"},
+  proudfoot2006:{s:"Proudfoot et al., 2006",g:"a",apa:"Proudfoot, C. J., Garry, E. M., Cottrell, D. F., Rosie, R., Anderson, H., Robertson, D. C., Fleetwood-Walker, S. M., & Mitchell, R. (2006). Analgesia mediated by the TRPM8 cold receptor in chronic neuropathic pain. <i>Current Biology, 16</i>(16), 1591–1605.",doi:"10.1016/j.cub.2006.07.061"},
+  cox2006:{s:"Cox et al., 2006",g:"a",apa:"Cox, J. J., Reimann, F., Nicholas, A. K., Thornton, G., Roberts, E., Springell, K., Karbani, G., Jafri, H., Mannan, J., Raashid, Y., Al-Gazali, L., Hamamy, H., Valente, E. M., Gorman, S., Williams, R., McHale, D. P., Wood, J. N., Gribble, F. M., & Woods, C. G. (2006). An <i>SCN9A</i> channelopathy causes congenital inability to experience pain. <i>Nature, 444</i>(7121), 894–898.",doi:"10.1038/nature05413"},
+  szczot2018:{s:"Szczot et al., 2018",g:"a",apa:"Szczot, M., Liljencrantz, J., Ghitani, N., Barik, A., Lam, R., Thompson, J. H., Bharucha-Goebel, D., Saade, D., Necaise, A., Donkervoort, S., Foley, A. R., Gordon, T., Case, L., Bushnell, M. C., Bönnemann, C. G., & Chesler, A. T. (2018). PIEZO2 mediates injury-induced tactile pain in mice and humans. <i>Science Translational Medicine, 10</i>(462), Article eaat9892.",doi:"10.1126/scitranslmed.aat9892"},
+  corder2018:{s:"Corder et al., 2018",g:"a",apa:"Corder, G., Castro, D. C., Bruchas, M. R., & Scherrer, G. (2018). Endogenous and exogenous opioids in pain. <i>Annual Review of Neuroscience, 41</i>, 453–473.",doi:"10.1146/annurev-neuro-080317-061522"},
+  woodhams2017:{s:"Woodhams et al., 2017",g:"a",apa:"Woodhams, S. G., Chapman, V., Finn, D. P., Hohmann, A. G., & Neugebauer, V. (2017). The cannabinoid system and pain. <i>Neuropharmacology, 124</i>, 105–120.",doi:"10.1016/j.neuropharm.2017.06.015"},
+  gertsch2008:{s:"Gertsch et al., 2008",g:"a",apa:"Gertsch, J., Leonti, M., Raduner, S., Racz, I., Chen, J.-Z., Xie, X.-Q., Altmann, K.-H., Karsak, M., & Zimmer, A. (2008). Beta-caryophyllene is a dietary cannabinoid. <i>Proceedings of the National Academy of Sciences of the United States of America, 105</i>(26), 9099–9104.",doi:"10.1073/pnas.0803601105"},
+  zhang2014:{s:"Zhang et al., 2014",g:"a",apa:"Zhang, Y., Wang, C., Wang, L., Parks, G. S., Zhang, X., Guo, Z., Ke, Y., Li, K.-W., Kim, M. K., Vo, B., Borrelli, E., Ge, G., Yang, L., Wang, Z., Garcia-Fuster, M. J., Luo, Z. D., Liang, X., & Civelli, O. (2014). A novel analgesic isolated from a traditional Chinese medicine. <i>Current Biology, 24</i>(2), 117–123.",doi:"10.1016/j.cub.2013.11.039"},
+  fedurco2015:{s:"Fedurco et al., 2015",g:"a",apa:"Fedurco, M., Gregorová, J., Šebrlová, K., Kantorová, J., Peš, O., Baur, R., Sigel, E., & Táborská, E. (2015). Modulatory effects of <i>Eschscholzia californica</i> alkaloids on recombinant GABA<sub>A</sub> receptors. <i>Biochemistry Research International, 2015</i>, Article 617620.",doi:"10.1155/2015/617620"},
+  harden2010:{s:"Harden et al., 2010",g:"a",apa:"Harden, R. N., Bruehl, S., Perez, R. S. G. M., Birklein, F., Marinus, J., Maihofner, C., Lubenow, T., Buvanendran, A., Mackey, S., Graciosa, J., Mogilevski, M., Ramsden, C., Chont, M., & Vatine, J.-J. (2010). Validation of proposed diagnostic criteria (the \"Budapest Criteria\") for complex regional pain syndrome. <i>Pain, 150</i>(2), 268–274.",doi:"10.1016/j.pain.2010.04.030"},
+  goebel2021:{s:"Goebel et al., 2021",g:"a",apa:"Goebel, A., Birklein, F., Brunner, F., Clark, J. D., Gierthmühlen, J., Harden, N., Huygen, F., Knudsen, L., McCabe, C., Lewis, J., Maihöfner, C., Magerl, W., Moseley, G. L., Terkelsen, A., Thomassen, I., & Bruehl, S. (2021). The Valencia consensus-based adaptation of the IASP complex regional pain syndrome diagnostic criteria. <i>Pain, 162</i>(9), 2346–2348.",doi:"10.1097/j.pain.0000000000002245"},
+  birklein2017:{s:"Birklein & Dimova, 2017",g:"a",apa:"Birklein, F., & Dimova, V. (2017). Complex regional pain syndrome–up-to-date. <i>Pain Reports, 2</i>(6), Article e624.",doi:"10.1097/PR9.0000000000000624"},
+  moseley2014:{s:"Moseley et al., 2014",g:"a",apa:"Moseley, G. L., Herbert, R. D., Parsons, T., Lucas, S., Van Hilten, J. J., & Marinus, J. (2014). Intense pain soon after wrist fracture strongly predicts who will develop complex regional pain syndrome: Prospective cohort study. <i>The Journal of Pain, 15</i>(1), 16–23.",doi:"10.1016/j.jpain.2013.08.009"},
+  zollinger2007:{s:"Zollinger et al., 2007",g:"a",apa:"Zollinger, P. E., Tuinebreijer, W. E., Breederveld, R. S., & Kreis, R. W. (2007). Can vitamin C prevent complex regional pain syndrome in patients with wrist fractures? A randomized, controlled, multicenter dose-response study. <i>The Journal of Bone and Joint Surgery, 89</i>(7), 1424–1431.",doi:"10.2106/JBJS.F.01147"},
+  ekrol2014:{s:"Ekrol et al., 2014",g:"a",apa:"Ekrol, I., Duckworth, A. D., Ralston, S. H., Court-Brown, C. M., & McQueen, M. M. (2014). The influence of vitamin C on the outcome of distal radial fractures: A double-blind, randomized controlled trial. <i>The Journal of Bone and Joint Surgery, 96</i>(17), 1451–1459.",doi:"10.2106/JBJS.M.00268"},
+  chrubasik2000:{s:"Chrubasik et al., 2000",g:"a",apa:"Chrubasik, S., Eisenberg, E., Balan, E., Weinberger, T., Luzzati, R., & Conradt, C. (2000). Treatment of low back pain exacerbations with willow bark extract: A randomized double-blind study. <i>The American Journal of Medicine, 109</i>(1), 9–14.",doi:"10.1016/S0002-9343(00)00442-3"},
+  anand2007:{s:"Anand et al., 2007",g:"a",apa:"Anand, P., Kunnumakkara, A. B., Newman, R. A., & Aggarwal, B. B. (2007). Bioavailability of curcumin: Problems and promises. <i>Molecular Pharmaceutics, 4</i>(6), 807–818.",doi:"10.1021/mp700113r"},
+  nelson2017:{s:"Nelson et al., 2017",g:"a",apa:"Nelson, K. M., Dahlin, J. L., Bisson, J., Graham, J., Pauli, G. F., & Walters, M. A. (2017). The essential medicinal chemistry of curcumin. <i>Journal of Medicinal Chemistry, 60</i>(5), 1620–1637.",doi:"10.1021/acs.jmedchem.6b00975"},
+  daily2016:{s:"Daily et al., 2016",g:"a",apa:"Daily, J. W., Yang, M., & Park, S. (2016). Efficacy of turmeric extracts and curcumin for alleviating the symptoms of joint arthritis: A systematic review and meta-analysis of randomized clinical trials. <i>Journal of Medicinal Food, 19</i>(8), 717–729.",doi:"10.1089/jmf.2016.3705"},
+  wood2004:{s:"Wood, 2004",g:"a",apa:"Wood, M. (2004). <i>The practice of traditional Western herbalism: Basic doctrine, energetics, and classification</i>. North Atlantic Books."},
+  ema2017:{s:"EMA, 2017",g:"a",apa:"European Medicines Agency, Committee on Herbal Medicinal Products. (2017). <i>European Union herbal monograph on Salix [various species including S. purpurea L., S. daphnoides Vill., S. fragilis L.], cortex</i> (EMA/HMPC/80630/2016 Corr 1).",url:"https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-salix-various-species-including-s-purpurea-l-s-daphnoides-vill-s-fragilis-l-cortex_en.pdf"},
+  coull2005:{s:"Coull et al., 2005",g:"a",apa:"Coull, J. A. M., Beggs, S., Boudreau, D., Boivin, D., Tsuda, M., Inoue, K., Gravel, C., Salter, M. W., & De Koninck, Y. (2005). BDNF from microglia causes the shift in neuronal anion gradient underlying neuropathic pain. <i>Nature, 438</i>(7070), 1017–1021.",doi:"10.1038/nature04223"},
+  harvey2004:{s:"Harvey et al., 2004",g:"a",apa:"Harvey, R. J., Depner, U. B., Wässle, H., Ahmadi, S., Heindl, C., Reinold, H., Smart, T. G., Harvey, K., Schütz, B., Abo-Salem, O. M., Zimmer, A., Poisbeau, P., Welzl, H., Wolfer, D. P., Betz, H., Zeilhofer, H. U., & Müller, U. (2004). GlyR α3: An essential target for spinal PGE<sub>2</sub>-mediated inflammatory pain sensitization. <i>Science, 304</i>(5672), 884–887.",doi:"10.1126/science.1094925"},
+  kruegel2016:{s:"Kruegel et al., 2016",g:"a",apa:"Kruegel, A. C., Gassaway, M. M., Kapoor, A., Váradi, A., Majumdar, S., Filizola, M., Javitch, J. A., & Sames, D. (2016). Synthetic and receptor signaling explorations of the <i>Mitragyna</i> alkaloids: Mitragynine as an atypical molecular framework for opioid receptor modulators. <i>Journal of the American Chemical Society, 138</i>(21), 6754–6764.",doi:"10.1021/jacs.6b00360"},
+  roth2002:{s:"Roth et al., 2002",g:"a",apa:"Roth, B. L., Baner, K., Westkaemper, R., Siebert, D., Rice, K. C., Steinberg, S., Ernsberger, P., & Rothman, R. B. (2002). Salvinorin A: A potent naturally occurring nonnitrogenous kappa opioid selective agonist. <i>Proceedings of the National Academy of Sciences of the United States of America, 99</i>(18), 11934–11939.",doi:"10.1073/pnas.182234399"},
+  bandell2004:{s:"Bandell et al., 2004",g:"a",apa:"Bandell, M., Story, G. M., Hwang, S. W., Viswanath, V., Eid, S. R., Petrus, M. J., Earley, T. J., & Patapoutian, A. (2004). Noxious cold ion channel TRPA1 is activated by pungent compounds and bradykinin. <i>Neuron, 41</i>(6), 849–857.",doi:"10.1016/S0896-6273(04)00150-3"},
+  laprairie2015:{s:"Laprairie et al., 2015",g:"a",apa:"Laprairie, R. B., Bagher, A. M., Kelly, M. E. M., & Denovan-Wright, E. M. (2015). Cannabidiol is a negative allosteric modulator of the cannabinoid CB<sub>1</sub> receptor. <i>British Journal of Pharmacology, 172</i>(20), 4790–4805.",doi:"10.1111/bph.13250"},
+  xu1999:{s:"Xu et al., 1999",g:"a",apa:"Xu, X. M., Sansores-Garcia, L., Chen, X. M., Matijevic-Aleksic, N., Du, M., & Wu, K. K. (1999). Suppression of inducible cyclooxygenase 2 gene transcription by aspirin and sodium salicylate. <i>Proceedings of the National Academy of Sciences of the United States of America, 96</i>(9), 5292–5297.",doi:"10.1073/pnas.96.9.5292"},
+  sugiura2002:{s:"Sugiura et al., 2002",g:"a",apa:"Sugiura, T., Tominaga, M., Katsuya, H., & Mizumura, K. (2002). Bradykinin lowers the threshold temperature for heat activation of vanilloid receptor 1. <i>Journal of Neurophysiology, 88</i>(1), 544–548.",doi:"10.1152/jn.2002.88.1.544"},
+  hill2000:{s:"Hill, 2000",g:"a",apa:"Hill, R. (2000). NK1 (substance P) receptor antagonists: Why are they not analgesic in humans? <i>Trends in Pharmacological Sciences, 21</i>(7), 244–246.",doi:"10.1016/S0165-6147(00)01502-9"},
+  anandbley2011:{s:"Anand & Bley, 2011",g:"a",apa:"Anand, P., & Bley, K. (2011). Topical capsaicin for pain management: Therapeutic potential and mechanisms of action of the new high-concentration capsaicin 8% patch. <i>British Journal of Anaesthesia, 107</i>(4), 490–502.",doi:"10.1093/bja/aer260"},
+  dedov2002:{s:"Dedov et al., 2002",g:"a",apa:"Dedov, V. N., Tran, V. H., Duke, C. C., Connor, M., Christie, M. J., Mandadi, S., & Roufogalis, B. D. (2002). Gingerols: A novel class of vanilloid receptor (VR1) agonists. <i>British Journal of Pharmacology, 137</i>(6), 793–798.",doi:"10.1038/sj.bjp.0704925"},
+  mcnamara2005:{s:"McNamara et al., 2005",g:"a",apa:"McNamara, F. N., Randall, A., & Gunthorpe, M. J. (2005). Effects of piperine, the pungent component of black pepper, at the human vanilloid receptor (TRPV1). <i>British Journal of Pharmacology, 144</i>(6), 781–790.",doi:"10.1038/sj.bjp.0706040"},
+  yang2003:{s:"Yang et al., 2003",g:"a",apa:"Yang, B. H., Piao, Z. G., Kim, Y.-B., Lee, C.-H., Lee, J. K., Park, K., Kim, J. S., & Oh, S. B. (2003). Activation of vanilloid receptor 1 (VR1) by eugenol. <i>Journal of Dental Research, 82</i>(10), 781–785.",doi:"10.1177/154405910308201004"},
+  bisogno2001:{s:"Bisogno et al., 2001",g:"a",apa:"Bisogno, T., Hanus, L., De Petrocellis, L., Tchilibon, S., Ponde, D. E., Brandi, I., Moriello, A. S., Davis, J. B., Mechoulam, R., & Di Marzo, V. (2001). Molecular targets for cannabidiol and its synthetic analogues: Effect on vanilloid VR1 receptors and on the cellular uptake and enzymatic hydrolysis of anandamide. <i>British Journal of Pharmacology, 134</i>(4), 845–852.",doi:"10.1038/sj.bjp.0704327"},
+  bautista2005:{s:"Bautista et al., 2005",g:"a",apa:"Bautista, D. M., Movahed, P., Hinman, A., Axelsson, H. E., Sterner, O., Högestätt, E. D., Julius, D., Jordt, S.-E., & Zygmunt, P. M. (2005). Pungent products from garlic activate the sensory ion channel TRPA1. <i>Proceedings of the National Academy of Sciences of the United States of America, 102</i>(34), 12248–12252.",doi:"10.1073/pnas.0505356102"},
+  behrendt2004:{s:"Behrendt et al., 2004",g:"a",apa:"Behrendt, H.-J., Germann, T., Gillen, C., Hatt, H., & Jostock, R. (2004). Characterization of the mouse cold-menthol receptor TRPM8 and vanilloid receptor type-1 VR1 using a fluorometric imaging plate reader (FLIPR) assay. <i>British Journal of Pharmacology, 141</i>(4), 737–745.",doi:"10.1038/sj.bjp.0705652"},
+  liu2019:{s:"Liu et al., 2019",g:"a",apa:"Liu, Y.-Y., Wang, T.-X., Zhou, J.-C., Qu, W.-M., & Huang, Z.-L. (2019). Dopamine D<sub>1</sub> and D<sub>2</sub> receptors mediate analgesic and hypnotic effects of l-tetrahydropalmatine in a mouse neuropathic pain model. <i>Psychopharmacology, 236</i>(11), 3169–3182.",doi:"10.1007/s00213-019-05275-3"},
+  fda2025:{s:"U.S. Food and Drug Administration, 2025",g:"a",apa:"U.S. Food and Drug Administration. (2025, January 30). <i>FDA approves novel non-opioid treatment for moderate to severe acute pain</i> [Press release].",url:"https://www.fda.gov/news-events/press-announcements/fda-approves-novel-non-opioid-treatment-moderate-severe-acute-pain"},
+  finnerup2016:{s:"Finnerup et al., 2016",g:"a",apa:"Finnerup, N. B., Haroutounian, S., Kamerman, P., Baron, R., Bennett, D. L. H., Bouhassira, D., Cruccu, G., Freeman, R., Hansson, P., Nurmikko, T., Raja, S. N., Rice, A. S. C., Serra, J., Smith, B. H., Treede, R.-D., & Jensen, T. S. (2016). Neuropathic pain: An updated grading system for research and clinical practice. <i>Pain, 157</i>(8), 1599–1606.",doi:"10.1097/j.pain.0000000000000492"},
+
+  /* from the student reading list */
+  coderre2023:{s:"Coderre, 2023",g:"c",apa:"Coderre, T. J. (2023). Contribution of microvascular dysfunction to chronic pain. <i>Frontiers in Pain Research, 4</i>, Article 1111559.",doi:"10.3389/fpain.2023.1111559"},
+  zhao2022:{s:"Zhao et al., 2022",g:"c",apa:"Zhao, Y., Zhang, H., Li, N., Li, J., & Zhang, L. (2022). Chronic pain after bone fracture: Current insights into molecular mechanisms and therapeutic strategies. <i>Brain Sciences, 12</i>(8), Article 1056.",doi:"10.3390/brainsci12081056"},
+  haroutounian2014:{s:"Haroutounian et al., 2014",g:"c",apa:"Haroutounian, S., Nikolajsen, L., Bendtsen, T. F., Finnerup, N. B., Kristensen, A. D., Hasselstrøm, J. B., & Jensen, T. S. (2014). Primary afferent input critical for maintaining spontaneous pain in peripheral neuropathy. <i>Pain, 155</i>(7), 1272–1279.",doi:"10.1016/j.pain.2014.03.022"},
+  woolf2011:{s:"Woolf, 2011",g:"c",apa:"Woolf, C. J. (2011). Central sensitization: Implications for the diagnosis and treatment of pain. <i>Pain, 152</i>(3 Suppl.), S2–S15.",doi:"10.1016/j.pain.2010.09.030"},
+  smith2007:{s:"Smith et al., 2007",g:"c",apa:"Smith, M. T., Edwards, R. R., McCann, U. D., & Haythornthwaite, J. A. (2007). The effects of sleep deprivation on pain inhibition and spontaneous pain in women. <i>Sleep, 30</i>(4), 494–505.",doi:"10.1093/sleep/30.4.494"},
+  ngan2011:{s:"Ngan & Conduit, 2011",g:"c",apa:"Ngan, A., & Conduit, R. (2011). A double-blind, placebo-controlled investigation of the effects of <i>Passiflora incarnata</i> (passionflower) herbal tea on subjective sleep quality. <i>Phytotherapy Research, 25</i>(8), 1153–1159.",doi:"10.1002/ptr.3400"},
+  irwin2023:{s:"Irwin et al., 2023",g:"c",apa:"Irwin, M. R., Olmstead, R., Bjurstrom, M. F., Finan, P. H., & Smith, M. T. (2023). Sleep disruption and activation of cellular inflammation mediate heightened pain sensitivity: A randomized clinical trial. <i>Pain, 164</i>(5), 1128–1137.",doi:"10.1097/j.pain.0000000000002811"},
+  kiverstein2022:{s:"Kiverstein et al., 2022",g:"c",apa:"Kiverstein, J., Kirchhoff, M. D., & Thacker, M. (2022). An embodied predictive processing theory of pain experience. <i>Review of Philosophy and Psychology, 13</i>(4), 973–998.",doi:"10.1007/s13164-022-00616-2"},
+  ramne2024:{s:"Ramne & Sensinger, 2024",g:"c",apa:"Ramne, M., & Sensinger, J. (2024). A computational framework for understanding the impact of prior experiences on pain perception and neuropathic pain. <i>PLOS Computational Biology, 20</i>(10), Article e1012097.",doi:"10.1371/journal.pcbi.1012097"},
+  cherkin2016:{s:"Cherkin et al., 2016",g:"c",apa:"Cherkin, D. C., Sherman, K. J., Balderson, B. H., Cook, A. J., Anderson, M. L., Hawkes, R. J., Hansen, K. E., & Turner, J. A. (2016). Effect of mindfulness-based stress reduction vs cognitive behavioral therapy or usual care on back pain and functional limitations in adults with chronic low back pain: A randomized clinical trial. <i>JAMA, 315</i>(12), 1240–1249.",doi:"10.1001/jama.2016.2323"},
+  yoon2020:{s:"Yoon et al., 2020",g:"c",apa:"Yoon, A. P., Wang, C., Speth, K. A., Wang, L., Chung, K. C., & WRIST Group. (2020). Modifiable factors associated with chronic pain 1 year after operative management of distal radius fractures: A secondary analysis of a randomized clinical trial. <i>JAMA Network Open, 3</i>(12), Article e2028929.",doi:"10.1001/jamanetworkopen.2020.28929"},
+  luk2023:{s:"Luk et al., 2023",g:"c",apa:"Luk, M. L. M., Chan, A. C. M., Cho, J. S. Y., Ng, D. M. T., Lam, I. C. Y., Yau, E. L. K., Miller, T., & Pang, M. Y. C. (2023). Predictors of chronic pain and disability in patients treated conservatively after distal radius fracture: A prospective cohort study. <i>International Orthopaedics, 47</i>(6), 1535–1543.",doi:"10.1007/s00264-023-05785-y"},
+  mcgreevy2011:{s:"McGreevy et al., 2011",g:"c",apa:"McGreevy, K., Bottros, M. M., & Raja, S. N. (2011). Preventing chronic pain following acute pain: Risk factors, preventive strategies, and their efficacy. <i>European Journal of Pain Supplements, 5</i>(2), 365–372.",doi:"10.1016/j.eujps.2011.08.013"},
+  stubbs2016:{s:"Stubbs et al., 2016",g:"c",apa:"Stubbs, B., Koyanagi, A., Thompson, T., Veronese, N., Carvalho, A. F., Solomi, M., Mugisha, J., Schofield, P., Cosco, T., Wilson, N., & Vancampfort, D. (2016). The epidemiology of back pain and its relationship with depression, psychosis, anxiety, sleep disturbances, and stress sensitivity: Data from 43 low- and middle-income countries. <i>General Hospital Psychiatry, 43</i>, 63–70.",doi:"10.1016/j.genhosppsych.2016.09.008"},
+  antcliff2019:{s:"Antcliff et al., 2019",g:"c",apa:"Antcliff, D., Keenan, A.-M., Keeley, P., Woby, S., & McGowan, L. (2019). Survey of activity pacing across healthcare professionals informs a new activity pacing framework for chronic pain/fatigue. <i>Musculoskeletal Care, 17</i>(4), 335–345.",doi:"10.1002/msc.1421"},
+  lawsluka2017:{s:"Law & Sluka, 2017",g:"c",apa:"Law, L. F., & Sluka, K. A. (2017). How does physical activity modulate pain? <i>Pain, 158</i>(3), 369–370.",doi:"10.1097/j.pain.0000000000000792"},
+  ellingwood1919:{s:"Ellingwood, 1919",g:"c",apa:"Ellingwood, F. (1919). Lobelia (<i>Lobelia inflata</i>). In <i>The American materia medica, therapeutics and pharmacognosy</i>. Henriette's Herbal Homepage.",url:"https://www.henriettes-herb.com/eclectic/ellingwood/lobelia.html"},
+  gardner2013:{s:"Gardner & McGuffin, 2013",g:"c",apa:"Gardner, Z., & McGuffin, M. (Eds.). (2013). <i>American Herbal Products Association's botanical safety handbook</i> (2nd ed.). CRC Press."}
+};
+function C(k){const r=REFS[k];if(!r){console.warn("missing ref",k);return k;}return '<a class="cite" href="#ref-'+k+'">'+r.s+'</a>';}
+function T(str){return String(str).replace(/\{([a-z0-9]+)\}/g,function(m,k){return C(k);});}
+function $(s,el){return (el||document).querySelector(s);}
+function $$(s,el){return Array.prototype.slice.call((el||document).querySelectorAll(s));}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+
+/* ---------- keepers ---------- */
+const KEEPERS = [
+  {id:"receptor",word:"receptor",ring:["receptor"],
+   title:"The receptor keeps the score",
+   claim:"The molecular state of the nociceptor terminal sets the gain. A sensitized terminal fires at body temperature and under light pressure, so the score is written in channel phosphorylation and expression.",
+   evidence:"Bradykinin lowered the heat activation threshold of TRPV1 to below body temperature ({sugiura2002}). People without functional Nav1.7 cannot feel pain ({cox2006}). In peripheral neuropathic pain, a nerve block abolished spontaneous pain within minutes, so the periphery was carrying the signal ({haroutounian2014}).",
+   predicts:"Heat hurts at the injury (primary hyperalgesia). A local anaesthetic block of the region should remove most of the ongoing pain. Topicals should do something measurable.",
+   licenses:"Agents that reach the terminal: topical TRPV1 and TRPM8 agents, counter-irritants, and local anaesthesia in medicine. A plant compound with measured receptor activity becomes a candidate once you can say how much of it reaches the skin or nerve.",
+   cannot:"Pain that persists after a complete block, spread to the forearm or the other hand, and the influence of sleep, threat and meaning.",
+   refs:["caterina1997","julius2013","sugiura2002","cox2006","haroutounian2014"]},
+  {id:"dorsal",word:"dorsal horn",ring:["dorsal","horn"],
+   title:"The dorsal horn keeps the score",
+   claim:"The spinal cord amplifies. After an intense or prolonged barrage, dorsal horn neurons strengthen their synapses and lose inhibition, so touch arrives as pain.",
+   evidence:"Gate control theory proposed that spinal circuits modulate nociceptive input under the influence of large-fibre input and descending control ({melzackwall1965}). Central sensitization is now well characterized, with NMDA-dependent facilitation, secondary hyperalgesia and allodynia ({woolf2011}). Inhibition has defined failure routes: microglial BDNF shifts the chloride gradient of lamina I neurons so GABA inhibits less ({coull2005}), and PGE<sub>2</sub> acting through EP2 and PKA disables glycine receptor α3 ({harvey2004}).",
+   predicts:"Brushing skin well away from the fracture hurts (dynamic allodynia). Pinprick hurts over a wider area (secondary hyperalgesia). Repeated pinprick builds up, and after-sensations linger.",
+   licenses:"Strategies aimed at spinal processing: graded sensory input and movement, sleep and stress work that restores descending inhibition, and in medicine gabapentinoids or NMDA antagonists. A herbal claim at this level has to show the compound reaches the central nervous system.",
+   cannot:"Why one person sensitizes after a fracture and another does not. That needs history, brain and body.",
+   refs:["melzackwall1965","woolf2011","coull2005","harvey2004"]},
+  {id:"brain",word:"brain",ring:["brain"],
+   title:"The brain keeps the score",
+   claim:"Pain is an output of a distributed brain network that weighs input against context. As pain becomes chronic its representation moves toward emotional and learning circuits, and descending control can tip from inhibition to facilitation.",
+   evidence:"Melzack's neuromatrix framed pain as the output of a distributed network ({melzack2001}). As back pain became chronic, its brain representation shifted from acute-pain regions toward emotional circuits ({hashmi2013}). Pathways through the periaqueductal grey and rostral ventromedial medulla inhibit or facilitate dorsal horn transmission ({ossipov2014}). Sleep disruption impaired endogenous pain inhibition in healthy women ({smith2007}).",
+   predicts:"Weak conditioned pain modulation, pain that tracks sleep quality, and pain that changes with attention and emotional state.",
+   licenses:"Sleep restoration, work on attention and emotion, and in medicine drugs that strengthen descending inhibition. A sleep herb earns its place here when sleep is the stated target ({ngan2011}).",
+   cannot:"Local swelling, temperature asymmetry and trophic change in the hand.",
+   refs:["melzack2001","hashmi2013","ossipov2014","smith2007"]},
+  {id:"mind",word:"mind",ring:["mind"],
+   title:"The mind keeps the score",
+   claim:"Perception is inference. Pain reflects the nervous system's best estimate of threat to the body, combining sensory evidence with expectation and learning. Fear and avoidance can hold that estimate high.",
+   evidence:"Expectation, attention and appraisal change both reported pain and its neural processing ({wiech2016}). Pain behaves like a statistical inference over noisy evidence ({tabor2017}), and models built on priors reproduce placebo, nocebo and neuropathic phenomena ({ramne2024}). Fear-avoidance links catastrophic interpretation to guarding, disuse and disability ({vlaeyen2000}).",
+   predicts:"R. guards the hand, avoids gripping and expects harm from use. Pain rises in threatening contexts and falls with credible reassurance and graded success.",
+   licenses:"Explanation as treatment, graded exposure, mindfulness-based stress reduction ({cherkin2016}), and the consultation itself. The taste, ritual and meaning of a remedy act here, and you can say so plainly.",
+   cannot:"How the inference started. A mind-only account slides toward \"it is in your head\" unless it keeps the body in view.",
+   refs:["wiech2016","tabor2017","ramne2024","vlaeyen2000"]},
+  {id:"world",word:"world",ring:["world"],
+   title:"The world keeps the score",
+   claim:"Work, money, support, compensation and access shape whether pain becomes disability and what it means to the person.",
+   evidence:"Engel proposed the biopsychosocial model as a challenge to biomedicine's reductionism ({engel1977}), and chronic pain research has since filled in many of the links ({gatchel2007}). Greater occupational demand predicted pain at 24 weeks after wrist fracture ({luk2023}). Back pain tracked depression, anxiety, sleep problems and stress sensitivity across 43 low- and middle-income countries ({stubbs2016}).",
+   predicts:"R.'s pain and disability will move with return-to-work plans, income pressure, any compensation process and support at home.",
+   licenses:"Work modification, collaborative care, and attention to cost and adherence. Posology is social too: an 80 mL a day tincture regimen will not get taken.",
+   cannot:"Anything at the receptor unless you state the chain that connects them. In practice the biopsychosocial model is often fragmented into separate boxes and used in reductionist ways ({cormack2023}).",
+   refs:["engel1977","gatchel2007","luk2023","stubbs2016","cormack2023"]},
+  {id:"body",word:"body",ring:["body"],
+   title:"The body keeps the score",
+   claim:"Pain is produced by the whole neural, endocrine and immune ensemble. Glia, immune cells, sleep and stress physiology set the background against which nociceptive signals are weighed.",
+   evidence:"Immune cells and glia release mediators that both drive and resolve pain ({ji2016}). Experimental sleep disruption raised inflammatory signaling and lowered heat pain thresholds, with inflammation mediating part of the effect ({irwin2023}). Embodied predictive processing places pain in this whole-body system ({kiverstein2022}).",
+   predicts:"Pain covaries with sleep, infection, systemic inflammation and stress load, and fatigue and widespread aches travel with it.",
+   licenses:"Systemic interventions: sleep, stress physiology, diet and activity. A systemic herbal claim needs a systemic exposure, which is where dietary amounts usually fall short.",
+   cannot:"Why the burning sits on the back of the right hand.",
+   note:"The page title borrows this phrase from van der Kolk's book on trauma (see the introduction). In pain science the embodied version is a set of testable claims about immune, endocrine and autonomic signaling.",
+   refs:["ji2016","irwin2023","kiverstein2022"]},
+  {id:"history",word:"history",ring:["history"],
+   title:"History keeps the score",
+   claim:"Chronic pain is the outcome of a time course. How much it hurt in the first week, how long surgery took, and how R. coped in the cast all shape month seven.",
+   evidence:"After operative wrist fracture care, a one-week delay to surgery and higher preoperative pain were associated with chronic pain at one year ({yoon2020}). With conservative care, pain at cast removal predicted pain at 24 weeks, and anxiety and depression scores predicted disability ({luk2023}). Intense pain in the first week after wrist fracture strongly predicted CRPS ({moseley2014}).",
+   predicts:"The early record matters: week-one pain scores, time to fixation, cast problems and early mood. R.'s week-one scores of 8 to 9 raise the prior for CRPS.",
+   licenses:"Timing-aware care. Prevention belongs early; at month seven the targets have changed. Screening for CRPS and nerve injury becomes part of the formulation.",
+   cannot:"What the pain is made of now. History sets probabilities; it does not name mechanisms.",
+   refs:["yoon2020","luk2023","moseley2014","mcgreevy2011"]},
+  {id:"tissue",word:"tissue",ring:["tissue"],
+   title:"The tissue keeps the score",
+   claim:"Pain reports the state of the injured tissue. Find the lesion, settle the inflammation, and the pain follows.",
+   evidence:"Acute post-injury pain does track tissue events: damaged and inflammatory cells release protons, ATP, bradykinin, prostaglandins and nerve growth factor, which activate and sensitize nociceptor terminals ({basbaum2009}). Microvascular injury can sustain that environment ({coderre2023}), and fracture pain has its own molecular drivers ({zhao2022}).",
+   predicts:"Pain sits over the fracture or plate, rises with loading and grip, settles with rest, and matches a finding on imaging or examination such as non-union, hardware irritation or tendon adhesion.",
+   licenses:"Tissue-directed care: load management, anti-inflammatory strategies at doses that reach the tissue, topical counter-irritants, and referral for hardware or union problems.",
+   cannot:"Pain that persists after union with clean imaging, pain that spreads beyond the injury, pain from light touch, and pain that moves with sleep, mood or context.",
+   refs:["basbaum2009","coderre2023","zhao2022"]}
+];
+const KMAP={};KEEPERS.forEach(function(k){KMAP[k.id]=k;});
+
+const EDGES = [
+  {a:"tissue",b:"receptor",t:"Inflammatory mediators from injured tissue (bradykinin, PGE<sub>2</sub>, NGF) sensitize TRPV1 and sodium channels at the terminal.",r:["basbaum2009","sugiura2002"]},
+  {a:"receptor",b:"dorsal",t:"A sustained afferent barrage drives central sensitization, and removing peripheral input stopped spontaneous neuropathic pain.",r:["woolf2011","haroutounian2014"]},
+  {a:"dorsal",b:"brain",t:"Amplified signals ascend to the brain; descending pathways from the brainstem inhibit or facilitate the dorsal horn in return.",r:["ossipov2014","hashmi2013"]},
+  {a:"brain",b:"mind",t:"Expectation and attention change pain perception and its neural processing.",r:["wiech2016","tabor2017"]},
+  {a:"mind",b:"world",t:"Work demands and threat appraisal feed fear-avoidance, guarding and disability.",r:["vlaeyen2000","luk2023"]},
+  {a:"world",b:"body",t:"Sustained social and economic stress loads endocrine and immune systems over time.",r:["gatchel2007"]},
+  {a:"body",b:"dorsal",t:"Microglia release BDNF, which shifts the chloride gradient of dorsal horn neurons and weakens spinal inhibition.",r:["coull2005","ji2016"]},
+  {a:"body",b:"brain",t:"Broken sleep raises inflammatory signaling and weakens endogenous pain inhibition.",r:["irwin2023","smith2007"]},
+  {a:"body",b:"tissue",t:"Immune cells in injured tissue produce mediators that both drive and resolve pain.",r:["ji2016"]},
+  {a:"history",b:"dorsal",t:"An intense early barrage is the setting for central sensitization; intense week-one pain strongly predicted CRPS after wrist fracture.",r:["woolf2011","moseley2014"]},
+  {a:"history",b:"mind",t:"Threat learned during injury and immobilization accumulates as fear and avoidance.",r:["vlaeyen2000"]},
+  {a:"history",b:"tissue",t:"Time to fixation is part of the tissue story: a one-week surgical delay was associated with more than triple the odds of chronic pain at one year.",r:["yoon2020"]}
+];
+function neighbors(id){return EDGES.filter(function(e){return e.a===id||e.b===id;});}
+function other(e,id){return e.a===id?e.b:e.a;}
+const LEVELNAME={tissue:"tissue",receptor:"receptor",dorsal:"dorsal horn",brain:"brain",mind:"mind",body:"body",history:"history",world:"world"};
+
+const IVS = [
+  {id:"willow",name:"Willow bark tincture, 2 mL three times a day",acts:["tissue"],
+   mech:"Salicin is converted to salicylic acid, which lowers prostaglandin production in inflamed tissue through weak direct COX inhibition and suppression of COX-2 induction ({xu1999}).",
+   dose:"In the positive low back pain trial, 39% of patients on 240 mg of salicin a day were pain-free in the final week, against 21% on 120 mg and 6% on placebo ({chrubasik2000}). The effect scaled with dose. Run your tincture through the strength calculator before writing the mechanism down."},
+  {id:"turmeric",name:"Dietary turmeric",acts:["body","tissue"],
+   mech:"The anti-inflammatory claims (NF-κB and related pathways) come mostly from cell experiments at micromolar concentrations.",
+   dose:"Free curcumin in plasma after oral dosing is very low ({anand2007}), and curcumin is a frequent false positive in assays ({nelson2017}). Food amounts support a dietary-pattern claim. A pharmacological claim needs a different preparation and dose."},
+  {id:"corydalis",name:"Corydalis (yan hu suo) for pain",acts:["brain"],
+   mech:"Dehydrocorybulbine was antinociceptive in mice through dopamine D2 receptor antagonism ({zhang2014}); l-tetrahydropalmatine acted through D1 agonism and D2 antagonism in neuropathic mice ({liu2019}).",
+   dose:"Mouse data, and alkaloid content varies by preparation. A D2-antagonist mechanism also tells you which effects to watch for."},
+  {id:"calpoppy",name:"California poppy at night",acts:["brain","mind"],
+   mech:"In cell systems, (S)-reticuline enhanced some GABA<sub>A</sub> receptor subtypes and inhibited another, while protopine had no significant effect ({fedurco2015}). Traditional use is for sleep and restlessness.",
+   dose:"The receptor data come from cells and human analgesic evidence is scarce. Framing it as a sleep intervention makes the claim checkable."},
+  {id:"piscidia",name:"Jamaican dogwood for pain",acts:[],
+   mech:"A traditional anodyne and antispasmodic. PubMed holds a few old animal studies and no human trials for pain, and no receptor-level work on its analgesic action. The genus is a fish poison.",
+   dose:"With no mechanism to cite, the honest claim is empirical: name the outcome you will track and the safety limits you will keep ({gardner2013})."},
+  {id:"capsaicin",name:"Capsaicin cream to the back of the hand",acts:["receptor"],
+   mech:"A TRPV1 agonist. Repeated or high-concentration exposure defunctionalizes nociceptor terminals in the skin ({caterina1997}; {anandbley2011}).",
+   dose:"Burning comes first and relief later. Concentration, area and frequency are the dose. Keep it off broken skin."},
+  {id:"menthol",name:"Peppermint oil or menthol rub",acts:["receptor","dorsal"],
+   mech:"TRPM8 activation. In neuropathic rats, cooling-mediated analgesia depended on central mechanisms ({proudfoot2006}).",
+   dose:"Concentration on the skin and area treated are the dose. The central mechanism comes from rodent work."},
+  {id:"passion",name:"Passionflower tea for sleep",acts:["brain","body"],
+   mech:"One cup nightly improved subjective sleep quality compared with placebo ({ngan2011}).",
+   dose:"The claim is about sleep. The bridge to pain runs through sleep and descending inhibition ({smith2007}; {irwin2023})."},
+  {id:"graded",name:"Graded return to grip with activity pacing",acts:["mind","world","brain"],
+   mech:"Pacing aims at meaningful activity rather than avoidance of symptoms ({antcliff2019}), and physical activity engages endogenous pain inhibition ({lawsluka2017}).",
+   dose:"Load, frequency and progression are the dose, written down like any other prescription."},
+  {id:"explain",name:"Explaining pain physiology in session",acts:["mind","brain"],
+   mech:"Expectation and appraisal change pain processing ({wiech2016}).",
+   dose:"Content and timing are the dose. It lands better when the explanation matches what R. actually feels."}
+];
+
+/* ---------- hero + keeper wiring ---------- */
+let curKeeper="tissue", curIv=null;
+const picker=$("#picker");
+const order=["tissue","receptor","dorsal","brain","mind","body","history","world"];
+order.forEach(function(id){
+  const b=document.createElement("button");
+  b.className="pick";b.type="button";b.dataset.k=id;b.textContent=KMAP[id].word;
+  b.setAttribute("aria-pressed",id===curKeeper?"true":"false");
+  b.addEventListener("click",function(){setKeeper(id);});
+  picker.appendChild(b);
+});
+const spin=document.createElement("button");
+spin.className="btn";spin.type="button";spin.textContent="Spin";
+picker.appendChild(spin);
+
+const reel=$("#reel");
+const reduced=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function showWord(w,anim){
+  reel.textContent=w;
+  if(anim&&!reduced){reel.classList.remove("tick");void reel.offsetWidth;reel.classList.add("tick");}
+}
+let spinning=false;
+spin.addEventListener("click",function(){
+  if(spinning)return;
+  const choices=order.filter(function(x){return x!==curKeeper;});
+  const target=choices[Math.floor(Math.random()*choices.length)];
+  if(reduced){setKeeper(target);return;}
+  spinning=true;spin.disabled=true;
+  let i=0, n=14, idx=order.indexOf(curKeeper);
+  (function step(){
+    idx=(idx+1)%order.length;
+    if(i>=n-1){showWord(KMAP[target].word,true);spinning=false;spin.disabled=false;setKeeper(target);return;}
+    showWord(KMAP[order[idx]].word,true);
+    i++;
+    setTimeout(step,45+i*i*1.6);
+  })();
+});
+
+function setKeeper(id){
+  curKeeper=id;
+  if(!spinning)showWord(KMAP[id].word,false);
+  $$(".pick").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.k===id?"true":"false");});
+  const k=KMAP[id];
+  $("#readKeeper").textContent="read the case for "+(id==="history"?"history":"the "+k.word);
+  renderRing();renderLabel();renderBridges();renderVerdict();
+}
+
+/* ring */
+const ringPos={};
+(function(){
+  const cx=180,cy=180,R=128;
+  order.slice().sort(function(a,b){return 0;});
+  const ringOrder=["receptor","dorsal","brain","mind","world","body","history","tissue"];
+  ringOrder.forEach(function(id,i){
+    const ang=(-90+i*45)*Math.PI/180;
+    ringPos[id]={x:cx+R*Math.cos(ang),y:cy+R*Math.sin(ang)};
+  });
+})();
+function renderRing(){
+  const svg=$("#ring");
+  const nb=neighbors(curKeeper).map(function(e){return other(e,curKeeper);});
+  let h="";
+  EDGES.forEach(function(e){
+    const p=ringPos[e.a],q=ringPos[e.b];
+    const hot=(e.a===curKeeper||e.b===curKeeper);
+    h+='<line class="edge'+(hot?" hot":"")+'" x1="'+p.x.toFixed(1)+'" y1="'+p.y.toFixed(1)+'" x2="'+q.x.toFixed(1)+'" y2="'+q.y.toFixed(1)+'"/>';
+  });
+  Object.keys(ringPos).forEach(function(id){
+    const p=ringPos[id],k=KMAP[id];
+    const cls="node"+(id===curKeeper?" on":(nb.indexOf(id)>-1?" nb":""));
+    const lines=k.ring;
+    let t="";
+    if(lines.length===1)t='<text x="'+p.x.toFixed(1)+'" y="'+(p.y+4.5).toFixed(1)+'">'+lines[0]+'</text>';
+    else t='<text x="'+p.x.toFixed(1)+'" y="'+(p.y-2).toFixed(1)+'">'+lines[0]+'</text><text x="'+p.x.toFixed(1)+'" y="'+(p.y+12).toFixed(1)+'">'+lines[1]+'</text>';
+    h+='<g class="'+cls+'" data-k="'+id+'" tabindex="0" role="button" aria-pressed="'+(id===curKeeper)+'" aria-label="'+esc(k.title)+'"><circle cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFixed(1)+'" r="31"/>'+t+'</g>';
+  });
+  svg.innerHTML=h;
+  $$(".node",svg).forEach(function(g){
+    g.addEventListener("click",function(){setKeeper(g.dataset.k);});
+    g.addEventListener("keydown",function(ev){if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();setKeeper(g.dataset.k);}});
+  });
+}
+function renderLabel(){
+  const k=KMAP[curKeeper];
+  let h='<h3>'+k.title+'</h3><div class="sub">A pain narrative, pressed and labelled</div>';
+  [["Claim",k.claim],["Best evidence",k.evidence],["Predicts for R.",k.predicts],["Licenses",k.licenses],["Cannot explain",k.cannot],["Read",k.refs.map(C).join("; ")]].forEach(function(r){
+    h+='<div class="row"><div class="k">'+r[0]+'</div><div class="v">'+T(r[1])+'</div></div>';
+  });
+  if(k.note)h+='<p class="note">'+T(k.note)+'</p>';
+  $("#keeperLabel").innerHTML=h;
+}
+function renderBridges(){
+  const ul=$("#bridgeList");
+  ul.innerHTML=neighbors(curKeeper).map(function(e){
+    const o=other(e,curKeeper);
+    const nm=LEVELNAME[curKeeper];return '<li><b>'+nm.charAt(0).toUpperCase()+nm.slice(1)+' and '+LEVELNAME[o]+'.</b> '+T(e.t)+' ('+e.r.map(C).join("; ")+')</li>';
+  }).join("");
+}
+const ivBox=$("#ivChips");
+IVS.forEach(function(iv){
+  const b=document.createElement("button");
+  b.className="chip";b.type="button";b.dataset.iv=iv.id;b.setAttribute("aria-pressed","false");b.textContent=iv.name;
+  b.addEventListener("click",function(){curIv=iv.id;$$("#ivChips .chip").forEach(function(c){c.setAttribute("aria-pressed",c.dataset.iv===iv.id?"true":"false");});renderVerdict();});
+  ivBox.appendChild(b);
+});
+function listLevels(a){return a.map(function(x){return "the "+LEVELNAME[x];}).join(" and ");}
+function renderVerdict(){
+  const box=$("#verdict");
+  if(!curIv){return;}
+  const iv=IVS.filter(function(x){return x.id===curIv;})[0];
+  const k=curKeeper, kn=LEVELNAME[k];
+  let cls,head,body;
+  if(iv.acts.length===0){
+    cls="v-bad";head="No level licenses a mechanism here yet.";
+    body="<p>"+T(iv.mech)+"</p><p>"+T(iv.dose)+"</p>";
+  } else if(iv.acts.indexOf(k)>-1){
+    cls="v-ok";head="Licensed by your stance.";
+    body="<p>You say the score is kept in "+(k==="history"?"history":"the "+kn)+", and this acts there. "+T(iv.mech)+"</p><p><b>Now make the dose reach it.</b> "+T(iv.dose)+"</p>";
+  } else {
+    const br=neighbors(k).filter(function(e){return iv.acts.indexOf(other(e,k))>-1;});
+    if(br.length){
+      const e=br[0];
+      cls="v-bridge";head="Needs a stated bridge.";
+      body="<p>This acts at "+listLevels(iv.acts)+". Your stance keeps the score in "+(k==="history"?"history":"the "+kn)+". Write the link into your formulation: "+T(e.t)+" ("+e.r.map(C).join("; ")+").</p><p>"+T(iv.mech)+" "+T(iv.dose)+"</p>";
+    } else {
+      cls="v-bad";head="Incoherent as written.";
+      body="<p>This acts at "+listLevels(iv.acts)+", and no documented link runs directly from there to "+(k==="history"?"history":"the "+kn)+". Change your stance, add the intermediate step with its evidence, or drop the intervention.</p><p>"+T(iv.mech)+"</p>";
+    }
+  }
+  box.className="verdict "+cls;
+  box.innerHTML='<div class="vh">'+head+'</div>'+body;
+}
+
+/* ---------- receptor bench ---------- */
+const ROLES={
+  transduce:{n:"Transduces a stimulus",shape:"circle"},
+  sensitize:{n:"Sensitizes or disinhibits",shape:"diamond"},
+  transmit:{n:"Transmits",shape:"square"},
+  inhibit:{n:"Inhibits",shape:"triangle"},
+  modulate:{n:"Modulates either way",shape:"hex"}
+};
+const RX=[
+  {id:"trpv1",n:"TRPV1",role:"transduce",x:205,y:132,kind:"Ion channel (non-selective cation, calcium-permeable)",
+   where:"Peptidergic C-fibre terminals, sensory neuron cell bodies and their central terminals.",
+   does:"Opens to noxious heat, protons and capsaicin.",
+   sens:"Bradykinin (through B2, Gq and PKC), PGE<sub>2</sub> (through EP receptors, Gs and PKA) and NGF (through TrkA) phosphorylate TRPV1 or add channels to the membrane. Bradykinin lowered its heat activation threshold to below body temperature ({sugiura2002}).",
+   drugs:"A single application of the 8% capsaicin patch gave relief for up to 12 weeks in neuropathic pain by defunctionalizing nociceptor terminals ({anandbley2011}).",
+   plants:[["Capsaicin","Capsicum spp.","Agonist; defunctionalizes terminals with high or repeated exposure","people","anandbley2011"],["Piperine","Piper nigrum","Agonist, about 130 times less potent than capsaicin","cells","mcnamara2005"],["[6]-Gingerol","Zingiber officinale","Agonist","cells","dedov2002"],["Eugenol","Syzygium aromaticum (clove)","Agonist","cells","yang2003"],["Cannabidiol","Cannabis sativa","Agonist; desensitizes TRPV1 to capsaicin","cells","bisogno2001"]],
+   teach:"Agonists hurt before they help. A TRPV1 claim has to say which you mean, counter-irritation now or desensitization after repeated exposure, and at what concentration at the terminal. Potency matters too: piperine needed micromolar concentrations where capsaicin needed a fraction of one ({mcnamara2005}).",
+   refs:["caterina1997","julius2013","sugiura2002","anandbley2011"]},
+  {id:"trpa1",n:"TRPA1",role:"transduce",x:125,y:165,kind:"Ion channel (non-selective cation)",
+   where:"A subset of TRPV1-positive C fibres.",
+   does:"Detects reactive irritants, including oxidative products formed in inflamed tissue.",
+   sens:"Bradykinin signaling activates it ({bandell2004}).",
+   drugs:"None approved as an analgesic. Counter-irritant preparations act on it by default.",
+   plants:[["Allyl isothiocyanate","Mustard (Brassica spp.), wasabi","Agonist","cells","jordt2004"],["Cinnamaldehyde","Cinnamomum spp.","Agonist","cells","bandell2004"],["Allicin, diallyl disulfide","Allium sativum (garlic)","Agonists","cells","bautista2005"],["Δ9-THC","Cannabis sativa","Agonist","cells","jordt2004"]],
+   teach:"A mustard plaster is TRPA1 pharmacology: local irritation, neurogenic vasodilation and counter-irritant relief. Concentration and contact time are the dose, and so is the risk of skin damage.",
+   refs:["jordt2004","bandell2004","julius2013"]},
+  {id:"trpm8",n:"TRPM8",role:"transduce",x:225,y:200,kind:"Ion channel (non-selective cation)",
+   where:"A distinct population of cold-sensing afferents.",
+   does:"Opens to cooling and to menthol and related cooling compounds.",
+   sens:"After nerve injury, cold can become painful through several channels, so cooling feels different on a sensitized limb.",
+   drugs:"None approved; menthol is in many over-the-counter rubs.",
+   plants:[["Menthol","Mentha × piperita","Agonist; analgesic in neuropathic rats","animals","proudfoot2006"],["1,8-Cineole (eucalyptol)","Eucalyptus spp.","Very weak agonist, active only at millimolar concentrations","cells","behrendt2004"]],
+   teach:"Cooling analgesia in neuropathic rats depended on central mechanisms ({proudfoot2006}). In one assay, menthol activated TRPM8 at about 4 µM and eucalyptol needed about 7.7 mM, nearly two thousand times more ({behrendt2004}). \"Eucalyptus is cooling via TRPM8\" is true in a test tube and needs a concentration argument on skin.",
+   refs:["proudfoot2006","julius2013","behrendt2004"]},
+  {id:"piezo2",n:"Piezo2",role:"transduce",x:62,y:220,kind:"Mechanically activated ion channel",
+   where:"Low-threshold mechanoreceptors (touch afferents) and some other sensory neurons.",
+   does:"Converts light touch and stretch into current.",
+   sens:"After injury, touch-fibre input can reach pain circuits once spinal inhibition fails.",
+   drugs:"None.",
+   plants:[],
+   teach:"People lacking functional PIEZO2 did not develop touch-evoked pain after skin inflammation ({szczot2018}). When light brushing of R.'s hand hurts, the input travels on touch fibres, and the amplification sits downstream of them.",
+   refs:["szczot2018"]},
+  {id:"asic3",n:"ASIC3",role:"transduce",x:150,y:248,kind:"Proton-gated ion channel",
+   where:"Sensory neurons, prominently those supplying muscle and joints.",
+   does:"Detects acidification from ischaemia and inflammation.",
+   sens:"Inflamed and ischaemic tissue is acidic, so input rises with the tissue state.",
+   drugs:"None approved.",plants:[],
+   teach:"A useful reminder that the tissue's chemistry, including its pH, is itself a stimulus.",
+   refs:["basbaum2009"]},
+  {id:"p2x3",n:"P2X3",role:"transduce",x:215,y:282,kind:"ATP-gated ion channel",
+   where:"Non-peptidergic C fibres.",
+   does:"Detects ATP released from damaged or stressed cells.",
+   sens:"Crush injury releases ATP from damaged cells.",
+   drugs:"P2X3 antagonists were developed mainly for chronic cough.",plants:[],
+   teach:"Cell damage signals pain directly, before any inflammatory mediator is made.",
+   refs:["basbaum2009"]},
+  {id:"b2",n:"B2",role:"sensitize",x:105,y:305,kind:"G protein-coupled receptor (Gq)",
+   where:"Nociceptor terminals.",
+   does:"Bradykinin, formed in injured tissue, excites nociceptors and sensitizes TRPV1 and TRPA1 through PLC and PKC.",
+   sens:"Its own ligand rises with injury and inflammation.",
+   drugs:"No analgesic in routine use.",plants:[],
+   teach:"B2 is the switch that turns body temperature into a painful stimulus for a sensitized TRPV1 ({sugiura2002}).",
+   refs:["sugiura2002","bandell2004","basbaum2009"]},
+  {id:"ep",n:"EP2/EP4",role:"sensitize",x:200,y:342,kind:"G protein-coupled receptors (Gs)",
+   where:"Nociceptor terminals; EP2 also in the spinal dorsal horn.",
+   does:"PGE<sub>2</sub> raises cAMP and PKA activity, sensitizing TRPV1 and Nav1.8. In the spinal cord, PGE<sub>2</sub> acting through EP2 weakens glycine receptor α3 ({harvey2004}).",
+   sens:"PGE<sub>2</sub> comes from COX-2 induced in inflamed tissue.",
+   drugs:"NSAIDs reduce PGE<sub>2</sub> production upstream of these receptors.",
+   plants:[["Salicylic acid (from salicin)","Willow bark, Salix spp.","Weak direct COX inhibition; suppresses COX-2 transcription","cells","xu1999"],["Willow bark extract, 240 mg salicin a day","Salix spp.","Pain relief in low back pain flares","people","chrubasik2000"]],
+   teach:"Willow acts upstream of this receptor by lowering prostaglandin production. That is a tissue-level, exposure-dependent claim, so check the salicin dose.",
+   refs:["harvey2004","xu1999","chrubasik2000"]},
+  {id:"trka",n:"TrkA (NGF)",role:"sensitize",x:55,y:372,kind:"Receptor tyrosine kinase",
+   where:"Peptidergic nociceptors.",
+   does:"Nerve growth factor from injured and inflamed tissue binds TrkA. Within minutes it sensitizes TRPV1; over days it changes gene expression and promotes sprouting.",
+   sens:"NGF rises with injury and inflammation.",
+   drugs:"Anti-NGF antibodies reduced osteoarthritis pain in trials, but tanezumab was not approved after rapidly progressive osteoarthritis emerged as a safety problem.",
+   plants:[],
+   teach:"Fracture and crush injury raise NGF, linking the tissue story to long-lasting changes in the nerve.",
+   refs:["basbaum2009"]},
+  {id:"cb2",n:"CB2",role:"inhibit",x:62,y:118,kind:"G protein-coupled receptor (Gi/o)",
+   where:"Immune cells and microglia, with low neuronal expression.",
+   does:"Dampens immune cell activation and inflammatory signaling.",
+   sens:"Not applicable.",
+   drugs:"None approved.",
+   plants:[["β-Caryophyllene","Black pepper, clove, hops, Cannabis","Selective CB2 agonist; anti-inflammatory in mice","animals","gertsch2008"]],
+   teach:"Gertsch and colleagues called β-caryophyllene a dietary cannabinoid. The dose that matters is still the one reaching immune cells.",
+   refs:["gertsch2008","woodhams2017"]},
+  {id:"nav17",n:"Nav1.7",role:"transmit",x:330,y:240,lp:"a",kind:"Voltage-gated sodium channel",
+   where:"Nociceptor terminals and axons.",
+   does:"Amplifies small depolarizations toward the firing threshold.",
+   sens:"Its gene sets the gain of the whole system: loss-of-function mutations in SCN9A cause congenital inability to experience pain ({cox2006}).",
+   drugs:"Local anaesthetics block sodium channels without selectivity.",
+   plants:[],
+   teach:"Many plant constituents block sodium channels in cell assays at high micromolar concentrations. Selectivity and achievable concentration decide whether that matters.",
+   refs:["cox2006"]},
+  {id:"nav18",n:"Nav1.8",role:"transmit",x:395,y:240,lp:"a",kind:"Voltage-gated sodium channel (tetrodotoxin-resistant)",
+   where:"Nociceptor axons and terminals.",
+   does:"Carries much of the action potential in nociceptors.",
+   sens:"PGE<sub>2</sub>, through PKA, increases its current.",
+   drugs:"Suzetrigine, a selective Nav1.8 inhibitor, was approved in the United States in January 2025 for moderate-to-severe acute pain in adults ({fda2025}).",
+   plants:[],
+   teach:"A selective channel blocker reached approval only after decades of work on selectivity. That is the bar a vague claim about sodium-channel-blocking herbs should be measured against.",
+   refs:["basbaum2009"]},
+  {id:"cav",n:"Cav2.2 + α2δ-1",role:"transmit",x:648,y:198,lp:"a",kind:"Voltage-gated calcium channel (N-type) with its α2δ-1 subunit",
+   where:"Central terminals of nociceptors in the dorsal horn.",
+   does:"Calcium entry triggers release of glutamate and substance P onto dorsal horn neurons.",
+   sens:"α2δ-1 is upregulated after nerve injury.",
+   drugs:"Gabapentin and pregabalin bind α2δ-1. Ziconotide, a synthetic cone-snail peptide, blocks Cav2.2 and is given intrathecally.",
+   plants:[],
+   teach:"Ziconotide is a natural product with a named target, route and dose. That is the standard a plant-derived mechanism claim is measured against.",
+   refs:["basbaum2009"]},
+  {id:"mor",n:"MOR",role:"inhibit",x:598,y:198,lp:"l",kind:"G protein-coupled receptor (Gi/o), μ-opioid",
+   where:"Peripheral terminals (more after inflammation), central terminals, dorsal horn neurons, periaqueductal grey and rostral ventromedial medulla.",
+   does:"Reduces calcium entry and transmitter release, hyperpolarizes neurons through potassium channels, and engages descending inhibition.",
+   sens:"Not applicable.",
+   drugs:"Morphine and other opioids.",
+   plants:[["Morphine","Papaver somniferum","Full agonist","people","corder2018"],["Mitragynine, 7-hydroxymitragynine","Mitragyna speciosa (kratom)","Partial agonists","cells","kruegel2016"]],
+   teach:"Corydalis and California poppy are often filed as opioid-like. Their best-characterized actions are at dopamine and GABA<sub>A</sub> receptors, so an opioid claim for them needs its own evidence.",
+   refs:["corder2018","kruegel2016"]},
+  {id:"cb1",n:"CB1",role:"inhibit",x:598,y:282,lp:"l",kind:"G protein-coupled receptor (Gi/o)",
+   where:"Presynaptic terminals throughout the pain pathway: sensory neurons, dorsal horn, periaqueductal grey and cortex.",
+   does:"Endocannabinoids made on demand act backwards across the synapse to suppress transmitter release.",
+   sens:"Not applicable.",
+   drugs:"Cannabinoid medicines where legal.",
+   plants:[["Δ9-THC","Cannabis sativa","Partial agonist","people","woodhams2017"],["Cannabidiol","Cannabis sativa","Negative allosteric modulator","cells","laprairie2015"]],
+   teach:"Intoxication runs through the same receptor, so central CB1 analgesia is hard to separate from psychoactivity.",
+   refs:["woodhams2017","laprairie2015"]},
+  {id:"a2",n:"α2-adrenoceptor",role:"inhibit",x:648,y:282,lp:"b",kind:"G protein-coupled receptor (Gi)",
+   where:"Central terminals and dorsal horn neurons, the target of descending noradrenergic fibres.",
+   does:"Noradrenaline from descending pathways suppresses dorsal horn transmission.",
+   sens:"Not applicable.",
+   drugs:"Clonidine acts here; serotonin-noradrenaline reuptake inhibitors raise noradrenaline.",
+   plants:[],
+   teach:"Descending noradrenergic inhibition is one reason sleep, mood and threat change pain at the spinal level ({ossipov2014}).",
+   refs:["ossipov2014"]},
+  {id:"nmda",n:"NMDA and AMPA",role:"transmit",x:770,y:198,lp:"a",kind:"Glutamate-gated ion channels",
+   where:"Dorsal horn neurons.",
+   does:"AMPA receptors carry fast transmission. NMDA receptors open when sustained depolarization removes their magnesium block, admit calcium, and drive wind-up and synaptic strengthening.",
+   sens:"Repeated C-fibre input relieves the magnesium block.",
+   drugs:"Ketamine blocks NMDA receptors.",
+   plants:[],
+   teach:"This is the core machinery of central sensitization ({woolf2011}).",
+   refs:["woolf2011"]},
+  {id:"nk1",n:"NK1",role:"transmit",x:770,y:282,lp:"b",kind:"G protein-coupled receptor (Gq)",
+   where:"Lamina I projection neurons.",
+   does:"Substance P from peptidergic C fibres excites projection neurons.",
+   sens:"Substance P release rises with C-fibre activity.",
+   drugs:"NK1 antagonists attenuated sensitized pain responses in animals but failed in clinical trials across a range of pain states ({hill2000}).",
+   plants:[],
+   teach:"A clean mechanism in rodents that did not translate. Keep it in mind when a herbal paper rests on a mouse model.",
+   refs:["basbaum2009","hill2000"]},
+  {id:"glyr",n:"GlyR α3",role:"sensitize",x:872,y:198,lp:"b",kind:"Glycine-gated chloride channel",
+   where:"Dorsal horn neurons receiving inhibitory glycinergic input.",
+   does:"Carries glycinergic inhibition.",
+   sens:"PGE<sub>2</sub> acting through EP2 and PKA phosphorylates it and reduces inhibition ({harvey2004}).",
+   drugs:"None.",plants:[],
+   teach:"One route by which inflammation weakens spinal inhibition, and one reason prostaglandin effects can matter centrally.",
+   refs:["harvey2004"]},
+  {id:"gaba",n:"GABAA and KCC2",nh:"GABA<sub>A</sub> and KCC2",role:"inhibit",x:872,y:282,lp:"b",kind:"Chloride channel, and the transporter that sets its driving force",
+   where:"Dorsal horn neurons.",
+   does:"GABA<sub>A</sub> receptors inhibit only while KCC2 keeps intracellular chloride low.",
+   sens:"After nerve injury, microglial BDNF shifts the chloride gradient in lamina I neurons, so GABA inhibits less and can even excite ({coull2005}).",
+   drugs:"Benzodiazepines enhance GABA<sub>A</sub> receptors but are not used as analgesics.",
+   plants:[["(S)-Reticuline","Eschscholzia californica (California poppy)","Positive modulator at α3, α5 and α6-containing receptors; inhibits α2-containing receptors","cells","fedurco2015"],["Protopine","Eschscholzia californica","No significant effect up to 30 µM","cells","fedurco2015"]],
+   teach:"If the chloride gradient has shifted, boosting GABA<sub>A</sub> does less than expected. Subtype matters as well: the same poppy alkaloid enhanced some GABA<sub>A</sub> subtypes and inhibited another ({fedurco2015}). A nervine claim at this level should name the subtype and the patient's state.",
+   refs:["coull2005","fedurco2015"]},
+  {id:"glia",n:"Microglia",role:"sensitize",x:705,y:362,kind:"Immune cells of the spinal cord",
+   where:"Dorsal horn, near nerve-injured afferent terminals.",
+   does:"After nerve injury they activate and release BDNF and cytokines that reduce inhibition and increase excitation.",
+   sens:"Purinergic and Toll-like receptor signaling activate them.",
+   drugs:"None approved.",plants:[],
+   teach:"The body keeps part of the score here: immune cells in the spinal cord change how dorsal horn neurons respond ({coull2005}; {ji2016}).",
+   refs:["coull2005","ji2016"]},
+  {id:"ht",n:"5-HT receptors",short:"5-HT",role:"modulate",x:926,y:186,lp:"b",kind:"G protein-coupled receptors and one ion channel (5-HT3)",
+   where:"Dorsal horn, on terminals of descending serotonergic fibres from the rostral ventromedial medulla.",
+   does:"Serotonin can inhibit or facilitate dorsal horn transmission depending on receptor subtype.",
+   sens:"Descending facilitation can grow as pain becomes chronic ({ossipov2014}).",
+   drugs:"Serotonin-noradrenaline reuptake inhibitors.",plants:[],
+   teach:"Serotonin is two-sided in pain. \"Serotonergic\" is not by itself an analgesic mechanism.",
+   refs:["ossipov2014"]},
+  {id:"d2",n:"D2",role:"modulate",x:700,y:30,kind:"G protein-coupled receptor (Gi/o), dopamine",
+   where:"Brain.",
+   does:"Dopamine signaling through D2 receptors modulates pain and its affective weight.",
+   sens:"Not applicable.",
+   drugs:"None used for pain.",
+   plants:[["Dehydrocorybulbine","Corydalis yanhusuo","D2 antagonist; antinociceptive in mice without tolerance","animals","zhang2014"],["l-Tetrahydropalmatine","Corydalis yanhusuo","D1 partial agonist and D2 antagonist; analgesic and hypnotic in neuropathic mice","animals","liu2019"]],
+   teach:"If Corydalis works through dopamine receptors, the effects to monitor are those of a dopamine-active drug, including sedation, and the claim lives at the brain level. Writing \"Corydalis for pain\" commits you to both.",
+   refs:["zhang2014","liu2019"]},
+  {id:"kor",n:"KOR",role:"inhibit",x:860,y:30,kind:"G protein-coupled receptor (Gi/o), κ-opioid",
+   where:"Brain and spinal cord.",
+   does:"Dynorphin's receptor: analgesic in animals, with dysphoria and aversion.",
+   sens:"Not applicable.",
+   drugs:"None in routine pain care.",
+   plants:[["Salvinorin A","Salvia divinorum","Potent selective agonist","cells","roth2002"]],
+   teach:"Potency at a receptor says nothing about tolerability.",
+   refs:["roth2002","corder2018"]}
+];
+const RMAP={};RX.forEach(function(r){RMAP[r.id]=r;});
+let curR="trpv1", rFilter="all";
+
+function shapeSVG(role,x,y,s){
+  s=s||11;
+  if(role==="transduce")return '<circle class="shape r-transduce" cx="'+x+'" cy="'+y+'" r="'+s+'"/>';
+  if(role==="sensitize")return '<path class="shape r-sensitize" d="M'+x+' '+(y-s-2)+' L'+(x+s+2)+' '+y+' L'+x+' '+(y+s+2)+' L'+(x-s-2)+' '+y+' Z"/>';
+  if(role==="transmit")return '<rect class="shape r-transmit" x="'+(x-s+1)+'" y="'+(y-s+1)+'" width="'+(2*s-2)+'" height="'+(2*s-2)+'" rx="2"/>';
+  if(role==="inhibit")return '<path class="shape r-inhibit" d="M'+x+' '+(y-s-1)+' L'+(x+s+1)+' '+(y+s-1)+' L'+(x-s-1)+' '+(y+s-1)+' Z"/>';
+  let p=[];for(let i=0;i<6;i++){const a=(Math.PI/3)*i;p.push((x+(s+1)*Math.cos(a)).toFixed(1)+" "+(y+(s+1)*Math.sin(a)).toFixed(1));}
+  return '<path class="shape r-modulate" d="M'+p.join(" L")+' Z"/>';
+}
+function buildBench(){
+  const svg=$("#benchSvg");
+  let h='';
+  h+='<rect x="8" y="62" width="282" height="350" rx="18" fill="var(--carmine-wash)" opacity=".7"/>';
+  h+='<text class="zone-label" x="22" y="86">Injured tissue and skin</text>';
+  h+='<rect x="578" y="62" width="414" height="350" rx="18" fill="var(--violet-wash)" opacity=".7"/>';
+  h+='<text class="zone-label" x="592" y="86">Spinal dorsal horn</text>';
+  h+='<rect x="578" y="4" width="414" height="50" rx="12" fill="var(--cool-wash)"/>';
+  h+='<text class="zone-label" x="592" y="34">Brain</text>';
+  h+='<circle cx="62" cy="118" r="26" fill="var(--card)" stroke="var(--cool)" stroke-width="1.5"/>';
+  h+='<text class="zone-label" x="40" y="160" style="font-weight:600">immune cell</text>';
+  const tips=["trpv1","trpa1","trpm8","piezo2","asic3","p2x3","b2","ep","trka"];
+  tips.forEach(function(id){const r=RMAP[id];h+='<line x1="292" y1="240" x2="'+r.x+'" y2="'+r.y+'" stroke="var(--ink-3)" stroke-width="2.2" stroke-linecap="round"/>';});
+  h+='<line x1="290" y1="240" x2="612" y2="240" stroke="var(--ink-3)" stroke-width="4" stroke-linecap="round"/>';
+  h+='<line x1="460" y1="240" x2="460" y2="196" stroke="var(--ink-3)" stroke-width="2.5"/>';
+  h+='<circle cx="460" cy="172" r="24" fill="var(--paper-3)" stroke="var(--ink-3)" stroke-width="1.5"/>';
+  h+='<text class="zone-label" x="460" y="132" text-anchor="middle">dorsal root ganglion</text>';
+  h+='<text class="zone-label" x="520" y="266" text-anchor="middle" style="font-weight:600">nociceptor axon</text>';
+  h+='<circle cx="620" cy="240" r="24" fill="var(--card)" stroke="var(--ink-3)" stroke-width="1.5"/>';
+  h+='<circle cx="795" cy="240" r="34" fill="var(--card)" stroke="var(--ink-3)" stroke-width="1.5"/>';
+  h+='<text class="zone-label" x="795" y="244" text-anchor="middle" style="font-weight:600">projection</text>';
+  h+='<text class="zone-label" x="795" y="258" text-anchor="middle" style="font-weight:600">neuron</text>';
+  h+='<line x1="795" y1="206" x2="795" y2="56" stroke="var(--ink-3)" stroke-width="3"/>';
+  h+='<path d="M788 66 L795 52 L802 66" fill="none" stroke="var(--ink-3)" stroke-width="3"/>';
+  h+='<path d="M968 54 C968 150 955 230 870 252" fill="none" stroke="var(--cool)" stroke-width="3" stroke-dasharray="7 5"/>';
+  h+='<text class="zone-label" x="902" y="120" style="font-weight:600">descending</text>';
+  h+='<text class="zone-label" x="902" y="134" style="font-weight:600">control</text>';
+  RX.forEach(function(r){
+    const lp=r.lp||"r";
+    let tx=r.x+16, ty=r.y+5, anchor="start";
+    if(lp==="l"){tx=r.x-16;anchor="end";}
+    if(lp==="a"){tx=r.x;ty=r.y-19;anchor="middle";}
+    if(lp==="b"){tx=r.x;ty=r.y+30;anchor="middle";}
+    const label=r.id==="gaba"?"GABA-A and KCC2":(r.short||r.n);
+    h+='<g class="mk" data-r="'+r.id+'" tabindex="0" role="button" aria-label="'+esc(r.n)+', '+ROLES[r.role].n.toLowerCase()+'">'+shapeSVG(r.role,r.x,r.y)+'<text x="'+tx+'" y="'+ty+'" text-anchor="'+anchor+'">'+esc(label)+'</text></g>';
+  });
+  svg.innerHTML=h;
+  $$(".mk",svg).forEach(function(g){
+    g.addEventListener("click",function(){setR(g.dataset.r);});
+    g.addEventListener("keydown",function(ev){if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();setR(g.dataset.r);}});
+  });
+  /* legend */
+  $("#legend").innerHTML=Object.keys(ROLES).map(function(k){return '<span><svg viewBox="0 0 30 30">'+shapeSVG(k,15,15,9)+'</svg>'+ROLES[k].n+'</span>';}).join("");
+  /* filters */
+  const fb=$("#benchFilters");
+  [["all","All"],["transduce","Transduce"],["sensitize","Sensitize"],["transmit","Transmit"],["inhibit","Inhibit"],["modulate","Modulate"],["plants","Has plant data"]].forEach(function(f){
+    const b=document.createElement("button");b.className="chip";b.type="button";b.dataset.f=f[0];b.textContent=f[1];b.setAttribute("aria-pressed",f[0]==="all"?"true":"false");
+    b.addEventListener("click",function(){rFilter=f[0];$$("#benchFilters .chip").forEach(function(c){c.setAttribute("aria-pressed",c.dataset.f===rFilter?"true":"false");});applyFilter();});
+    fb.appendChild(b);
+  });
+  /* list */
+  $("#rlist").innerHTML=RX.map(function(r){return '<button type="button" data-r="'+r.id+'">'+(r.nh||esc(r.n))+'</button>';}).join("");
+  $$("#rlist button").forEach(function(b){b.addEventListener("click",function(){setR(b.dataset.r);});});
+}
+function matchFilter(r){if(rFilter==="all")return true;if(rFilter==="plants")return r.plants.length>0;return r.role===rFilter;}
+function applyFilter(){
+  $$(".mk").forEach(function(g){g.classList.toggle("dim",!matchFilter(RMAP[g.dataset.r]));});
+  $$("#rlist button").forEach(function(b){b.classList.toggle("dim",!matchFilter(RMAP[b.dataset.r]));});
+}
+function setR(id){
+  curR=id;const r=RMAP[id];
+  $$(".mk").forEach(function(g){g.classList.toggle("on",g.dataset.r===id);g.setAttribute("aria-pressed",g.dataset.r===id?"true":"false");});
+  $$("#rlist button").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.r===id?"true":"false");});
+  let left='<h3>'+(r.nh||esc(r.n))+'</h3><div class="kind">'+r.kind+'. '+ROLES[r.role].n+'.</div><dl>';
+  [["Where",r.where],["What it does",r.does],["What sensitizes or changes it",r.sens],["Drugs that act here",r.drugs]].forEach(function(p){left+='<dt>'+p[0]+'</dt><dd>'+T(p[1])+'</dd>';});
+  left+='<dt>Read</dt><dd>'+r.refs.map(C).join("; ")+'</dd></dl>';
+  let right='<h4>Plant compounds with measured activity here</h4>';
+  if(r.plants.length){
+    right+='<table class="ptable"><thead><tr><th scope="col">Compound and source</th><th scope="col">Action</th><th scope="col">Evidence</th></tr></thead><tbody>';
+    r.plants.forEach(function(p){right+='<tr><td><b>'+p[0]+'</b><br><span class="small"><i>'+p[1]+'</i></span></td><td>'+p[2]+'</td><td><span class="tag '+p[3]+'">'+p[3]+'</span><br><span class="small">'+C(p[4])+'</span></td></tr>';});
+    right+='</tbody></table>';
+  } else right+='<p class="small">None that this page can cite with confidence. A plant claim at this receptor would be new evidence and should be written as a hypothesis.</p>';
+  right+='<div class="teach"><b>For your formulation.</b> '+T(r.teach)+'</div>';
+  $("#rdetail").innerHTML='<div>'+left+'</div><div>'+right+'</div>';
+}
+
+/* hand test */
+let stim="none";
+function percept(){
+  const P=$("#tPeri").checked, Cs=$("#tCent").checked, D=$("#tDesc").checked;
+  let what,lvl,txt,carry;
+  if(stim==="none"){
+    if(P){what="Spontaneous burning";lvl=4;txt="Sensitized TRPV1 now opens near skin temperature, and sodium channels fire without a stimulus.";carry="TRPV1, Nav1.8 on C fibres";}
+    else if(Cs){what="Quiet, mostly";lvl=1;txt="Central amplification needs input. With little coming in, there is little to amplify, though after-sensations from earlier stimuli can linger.";carry="Little input";}
+    else{what="Nothing";lvl=0;txt="A resting hand with quiet terminals.";carry="None";}
+  } else if(stim==="warm"){
+    if(P){what="Painful heat";lvl=6;txt="Primary heat hyperalgesia. The terminal's heat threshold has fallen, so 40 °C crosses it.";carry="TRPV1 on C fibres";}
+    else{what="Warm";lvl=0;txt="40 °C sits below the heat threshold of a resting TRPV1."+(Cs?" Central sensitization amplifies mechanical input in the wider zone, and heat sensitivity there stays roughly normal.":"");carry="Warm fibres";}
+  } else if(stim==="brush"){
+    if(Cs){what="Painful touch";lvl=6;txt="Dynamic mechanical allodynia. Touch input reaches pain-signaling neurons once spinal inhibition fails.";carry="Piezo2 on Aβ touch fibres, then disinhibited dorsal horn";}
+    else{what="Touch";lvl=0;txt="Light brushing activates touch fibres only"+(P?". Away from the scar, peripheral sensitization alone does not make brushing painful.":".");carry="Piezo2 on Aβ touch fibres";}
+  } else {
+    if(Cs){what="Sharp pain, spreading";lvl=7;txt="Secondary punctate hyperalgesia: pinprick hurts more across a wide zone around the injury, and repeated pricks build up.";carry="Aδ and C fibres, amplified in the dorsal horn";}
+    else if(P){what="Sharp, a little more than usual";lvl=3;txt="Away from the scar, terminals are less sensitized than at the injury itself.";carry="Aδ and C fibres";}
+    else{what="Sharp prick";lvl=2;txt="Normal pinprick pain.";carry="Aδ fibres";}
+  }
+  if(D&&lvl>0){lvl=Math.min(10,lvl+2);txt+=" Weak descending inhibition turns the gain up further and lets pain outlast the stimulus.";}
+  const pain=lvl>=3;
+  $("#percept").innerHTML='<div class="small">R. reports</div><div class="what '+(pain?"pain":"calm")+'">'+what+'</div><div class="meter" role="img" aria-label="Pain intensity '+lvl+' out of 10"><i style="width:'+(lvl*10)+'%"></i></div><p>'+txt+'</p><p class="small"><b>Carried by:</b> '+carry+'</p>';
+}
+$$(".stims .chip").forEach(function(b){b.addEventListener("click",function(){stim=b.dataset.stim;$$(".stims .chip").forEach(function(c){c.setAttribute("aria-pressed",c===b?"true":"false");});percept();});});
+["#tPeri","#tCent","#tDesc"].forEach(function(s){$(s).addEventListener("change",percept);});
+
+/* ---------- posology ---------- */
+const HERBS={
+  willow:{marker:"Salicin",pct:1.5,ref:240,pctHint:"1.5% is the European Pharmacopoeia minimum for total salicylic derivatives in the dried bark. Some species carry several times more.",refHint:"Reference: an extract delivering 240 mg salicin a day relieved low back pain flares ({chrubasik2000}); the EU monograph's maximum daily dose of standardized extract for short-term low back pain works out to about the same. The same monograph's traditional-use tincture is 1:5 in 25% ethanol at 15 to 24 mL a day, accepted on long-standing use rather than trial evidence ({ema2017}).",etoh:25},
+  turmeric:{marker:"Curcuminoids",pct:3,ref:1000,pctHint:"Turmeric rhizome typically carries a few percent curcuminoids. Set the value from your product's analysis.",refHint:"Reference: trials pooled in a joint arthritis meta-analysis mostly used about 1000 mg of curcumin a day ({daily2016}), and plasma levels after oral curcumin are still very low ({anand2007}).",etoh:60},
+  custom:{marker:"Marker",pct:1,ref:100,pctHint:"Enter the marker content of the dried herb.",refHint:"Enter the daily marker dose used in the trial or monograph you are relying on.",etoh:45}
+};
+function setHerb(h){
+  const H=HERBS[h];
+  $("#cPct").value=H.pct;$("#cRef").value=H.ref;$("#cEtoh").value=H.etoh;
+  $("#cPctHint").textContent=H.pctHint;$("#cRefHint").innerHTML=T(H.refHint);
+  if(h==="turmeric"){$("#cPrep").value="dry";$("#cAmt").value="2";$("#cFreq").value="1";}
+  if(h==="willow"){$("#cPrep").value="0.2";$("#cAmt").value="2";$("#cFreq").value="3";}
+  syncUnits();calc();
+}
+function syncUnits(){
+  const dry=$("#cPrep").value==="dry";
+  const u=$("#cUnit");
+  u.innerHTML=dry?'<option value="g">g of dried herb</option>':'<option value="ml">mL</option><option value="drops">drops</option>';
+  $("#cDpmWrap").style.display=(dry||$("#cUnit").value!=="drops")?"none":"";
+  $("#cEtohWrap").style.display=dry?"none":"";
+}
+function fmt(n,d){if(!isFinite(n))return "–";return n.toLocaleString("en-US",{maximumFractionDigits:d,minimumFractionDigits:0});}
+function calc(){
+  const h=$("#cHerb").value,H=HERBS[h];
+  const prep=$("#cPrep").value, dry=prep==="dry";
+  const amt=Math.max(0,parseFloat($("#cAmt").value)||0), freq=Math.max(1,parseFloat($("#cFreq").value)||1);
+  const unit=$("#cUnit").value, dpm=Math.max(1,parseFloat($("#cDpm").value)||30);
+  const pct=parseFloat($("#cPct").value), ext=parseFloat($("#cExt").value)/100;
+  const ref=Math.max(1,parseFloat($("#cRef").value)||1), etoh=Math.max(0,parseFloat($("#cEtoh").value)||0);
+  $("#cPctOut").textContent=fmt(pct,1)+"%";$("#cExtOut").textContent=Math.round(ext*100)+"%";
+  let mlDose=0,herbDose;
+  if(dry){herbDose=amt;}
+  else{mlDose=unit==="drops"?amt/dpm:amt;herbDose=mlDose*parseFloat(prep);}
+  const herbDay=herbDose*freq;
+  const mg=herbDay*pct/100*1000*ext;
+  const share=mg/ref*100;
+  $("#cMarkerName").textContent=H.marker+" delivered per day";
+  $("#cOut").innerHTML=fmt(mg,mg<10?1:0)+' <small>mg</small>';
+  $("#cPctLine").textContent=fmt(share,share<10?1:0)+"% of the reference dose of "+fmt(ref,0)+" mg";
+  const max=Math.max(mg,ref)*1.08;
+  $("#cFill").style.width=(mg/max*100)+"%";
+  $("#cRefMark").style.left=(ref/max*100)+"%";
+  let facts='<li><span>Dried herb equivalent per day</span><b>'+fmt(herbDay,2)+' g</b></li>';
+  let needLine="";
+  if(!dry){
+    const mlDay=mlDose*freq;
+    const needMl=ref/(parseFloat(prep)*pct/100*1000*ext);
+    const ethG=needMl*etoh/100*0.789;
+    facts='<li><span>Liquid per day</span><b>'+fmt(mlDay,1)+' mL</b></li>'+facts;
+    facts+='<li><span>Volume per day to reach the reference</span><b>'+fmt(needMl,0)+' mL</b></li>';
+    facts+='<li><span>Ethanol in that volume</span><b>'+fmt(ethG,0)+' g</b></li>';
+    needLine=" Reaching the reference with this preparation takes about "+fmt(needMl,0)+" mL a day, carrying roughly "+fmt(ethG,0)+" g of ethanol"+(ethG>=14?", which is more than a standard US drink":"")+".";
+  } else {
+    const needG=ref/(pct/100*1000*ext);
+    facts+='<li><span>Dried herb per day to reach the reference</span><b>'+fmt(needG,1)+' g</b></li>';
+    needLine=" Reaching the reference as dried herb takes about "+fmt(needG,0)+" g a day, and for poorly absorbed markers even that says little about blood levels.";
+  }
+  $("#cFacts").innerHTML=facts;
+  let v;
+  if(share>=80)v="<b>In range.</b> This regimen delivers a marker amount comparable to the reference. The mechanism you cite now has a dose behind it.";
+  else if(share>=25)v="<b>Partial.</b> This delivers "+fmt(share,0)+"% of the reference. If you cite the trial's mechanism, say why a lower dose should work, or raise it.";
+  else v="<b>Subtherapeutic for this mechanism.</b> At "+fmt(share,share<10?1:0)+"% of the reference, a pharmacological claim borrowed from the trial is not supported. Either change the preparation and dose, or state a different rationale and own it.";
+  $("#cVerdict").innerHTML=v+needLine;
+}
+$("#cHerb").addEventListener("change",function(){setHerb(this.value);});
+$("#cPrep").addEventListener("change",function(){syncUnits();calc();});
+["#cAmt","#cFreq","#cUnit","#cDpm","#cPct","#cExt","#cRef","#cEtoh"].forEach(function(s){$(s).addEventListener("input",calc);$(s).addEventListener("change",calc);});
+$("#cUnit").addEventListener("change",function(){$("#cDpmWrap").style.display=(this.value==="drops")?"":"none";});
+
+function drops(){
+  const n=Math.max(0,parseFloat($("#dN").value)||0);
+  $("#dropBody").innerHTML=[20,30,40,50].map(function(d){const ml=n/d;return '<tr><td>'+d+(d===20?' (water, standard dropper)':'')+'</td><td>'+fmt(ml,2)+' mL</td><td>'+fmt(ml*0.2*1000,0)+' mg</td></tr>';}).join("");
+}
+$("#dN").addEventListener("input",drops);
+
+const NARR=[
+  {h:"Narrow margin",tag:["ok","Mechanism stated"],t:"Some plants are given in drops because the toxic dose sits close to the effective one. Ellingwood gave specific medicine lobelia in doses of one to twenty minims (a US minim is about 0.06 mL) and described its toxic signs in the same entry ({ellingwood1919}). The small dose follows from the pharmacology."},
+  {h:"Local or reflex target",tag:["ok","Mechanism stated"],t:"Bitters on the tongue, gargles and topicals act where they land. The dose is the concentration at that surface, so a few drops can be enough."},
+  {h:"Specific indication",tag:["mid","Mechanism optional"],t:"The eclectic tradition matched small repeated doses to a precise symptom picture. That is clinical observation. It becomes a mechanistic claim only when you name a target and show the dose can reach it."},
+  {h:"Meaning and ritual",tag:["ok","Mechanism stated, at the mind level"],t:"Taste, ritual and the relationship shape expectation, and expectation changes pain ({wiech2016}). If this is your reason, say so. It is a mechanism with real evidence."},
+  {h:"Energetic signal",tag:["bad","No exposure mechanism"],t:"Some practitioners describe drop doses as carrying the plant's character. That is a separate way of knowing, and it cannot borrow receptor language: three drops of willow tincture cannot be offered as a COX inhibitor."}
+];
+$("#narr").innerHTML=NARR.map(function(n){return '<li><div><div class="nh">'+n.h+'</div><span class="mtag '+n.tag[0]+'">'+n.tag[1]+'</span></div><div>'+T(n.t)+'</div></li>';}).join("");
+
+const EN=[
+  {id:"heat",n:"Heat (excitation)",seen:"Red, hot, swollen, throbbing; worse with warmth; restless.",bridge:"Inflammation and vasodilation; in a nerve-injured limb, neurogenic inflammation from peptides released by nociceptors.",pred:"The right wrist reads warmer than the left on a skin thermometer. A temperature asymmetry is also a CRPS vasomotor sign.",herb:"Cooling strategies need a mechanism and a dose: salicylate-bearing barks at trial-level exposure, or topical cooling through TRPM8 where concentration on the skin is the dose.",commit:"Measure both hands. If the injured side is cooler, the heat reading was wrong and the plan changes."},
+  {id:"cold",n:"Cold (depression)",seen:"Pale or bluish, cool, sluggish; worse in cold weather.",bridge:"Vasoconstriction and reduced perfusion from sympathetic vasoconstrictor tone; the cold presentation of CRPS.",pred:"The injured hand reads cooler, colour shifts toward blue or mottled, and pain worsens in the cold.",herb:"Rubefacients and warming stimulants act through TRPV1 and TRPA1 activation and the vasodilation that follows. On a sensitized limb they can also hurt, so start on a test patch.",commit:"If warmth aggravates and cooling soothes, revise the reading."},
+  {id:"dry",n:"Dry (atrophy)",seen:"Thin, shiny or flaking skin, brittle nails, stiffness, wasting.",bridge:"Trophic change and disuse, the motor and trophic category of the CRPS criteria; joint stiffness after immobilization.",pred:"Nail or hair growth differs between hands, range of motion is reduced, grip strength is down.",herb:"Emollient and demulcent topicals address the skin. The main correlate is disuse, so graded movement is the treatment the tissue state points to.",commit:"Track range of motion and grip at each visit. A reading that never moves these measures has told you little."},
+  {id:"stag",n:"Damp (stagnation)",seen:"Puffy, heavy, boggy, pitting; sluggish; worse with inactivity.",bridge:"Oedema from increased capillary permeability and reduced venous and lymphatic return, the sudomotor and oedema category of the CRPS criteria.",pred:"Hand volume or circumference is larger on the injured side; swelling rises with dependency and falls with elevation and movement.",herb:"Choose agents with documented effects on capillary permeability or venous tone at the doses used in trials, alongside elevation and movement.",commit:"Measure circumference at a fixed landmark. If both sides match, drop the reading."},
+  {id:"wind",n:"Wind (tension)",seen:"Guarding, cramping, tremor, the hand held stiffly; pain that shifts and catches.",bridge:"Protective guarding and sympathetic arousal driven by threat; tremor or dystonia as motor signs of CRPS.",pred:"Guarding eases when R. feels safe; fear-of-movement scores are high; tremor or a fixed posture may appear on examination.",herb:"Antispasmodic and relaxant herbs have a target here only if you name it: smooth muscle, skeletal muscle tone or central arousal. Guarding driven by fear points to graded exposure.",commit:"If guarding persists when R. is relaxed and confident, look for a motor sign of CRPS rather than a tension state."},
+  {id:"relax",n:"Damp (relaxation)",seen:"Lax, weak, sweaty, poor tone; fatigue.",bridge:"Deconditioning after immobilization; sweating asymmetry, which belongs to the sudomotor category of the CRPS criteria.",pred:"One palm sweats more than the other; strength on the injured side is lower than disuse alone explains.",herb:"Astringent topicals address the skin surface. The tone and strength picture calls for graded loading.",commit:"Record sweating asymmetry as a sign, and refer if it joins other CRPS features."},
+  {id:"stasis",n:"Blood stasis (TCM)",seen:"Fixed, stabbing pain, worse at night, dark or purplish colour, after trauma.",bridge:"Post-traumatic microvascular dysfunction and impaired perfusion, which can sustain chronic pain ({coderre2023}).",pred:"Colour and temperature asymmetry, swelling and night pain, the same findings that fill the CRPS vasomotor and oedema categories.",herb:"A claim to move the blood needs a vascular or haemostatic target and a dose. Herbs used this way often carry bleeding and anticoagulant cautions, so check R.'s medications ({gardner2013}).",commit:"Photograph and measure the colour and swelling. The reading should change as they change."},
+  {id:"vata",n:"Vata aggravation (Ayurveda)",seen:"Variable, moving pain; dryness; cold; anxiety; broken sleep.",bridge:"A sensitized, aroused nervous system with disrupted sleep: weak descending inhibition and heightened threat appraisal.",pred:"Pain varies with sleep and stress; hypersensitivity to touch, cold or sound; the comorbidities that mark nociplastic pain.",herb:"Warm, grounding and sleep-supporting measures make a checkable claim when the stated outcome is sleep or arousal ({ngan2011}).",commit:"Keep a sleep diary and a pain diary together. If pain does not track sleep, revise the reading."}
+];
+let curEn="heat";
+function renderEn(){
+  const e=EN.filter(function(x){return x.id===curEn;})[0];
+  let h='<h3>'+e.n+'</h3><div class="sub">An energetic reading, translated into a testable bridge</div>';
+  [["What you see",e.seen],["Physiological bridge",e.bridge],["Predicts for R.",e.pred],["Herb logic that keeps the mechanism",e.herb],["What you commit to",e.commit]].forEach(function(r){h+='<div class="row"><div class="k">'+r[0]+'</div><div class="v">'+T(r[1])+'</div></div>';});
+  if(e.id==="heat"||e.id==="cold"||e.id==="dry"||e.id==="stag"||e.id==="wind"||e.id==="relax")h+='<p class="note">Tissue-state vocabulary after '+C("wood2004")+'.</p>';
+  $("#enLabel").innerHTML=h;
+  $$("#enChips .chip").forEach(function(c){c.setAttribute("aria-pressed",c.dataset.en===curEn?"true":"false");});
+}
+$("#enChips").innerHTML=EN.map(function(e){return '<button type="button" class="chip" data-en="'+e.id+'" aria-pressed="false">'+e.n+'</button>';}).join("");
+$$("#enChips .chip").forEach(function(b){b.addEventListener("click",function(){curEn=b.dataset.en;renderEn();});});
+
+/* ---------- phenotype ---------- */
+const FIND=[
+  {g:"Pain",items:[
+    ["dur","Pain has lasted more than three months",""],
+    ["disp","Pain is out of proportion to the injury and its expected healing",""]]},
+  {g:"Symptoms R. reports",items:[
+    ["s_sens","Light touch hurts, or the skin is oversensitive","sensory"],
+    ["s_temp","One hand feels hotter or colder than the other","vasomotor"],
+    ["s_col","Skin colour of the hand changes","vasomotor"],
+    ["s_ed","The hand swells","sudomotor and oedema"],
+    ["s_sw","The hand sweats differently","sudomotor and oedema"],
+    ["s_rom","Stiffness or reduced movement","motor and trophic"],
+    ["s_mot","Weakness, tremor, or the hand not obeying","motor and trophic"],
+    ["s_tro","Nails, hair or skin texture have changed","motor and trophic"]]},
+  {g:"Signs you find on examination",items:[
+    ["g_allo","Light brushing of the back of the hand is painful","sensory"],
+    ["g_pin","Pinprick hurts more than on the other hand","sensory"],
+    ["g_temp","Skin temperature clearly differs from the other hand","vasomotor"],
+    ["g_col","Visible colour difference: red, blue or mottled","vasomotor"],
+    ["g_ed","Visible or measurable swelling","sudomotor and oedema"],
+    ["g_sw","Visible sweating difference","sudomotor and oedema"],
+    ["g_rom","Reduced range of motion","motor and trophic"],
+    ["g_mot","Weakness, tremor or a fixed posture","motor and trophic"],
+    ["g_tro","Shiny skin, or nail or hair changes","motor and trophic"]]},
+  {g:"Nerve findings",items:[
+    ["n_dist","Numbness or tingling confined to the thumb, index and middle fingers",""],
+    ["n_sig","Reduced or altered sensation in that same area on testing",""],
+    ["n_tin","Tapping over the carpal tunnel or scar reproduces tingling there",""],
+    ["n_ncs","A nerve conduction study confirms median neuropathy",""]]},
+  {g:"Whole-person findings",items:[
+    ["c_spread","Pain is regional rather than confined to the injury, or has spread to the forearm, shoulder or other side",""],
+    ["c_unex","Tissue and nerve findings do not fully account for the pain",""],
+    ["c_sleep","Sleep broken by frequent waking",""],
+    ["c_fat","Fatigue or trouble concentrating",""],
+    ["c_sens","More sensitive to light, sound or smells than before",""]]},
+  {g:"Tissue findings",items:[
+    ["k_load","Pain is sharp with gripping or loading and settles with rest",""],
+    ["k_loc","Tenderness localized over the plate or fracture line",""]]},
+  {g:"Red flags and other explanations",items:[
+    ["r_inf","Fever, wound redness or discharge, or rising pain at the hardware",""],
+    ["r_uni","Imaging shows non-union or a hardware problem",""],
+    ["r_acute","Numbness or weakness in the median territory getting rapidly worse",""],
+    ["r_oth","Another diagnosis better explains the signs and symptoms",""]]}
+];
+const PRESETS=[
+  {n:"Hardware and loading",on:["dur","k_load","k_loc","s_rom","g_rom"]},
+  {n:"Median nerve",on:["dur","n_dist","n_sig","n_tin","s_sens","k_load","s_rom"]},
+  {n:"Warm CRPS",on:["dur","disp","s_sens","s_temp","s_col","s_ed","s_sw","s_rom","g_allo","g_temp","g_col","g_ed","g_rom"]},
+  {n:"Mixed, as often missed",on:["dur","disp","s_sens","s_temp","s_rom","s_mot","g_allo","g_pin","g_rom","n_dist","c_spread","c_unex","c_sleep","c_fat","k_load"]},
+  {n:"Clear all",on:[]}
+];
+(function(){
+  let h="";
+  FIND.forEach(function(f){
+    h+='<fieldset><legend>'+f.g+'</legend>';
+    f.items.forEach(function(it){h+='<label class="find"><input type="checkbox" name="'+it[0]+'"><span>'+it[1]+(it[2]?' <span class="cat">'+it[2]+'</span>':'')+'</span></label>';});
+    h+='</fieldset>';
+  });
+  $("#findings").innerHTML=h;
+  $("#findings").addEventListener("change",pheno);
+  $("#presets").innerHTML=PRESETS.map(function(p,i){return '<button type="button" class="'+(i===PRESETS.length-1?"btn ghost":"chip")+'" data-p="'+i+'">'+p.n+'</button>';}).join("");
+  $$("#presets button").forEach(function(b){b.addEventListener("click",function(){const p=PRESETS[+b.dataset.p];$$("#findings input").forEach(function(i){i.checked=p.on.indexOf(i.name)>-1;});pheno();});});
+})();
+function F(){const o={};$$("#findings input").forEach(function(i){o[i.name]=i.checked;});return o;}
+function pheno(){
+  const f=F();
+  const symC=[f.s_sens,f.s_temp||f.s_col,f.s_ed||f.s_sw,f.s_rom||f.s_mot||f.s_tro];
+  const sigC=[f.g_allo||f.g_pin,f.g_temp||f.g_col,f.g_ed||f.g_sw,f.g_rom||f.g_mot||f.g_tro];
+  const nSym=symC.filter(Boolean).length,nSig=sigC.filter(Boolean).length;
+  const crps=f.disp&&nSym>=3&&nSig>=2&&!f.r_oth;
+  const crpsR=f.disp&&nSym===4&&nSig>=2&&!f.r_oth;
+  let neuro=0;
+  if(f.n_dist){neuro=1;if(f.n_sig||f.n_tin)neuro=2;if(f.n_ncs&&(f.n_sig||f.n_tin))neuro=3;}
+  let noci=0;
+  const hyperSign=f.g_allo; /* Kosek 2021 lists evoked allodynia or painful after-sensation */
+  if(f.dur&&f.c_spread&&f.c_unex&&hyperSign){noci=1;if(f.s_sens&&(f.c_sleep||f.c_fat||f.c_sens))noci=2;}
+  const nocic=f.k_load||f.k_loc;
+  const any=Object.keys(f).some(function(k){return f[k];});
+  let h='<h4>Complex regional pain syndrome</h4>';
+  const cats=["Sensory","Vasomotor","Sudomotor, oedema","Motor, trophic"];
+  h+='<div class="bud"><div></div>'+cats.map(function(c){return '<div class="rh" style="text-align:center">'+c+'</div>';}).join("")+'<div class="rh">Symptoms</div>'+symC.map(function(v){return '<div class="cell'+(v?" lit":"")+'">'+(v?"yes":"no")+'</div>';}).join("")+'<div class="rh">Signs</div>'+sigC.map(function(v){return '<div class="cell'+(v?" lit":"")+'">'+(v?"yes":"no")+'</div>';}).join("")+'</div>';
+  if(crps){h+='<span class="status met">Budapest clinical criteria met'+(crpsR?", research criteria too":"")+'</span>';}
+  else{
+    const miss=[];
+    if(!f.disp)miss.push("disproportionate pain");
+    if(nSym<3)miss.push("symptoms in "+(3-nSym)+" more categor"+(3-nSym===1?"y":"ies"));
+    if(nSig<2)miss.push("signs in "+(2-nSig)+" more categor"+(2-nSig===1?"y":"ies"));
+    if(f.r_oth)miss.push("no better explanation");
+    h+='<span class="status notmet">Not met</span><div class="small">Still needed: '+miss.join(", ")+'.</div>';
+  }
+  h+='<h4>Mechanism descriptors</h4>';
+  function meter(name,n,labels){return '<div>'+name+'</div><div class="steps">'+[1,2,3].map(function(i){return '<i class="'+(n>=i?"lit":"")+'"></i>';}).join("")+'</div><div class="lvl">'+labels[n]+'</div>';}
+  h+='<div class="mech">'+meter("Nociceptive",nocic?3:0,["no tissue findings ticked","","","tissue component present"])
+   +meter("Neuropathic",neuro,["not suggested","possible","probable","definite"])
+   +meter("Nociplastic",noci===0?0:(noci===1?2:3),["criteria not met","","possible","probable"])+'</div>';
+  const L=[];
+  if(f.r_inf)L.push(["flag","Refer before formulating: possible infection at the fracture or hardware needs same-week surgical review."]);
+  if(f.r_uni)L.push(["flag","Refer before formulating: non-union or hardware failure belongs to the surgical team."]);
+  if(f.r_acute)L.push(["flag","Urgent referral: progressing median nerve deficit can need decompression."]);
+  if(crps)L.push(["","Suspected CRPS: refer for medical assessment and co-manage. Physiotherapy and occupational therapy, including graded exposure and graded motor imagery, are core components of treatment ("+C("birklein2017")+"). Your herbal plan runs alongside and must not delay referral. Vitamin C concerns prevention in the weeks after fracture, and the trials disagree: CRPS fell from 10.1% to 1.8% with 500 mg a day in one ("+C("zollinger2007")+") and the same dose showed no benefit in another ("+C("ekrol2014")+")."]);
+  if(neuro>=2)L.push(["","Median nerve involvement: get it assessed. Topicals over the territory make receptor-level claims you can test, such as TRPV1 defunctionalization or TRPM8 cooling."]);
+  else if(neuro===1)L.push(["","Possible neuropathic component: examine sensation in the territory before deciding."]);
+  if(noci>=1)L.push(["","Nociplastic features: sleep, threat, activity and central processing are the targets. Brain- and body-level interventions fit; tissue-level anti-inflammatories need a stated bridge."]);
+  if(nocic)L.push(["","Nociceptive component: load management and tissue-level strategies fit. Pain focal over the plate goes back to the surgical team."]);
+  if(L.length>1)L.push(["","Mixed profiles are common. Name each component, then match each intervention to a component with its own mechanism and dose."]);
+  h+='<h4>What this profile licenses</h4>';
+  if(!any)h+='<p class="small">Tick findings or load an example to build R.\'s profile.</p>';
+  else if(!L.length)h+='<p class="small">Nothing yet points to a mechanism. Add findings from the examination.</p>';
+  else h+='<ul class="lic">'+L.map(function(l){return '<li class="'+l[0]+'">'+l[1]+'</li>';}).join("")+'</ul>';
+  $("#readout").innerHTML=h;
+}
+
+/* ---------- reading map ---------- */
+const LAYERS=[
+  {n:"What pain is",c:[],a:["raja2020"],gap:"No source separates pain from nociception; the 2020 IASP revision does exactly that."},
+  {n:"Mechanism descriptors",c:["Spahr 2017"],a:["kosek2016","kosek2021","fitzcharles2021","treede2019","finnerup2016"],gap:"Nociceptive, neuropathic and nociplastic are the working vocabulary; one source on the student list, a back pain phenotyping study, uses any of it."},
+  {n:"Theory lineage",c:["Garland 2012","Kiverstein 2022","Ramne 2024"],a:["melzackwall1965","melzack2001","tabor2017"],gap:"Predictive processing appears without the gate control and neuromatrix theories it extends, so its contribution is hard to see."},
+  {n:"Biopsychosocial model",c:[],a:["engel1977","gatchel2007","cormack2023"],gap:"Herbal formulations invoke it constantly; no source on the list states the model or its critique."},
+  {n:"Transduction and receptors",c:["Cao 2024"],a:["basbaum2009","caterina1997","julius2013","jordt2004","proudfoot2006","cox2006","szczot2018","sugiura2002","anandbley2011","fda2025"],gap:"Receptor biology appears only inside broad reviews; no primary work on the channels herbal claims target."},
+  {n:"Sensitization and spinal processing",c:["Woolf 2011","Haroutounian 2014","Zhao 2022"],a:["costigan2009","coull2005","harvey2004","hill2000"],gap:"Central sensitization is covered; the disinhibition mechanisms that explain touch-evoked pain are missing, and so is the record of spinal targets that failed to translate."},
+  {n:"Descending and endogenous control",c:["Smith 2007"],a:["ossipov2014","corder2018","woodhams2017"],gap:"Present only through sleep; the brainstem system and opioid and cannabinoid biology are missing."},
+  {n:"Brain networks",c:[],a:["hashmi2013"],gap:"Nothing on how chronification changes brain representation."},
+  {n:"Acute to chronic transition",c:["Nasir 2025","Wadhwa 2025","McGreevy 2011","Fregoso 2019","Thapa 2018"],a:[],gap:"Well covered by reviews."},
+  {n:"Neuroimmune and systemic",c:["Cao 2024","Coderre 2023","Garvey 2023","Yang 2026"],a:["ji2016"],gap:"Gut, microvascular and parasympathetic angles present; glial and immune regulation of pain missing."},
+  {n:"Psychological mechanisms",c:["Cherkin 2016","Cherkin 2017"],a:["vlaeyen2000","wiech2016"],gap:"Interventions without mechanisms: no expectation or fear-avoidance research."},
+  {n:"Sleep and pain",c:["Smith 2007","Matre 2015","Faraut 2015","Irwin 2023"],a:[],gap:"The strongest layer in the list."},
+  {n:"Social and occupational",c:["Stubbs 2016","Luk 2023","Grabara 2023"],a:[],gap:"Present through epidemiology."},
+  {n:"Wrist fracture outcomes",c:["Yoon 2020","Luk 2023","Laing 2017"],a:[],gap:"Good and specific to the case."},
+  {n:"Complex regional pain syndrome",c:[],a:["harden2010","goebel2021","birklein2017","moseley2014","zollinger2007","ekrol2014"],gap:"Absent, though the case is a crushed wrist."},
+  {n:"Plant pharmacology at pain targets",c:["Hossen 2021","Khan 2025","Tabęcka-Łonczyńska 2025"],a:["zhang2014","liu2019","gertsch2008","fedurco2015","kruegel2016","roth2002","bandell2004","bautista2005","laprairie2015","bisogno2001","dedov2002","mcnamara2005","yang2003","behrendt2004"],gap:"Animal and cell studies of other targets; no receptor-level work on the anodynes herbalists actually prescribe."},
+  {n:"Posology and exposure",c:["Bone & Mills 2013","Braun & Cohen 2015","Hoffmann 2003"],a:["chrubasik2000","ema2017","anand2007","nelson2017","daily2016","xu1999"],gap:"Textbook dose ranges with no exposure reasoning: no trial doses, marker content, bioavailability or monographs."},
+  {n:"Energetics and traditional systems",c:["Afkhami 2004","Agrawal 2010","Birch 2022","Ellingwood 1919"],a:["wood2004"],gap:"Traditional theory present; nothing on the tissue-state energetics most Western herbalists actually use."}
+];
+function renderLayers(){
+  $("#layers").innerHTML=LAYERS.map(function(L){
+    let sq=L.c.map(function(){return '<i class="c"></i>';}).join("")+L.a.map(function(){return '<i class="a"></i>';}).join("");
+    if(!L.c.length&&!L.a.length)sq='<i class="none">none</i>';
+    else if(!L.c.length)sq='<i class="none">none in student list</i>'+sq;
+    const det=(L.c.length?'<div><b>Student list:</b> '+L.c.join("; ")+'</div>':'')+(L.a.length?'<div><b>Added:</b> '+L.a.map(C).join("; ")+'</div>':'');
+    return '<div class="layer"><div class="ln">'+L.n+'</div><div class="sq" role="img" aria-label="'+L.c.length+' from student list, '+L.a.length+' added">'+sq+'</div><div><div class="gap">'+L.gap+'</div><details><summary>Show references</summary>'+det+'</details></div></div>';
+  }).join("");
+}
+function refItem(k){const r=REFS[k];const link=r.doi?' <a href="https://doi.org/'+r.doi+'">https://doi.org/'+r.doi+'</a>':(r.url?' <a href="'+r.url+'">'+r.url+'</a>':'');return '<li id="ref-'+k+'">'+r.apa+link+'</li>';}
+function sortKey(k){return REFS[k].apa.replace(/<[^>]+>/g,"").toLowerCase();}
+function renderRefs(){
+  const a=Object.keys(REFS).filter(function(k){return REFS[k].g==="a";}).sort(function(x,y){return sortKey(x)<sortKey(y)?-1:1;});
+  const c=Object.keys(REFS).filter(function(k){return REFS[k].g==="c";}).sort(function(x,y){return sortKey(x)<sortKey(y)?-1:1;});
+  $("#refsAdded").innerHTML=a.map(refItem).join("");
+  $("#refsClass").innerHTML=c.map(refItem).join("");
+}
+
+/* ---------- theme + nav ---------- */
+const root=document.documentElement, tbtn=$("#themeBtn");
+function isDark(){const t=root.getAttribute("data-theme");if(t)return t==="dark";return window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;}
+function syncThemeBtn(){tbtn.textContent=isDark()?"Light mode":"Dark mode";}
+try{const saved=localStorage.getItem("wkts-theme");if(saved)root.setAttribute("data-theme",saved);}catch(e){}
+syncThemeBtn();
+tbtn.addEventListener("click",function(){const next=isDark()?"light":"dark";root.setAttribute("data-theme",next);try{localStorage.setItem("wkts-theme",next);}catch(e){}syncThemeBtn();});
+if(window.IntersectionObserver){
+  const links=$$(".navlinks a");
+  const io=new IntersectionObserver(function(entries){entries.forEach(function(en){if(en.isIntersecting){links.forEach(function(a){a.setAttribute("aria-current",a.getAttribute("href")==="#"+en.target.id?"true":"false");});}});},{rootMargin:"-40% 0px -55% 0px"});
+  $$("main section[id]").forEach(function(s){io.observe(s);});
+}
+
+/* ---------- init ---------- */
+buildBench();setR("trpv1");percept();
+setHerb("willow");drops();renderEn();pheno();renderLayers();renderRefs();
+setKeeper("tissue");
+})();
+</script>
+</body>
+</html>
