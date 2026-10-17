@@ -1,7 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Herb Dosing Tool</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
@@ -161,7 +163,7 @@ const QUESTIONS = [
 
 const SPECTRUM = [
   {
-    id: 'drop', label: 'Reflexogenic', sub: 'Drop dose · specific medicine', color: COLORS.purple,
+    id: 'drop', label: 'Reflexo\u00ADgenic', sub: 'Drop dose · specific medicine', color: COLORS.purple,
     doseRange: '1–15 drops of a 1:10 tincture per dose',
     mechanism: 'Receptor sensitization and autonomic reflex arc. Effect is threshold-dependent, not concentration-dependent. Adding more dose past the threshold does not add therapeutic effect — it adds adverse effects. The dose-response curve is not sigmoidal; it is threshold-gated.',
     lineage: 'Eclectic specific medicine — Scudder, Lloyd, Felter; Matthew Wood; Physiomedicalism; Thomsonian tradition',
@@ -175,7 +177,7 @@ const SPECTRUM = [
     ],
   },
   {
-    id: 'pk', label: 'Pharmacokinetic', sub: 'Standard range · serum concentration', color: COLORS.green,
+    id: 'pk', label: 'Pharma\u00ADco\u00ADkinetic', sub: 'Standard range · serum concentration', color: COLORS.green,
     doseRange: '1–5 mL tincture (1:5) TID, or equivalent standardized extract',
     mechanism: 'Systemic serum concentration drives effect. Dose must reach and maintain therapeutic concentration at the target tissue. Classic sigmoidal dose-response. Most clinical trial evidence lives here. DHE conversion is essential for cross-source comparison.',
     lineage: 'Modern phytotherapy — Bone, Stansbury, Braun & Cohen, BHP, ESCOP, Commission E, AHP monographs',
@@ -312,7 +314,7 @@ function Tab1() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginBottom: 10 }}>
         {SPECTRUM.map(z => (
           <button key={z.id} onClick={() => setZone(zone === z.id ? null : z.id)}
-            style={{ ...btn(zone === z.id, z.color), padding: '12px 10px', textAlign: 'left', display: 'block' }}>
+            style={{ ...btn(zone === z.id, z.color), padding: '12px 10px', textAlign: 'left', display: 'block', hyphens: 'auto', WebkitHyphens: 'auto', overflowWrap: 'anywhere' }}>
             <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 4 }}>{z.label}</div>
             <div style={{ fontSize: 11, opacity: 0.8, lineHeight: 1.4 }}>{z.sub}</div>
           </button>
