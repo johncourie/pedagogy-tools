@@ -10,9 +10,13 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: #f9fafb; color: #1a1a2e; }
+    .crumb { max-width: 1280px; margin: 0 auto; padding: 20px 24px 0; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: #6b7280; }
+    .crumb a { color: #6b7280; text-decoration: none; }
+    .crumb a:hover { color: #1a1a2e; }
   </style>
 </head>
 <body>
+  <div class="crumb"><a href="../../">Pedagogy Tools</a> · <a href="../">Dispensary</a></div>
   <div id="root"></div>
   <script type="text/babel">
     const { useState } = React;

@@ -38,6 +38,12 @@
     font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase;
     color: var(--muted); margin-bottom: 0.5rem;
   }
+  header .crumb {
+    font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 0.9rem;
+  }
+  header .crumb a { color: var(--muted); text-decoration: none; border-bottom: none; }
+  header .crumb a:hover { color: var(--accent); }
   header h1 { font-size: 1.7rem; font-weight: 600; line-height: 1.25; margin-bottom: 0.5rem; }
   header .lede { color: var(--muted); font-size: 0.95rem; max-width: 62ch; }
 
@@ -141,7 +147,7 @@
     body { padding: 0.5in; background: white; }
     .stage, .resource, .checklist, .concept, .antipattern, .hygiene { break-inside: avoid; }
     a { color: inherit; border-bottom: none; }
-    .toc { display: none; }
+    .toc, header .crumb { display: none; }
   }
 </style>
 </head>
@@ -149,6 +155,7 @@
 <div class="container">
 
 <header>
+  <div class="crumb"><a href="../../">Pedagogy Tools</a> · <a href="../">Safety</a></div>
   <div class="eyebrow">HRB-641 · Safety of Botanical Medicine · Working Resource</div>
   <h1>Signal &amp; Causality Scaffold</h1>
   <p class="lede">A workflow for the problem this course keeps coming back to: telling real harm signals apart from false ones, in a poorly regulated marketplace of chemically heterogeneous products, where causality is rarely clean.</p>

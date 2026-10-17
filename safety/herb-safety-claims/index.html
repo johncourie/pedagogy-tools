@@ -42,6 +42,20 @@
     min-height: 100vh;
   }
 
+  /* BREADCRUMB */
+  .crumb {
+    background: var(--bg-dark);
+    padding: 1.1rem 2rem 0;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #8a7f6e;
+  }
+
+  .crumb a { color: #8a7f6e; text-decoration: none; }
+  .crumb a:hover { color: #f5f1eb; }
+
   /* HEADER */
   .site-header {
     background: var(--bg-dark);
@@ -951,6 +965,8 @@
 </style>
 </head>
 <body>
+
+<div class="crumb"><a href="../../">Pedagogy Tools</a> · <a href="../">Safety</a></div>
 
 <header class="site-header">
   <div class="header-top">

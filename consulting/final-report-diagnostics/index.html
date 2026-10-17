@@ -62,6 +62,16 @@
     margin:0;
   }
   .site-header .running-case strong{color:#fff;}
+  .site-header .crumb{
+    font-family:var(--sans);
+    font-size:11px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:#cfdbcf;
+    margin-bottom:22px;
+  }
+  .site-header .crumb a{color:#cfdbcf;text-decoration:none;}
+  .site-header .crumb a:hover{color:#fff;}
 
   /* ---------- progress ---------- */
   .progress{
@@ -377,6 +387,7 @@
     .progress,.reveal-row,.site-footer .footer-actions,.howto .save-note{display:none !important;}
     .annotation{display:block !important;animation:none;border-color:#bbb;}
     .site-header{background:#fff;color:#000;border-bottom:2px solid #000;}
+    .site-header .crumb{display:none;}
     .site-header .kicker,.site-header .running-case{color:#333;}
     .mode-tag{background:#000;}
     textarea{border:1px solid #999;}
@@ -388,6 +399,7 @@
 
 <header class="site-header">
   <div class="wrap">
+    <div class="crumb"><a href="../../">Pedagogy Tools</a> · <a href="../">Consulting</a></div>
     <div class="kicker">HPDM Capstone &middot; A Worked Case</div>
     <h1>Diagnosing Failure Modes in the Final Report</h1>
     <p class="running-case">Running case &mdash; <strong>Hollow Creek Botanicals</strong></p>

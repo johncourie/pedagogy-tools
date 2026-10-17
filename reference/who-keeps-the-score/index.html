@@ -73,6 +73,9 @@ sub{font-size:.72em}
 
 /* hero */
 .hero{padding:clamp(36px,7vw,88px) 0 40px}
+.crumb{font-family:var(--font-ui);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin:0 0 18px}
+.crumb a{color:var(--ink-3);text-decoration:none}
+.crumb a:hover{color:var(--ink)}
 .slot-line{font-family:var(--font-ui);font-weight:800;margin:0 0 26px;letter-spacing:-.02em;line-height:.96}
 .slot-line .l1,.slot-line .l3{display:block;font-size:clamp(2rem,6.4vw,4.6rem);font-variation-settings:"wdth" 70;color:var(--ink)}
 .reel-window{display:block;overflow:hidden;padding:.06em 0 .1em;margin:.02em 0}
@@ -309,7 +312,7 @@ footer{border-top:1px solid var(--rule);margin-top:50px;padding:26px 0 50px;font
   .meter i,.dosebar .fill{transition:none}
 }
 @media print{
-  .topbar,.picker,.bench-tools,.presets,.theme-btn{display:none}
+  .crumb,.topbar,.picker,.bench-tools,.presets,.theme-btn{display:none}
   .sec{break-inside:auto}
 }
 </style>
@@ -334,6 +337,7 @@ footer{border-top:1px solid var(--rule);margin-top:50px;padding:26px 0 50px;font
 <main id="top">
 <section class="hero">
   <div class="wrap">
+    <div class="crumb"><a href="../../">Pedagogy Tools</a> · <a href="../">Reference</a></div>
     <h1 class="slot-line" aria-label="Who keeps the score?">
       <span class="l1" aria-hidden="true">The</span>
       <span class="reel-window" aria-hidden="true"><span class="reel" id="reel">tissue</span></span>

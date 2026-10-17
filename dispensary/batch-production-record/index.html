@@ -39,6 +39,9 @@ header { background: var(--gray-900); color: #fff; padding: 16px 0; position: st
 header .container { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
 header h1 { font-size: 18px; font-weight: 600; letter-spacing: -0.02em; }
 header h1 span { color: var(--gray-400); font-weight: 400; }
+.crumb { background: var(--gray-900); color: var(--gray-400); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; padding-top: 12px; }
+.crumb a { color: var(--gray-400); text-decoration: none; }
+.crumb a:hover { color: #fff; }
 nav { display: flex; gap: 4px; }
 nav button { background: transparent; border: 1px solid transparent; color: var(--gray-400); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500; transition: all 0.15s; }
 nav button:hover { color: #fff; background: rgba(255,255,255,0.08); }
@@ -160,7 +163,7 @@ nav button.active { color: #fff; background: rgba(255,255,255,0.15); border-colo
 
 /* PRINT */
 @media print {
-  header, nav, .learn-controls, .template-controls, .template-actions, .audit-meta, .audit-bulk, .progress-bar-wrap, .workflow-meta, .workflow-actions, .toast, .btn { display: none !important; }
+  .crumb, header, nav, .learn-controls, .template-controls, .template-actions, .audit-meta, .audit-bulk, .progress-bar-wrap, .workflow-meta, .workflow-actions, .toast, .btn { display: none !important; }
   .view { display: none !important; padding: 0 !important; }
   .view.active { display: block !important; }
   body { font-size: 11pt; }
@@ -209,6 +212,8 @@ nav button.active { color: #fff; background: rgba(255,255,255,0.15); border-colo
 </style>
 </head>
 <body>
+
+<div class="crumb"><div class="container"><a href="../../">Pedagogy Tools</a> · <a href="../">Dispensary</a></div></div>
 
 <header>
   <div class="container">

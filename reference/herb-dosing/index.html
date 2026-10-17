@@ -8,6 +8,9 @@
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: system-ui, sans-serif; background: #f8f7f4; color: #1a1a18; }
+.crumb { max-width: 900px; margin: 0 auto; padding: 1.25rem 1rem 0; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: #7a7870; }
+.crumb a { color: #7a7870; text-decoration: none; }
+.crumb a:hover { color: #1a1a18; }
 input[type=range] { width: 100%; cursor: pointer; }
 input[type=number], input[type=text], select {
   width: 100%; padding: 7px 10px;
@@ -56,6 +59,7 @@ input[type=number]:focus, input[type=text]:focus, select:focus {
 </style>
 </head>
 <body>
+<div class="crumb"><a href="../../">Pedagogy Tools</a> · <a href="../">Reference</a></div>
 <div id="root"></div>
 <script type="text/babel">
 const { useState } = React;
