@@ -1,0 +1,1137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="referrer" content="no-referrer">
+<title>Link Self-Defense</title>
+<meta name="description" content="Read what a link carries, strip the tracking, cite it correctly in APA 7, and share it without leaking information about yourself. Runs entirely in your browser.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23b1b7ba'/%3E%3Crect x='1' y='2' width='3' height='2' fill='%23e4e7e8'/%3E%3Crect x='7' y='1' width='2' height='3' fill='%23101416'/%3E%3Crect x='11' y='5' width='4' height='2' fill='%23e4e7e8'/%3E%3Crect x='3' y='8' width='2' height='3' fill='%23101416'/%3E%3Crect x='8' y='9' width='3' height='2' fill='%23e4e7e8'/%3E%3Crect x='12' y='12' width='2' height='3' fill='%23101416'/%3E%3Crect x='2' y='13' width='4' height='2' fill='%23e4e7e8'/%3E%3C/svg%3E">
+<style>
+:root {
+  /* Layout: a static-grey broadcast band carries the title; a sticky tab strip tunes between five channels; the reader is the one raised object, everything else sits in a single reading column. Color comes only from the cargo tiers. */
+  --bg: #d0d4d6;
+  --surface: #e8ebec;
+  --well: #dde1e3;
+  --ink: #101416;
+  --ink-soft: #3e474c;
+  --rule: #a3abaf;
+  --accent: #1d5d72;
+  --static-lo: #b1b7ba;
+  --static-hi: #e4e7e8;
+  --band-ink: #0c1012;
+  --scan: rgba(16, 20, 22, 0.07);
+  --shadow: rgba(16, 20, 22, 0.16);
+  --t-label: #85570a;
+  --t-click: #ac3f17;
+  --t-share: #91306d;
+  --t-token: #a91d2a;
+  --t-content: #2b683b;
+  --t-unknown: #525d63;
+
+  --f-mono: ui-monospace, "SF Mono", "Cascadia Mono", "JetBrains Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --f-body: Charter, "Bitstream Charter", "Iowan Old Style", "Sitka Text", Cambria, Georgia, serif;
+
+  --s-xs: 0.8125rem;
+  --s-sm: 0.9375rem;
+  --s-md: 1.0625rem;
+  --s-lg: 1.375rem;
+  --s-xl: 2rem;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141819; --surface: #1c2123; --well: #111415; --ink: #d9dedf; --ink-soft: #9ba5a9; --rule: #3a4348; --accent: #7fc3d6;
+    --static-lo: #0d1011; --static-hi: #2c3234; --band-ink: #e8ecec; --scan: rgba(0, 0, 0, 0.28); --shadow: rgba(0, 0, 0, 0.5);
+    --t-label: #e3b552; --t-click: #f28c60; --t-share: #e486c0; --t-token: #ff7a7e; --t-content: #84d095; --t-unknown: #9aa5aa;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #141819; --surface: #1c2123; --well: #111415; --ink: #d9dedf; --ink-soft: #9ba5a9; --rule: #3a4348; --accent: #7fc3d6;
+  --static-lo: #0d1011; --static-hi: #2c3234; --band-ink: #e8ecec; --scan: rgba(0, 0, 0, 0.28); --shadow: rgba(0, 0, 0, 0.5);
+  --t-label: #e3b552; --t-click: #f28c60; --t-share: #e486c0; --t-token: #ff7a7e; --t-content: #84d095; --t-unknown: #9aa5aa;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 var(--s-md)/1.6 var(--f-body); -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+a { color: var(--accent); text-underline-offset: 0.18em; text-decoration-thickness: 1px; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+code, .mono { font-family: var(--f-mono); font-size: 0.92em; }
+.gut { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+/* Band */
+.band { position: relative; overflow: hidden; background: var(--bg); }
+.band canvas { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; display: block; }
+.band::after { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(to bottom, var(--scan) 0 1px, transparent 1px 3px); pointer-events: none; }
+.band-inner { position: relative; z-index: 1; max-width: 60rem; margin-inline: auto; padding-block: clamp(2.25rem, 6vw, 4.25rem) clamp(2rem, 5vw, 3.25rem); display: flex; flex-direction: column; gap: 1rem; }
+.crumb { margin: 0; font: 500 var(--s-xs)/1.4 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--band-ink); }
+.crumb a { color: inherit; text-decoration: none; }
+.crumb a:hover { text-decoration: underline; }
+.eyebrow { margin: 0; font: 600 var(--s-xs)/1.4 var(--f-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--band-ink); }
+h1 { margin: 0; font: 700 clamp(2.4rem, 8vw, 4.9rem)/0.98 var(--f-mono); letter-spacing: -0.035em; color: var(--band-ink); text-wrap: balance; }
+.lede { margin: 0; max-width: 40rem; font-size: clamp(1.0625rem, 2.2vw, 1.25rem); line-height: 1.5; color: var(--band-ink); }
+
+/* Tabs */
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.tabs-bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+.tabs { max-width: 60rem; margin-inline: auto; display: flex; gap: 0.25rem; overflow-x: auto; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab { flex: none; font: 600 var(--s-xs)/1 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; padding: 1rem 0.85rem 0.85rem; border: 0; border-bottom: 3px solid transparent; background: none; color: var(--ink-soft); white-space: nowrap; cursor: pointer; }
+.tab:first-child { padding-left: 0; }
+.tab:hover { color: var(--ink); }
+.tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--ink); }
+
+.panel { padding-block: 2rem 0; }
+.panel:focus-visible { outline: none; }
+
+/* Reader */
+.reader-wrap { max-width: 60rem; margin-inline: auto; display: flex; flex-direction: column; gap: 1.25rem; }
+.reader-intro { margin: 0; max-width: 44rem; }
+.reader { background: var(--surface); border: 1px solid var(--rule); border-radius: 4px; box-shadow: 0 1px 0 var(--shadow), 0 18px 40px -24px var(--shadow); padding: clamp(1rem, 3vw, 1.75rem); display: flex; flex-direction: column; gap: 1.25rem; }
+.reader-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.5rem 1.5rem; }
+.reader-head h2 { margin: 0; font: 700 var(--s-lg)/1.2 var(--f-mono); letter-spacing: -0.01em; }
+.local { margin: 0; display: flex; align-items: center; gap: 0.5rem; font: 500 var(--s-xs)/1.4 var(--f-mono); color: var(--ink-soft); }
+.local .dot { width: 0.55rem; height: 0.55rem; border-radius: 50%; background: var(--t-content); flex: none; }
+.field { display: flex; flex-direction: column; gap: 0.45rem; }
+.label { font: 600 var(--s-xs)/1.3 var(--f-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); }
+textarea { width: 100%; min-height: 5.25rem; resize: vertical; font: 400 var(--s-sm)/1.5 var(--f-mono); color: var(--ink); background: var(--well); border: 1px solid var(--rule); border-radius: 3px; padding: 0.75rem 0.85rem; word-break: break-all; }
+.examples { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+.btn { font: 600 var(--s-xs)/1 var(--f-mono); letter-spacing: 0.04em; color: var(--ink); background: transparent; border: 1px solid var(--rule); border-radius: 3px; padding: 0.55rem 0.75rem; cursor: pointer; }
+.btn:hover { background: color-mix(in srgb, var(--ink) 7%, transparent); }
+.btn[aria-pressed="true"] { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+.btn:disabled { opacity: 0.45; cursor: default; }
+.ex-note { margin: 0; font: 400 var(--s-xs)/1.4 var(--f-mono); color: var(--ink-soft); }
+.notice { margin: 0; padding: 0.85rem 1rem; background: var(--well); border-radius: 3px; font-size: var(--s-sm); }
+
+.results { display: flex; flex-direction: column; gap: 1.5rem; }
+.block { display: flex; flex-direction: column; gap: 0.6rem; min-width: 0; }
+.anatomy { margin: 0; padding: 0.85rem 1rem; background: var(--well); border-radius: 3px; font: 400 var(--s-sm)/1.9 var(--f-mono); word-break: break-all; overflow-wrap: anywhere; }
+.anatomy .base { color: var(--ink); }
+.anatomy .sep { color: var(--ink-soft); }
+.chip { font: inherit; color: var(--ink); background: color-mix(in srgb, var(--c) 12%, transparent); border: 0; border-bottom: 2px solid var(--c); padding: 0.05rem 0.2rem; margin: 0 0.05rem; cursor: pointer; border-radius: 2px 2px 0 0; word-break: break-all; text-align: left; }
+.chip.off { text-decoration: line-through; text-decoration-color: var(--c); opacity: 0.6; background: transparent; border-bottom-style: dashed; }
+.chip:hover { background: color-mix(in srgb, var(--c) 22%, transparent); }
+
+.steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.55rem; }
+.steps li { display: grid; grid-template-columns: 8.5rem minmax(0, 1fr); gap: 0.75rem; align-items: baseline; font-size: var(--s-sm); line-height: 1.5; }
+
+.pill { display: inline-block; font: 700 0.6875rem/1 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--c); background: color-mix(in srgb, var(--c) 13%, transparent); border: 1px solid color-mix(in srgb, var(--c) 45%, transparent); padding: 0.32em 0.5em; border-radius: 3px; white-space: nowrap; justify-self: start; }
+.tier-label { --c: var(--t-label); }
+.tier-click { --c: var(--t-click); }
+.tier-share { --c: var(--t-share); }
+.tier-token { --c: var(--t-token); }
+.tier-content { --c: var(--t-content); }
+.tier-unknown { --c: var(--t-unknown); }
+.tier-unknownid { --c: var(--t-unknown); }
+.tier-unknownid.pill { border-style: dashed; }
+.tier-accent { --c: var(--accent); }
+
+.params { display: flex; flex-direction: column; }
+.param { display: grid; grid-template-columns: minmax(0, 16rem) minmax(0, 1fr) auto; gap: 0.5rem 1.25rem; padding-block: 0.9rem; border-top: 1px solid var(--rule); align-items: start; }
+.param:last-child { border-bottom: 1px solid var(--rule); }
+.param .kv { display: flex; flex-direction: column; align-items: flex-start; gap: 0.45rem; min-width: 0; }
+.param .kv code { font-size: var(--s-sm); word-break: break-all; overflow-wrap: anywhere; line-height: 1.4; }
+.param .kv .val { color: var(--ink-soft); }
+.param .why { margin: 0; font-size: var(--s-sm); line-height: 1.5; min-width: 0; }
+.param.off .kv code { text-decoration: line-through; text-decoration-color: color-mix(in srgb, var(--ink) 45%, transparent); }
+.empty { margin: 0; font-size: var(--s-sm); color: var(--ink-soft); }
+
+.switch { display: flex; align-items: center; gap: 0.5rem; font: 600 var(--s-xs)/1 var(--f-mono); color: var(--ink-soft); cursor: pointer; user-select: none; }
+.switch input { appearance: none; -webkit-appearance: none; width: 2.5rem; height: 1.4rem; border-radius: 1rem; background: var(--well); border: 1px solid var(--rule); position: relative; cursor: pointer; margin: 0; flex: none; transition: background 0.15s; }
+.switch input::after { content: ""; position: absolute; top: 2px; left: 2px; width: calc(1.4rem - 6px); height: calc(1.4rem - 6px); border-radius: 50%; background: var(--ink-soft); transition: transform 0.15s; }
+.switch input:checked { background: color-mix(in srgb, var(--t-content) 30%, var(--well)); border-color: var(--t-content); }
+.switch input:checked::after { transform: translateX(1.1rem); background: var(--t-content); }
+
+.outs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.out { display: flex; flex-direction: column; gap: 0.6rem; min-width: 0; padding: 1rem; border: 1px solid var(--rule); border-radius: 3px; }
+.out output, .template { display: block; padding: 0.75rem 0.85rem; background: var(--well); border-radius: 3px; font: 500 var(--s-sm)/1.5 var(--f-mono); word-break: break-all; overflow-wrap: anywhere; }
+.template { word-break: normal; white-space: pre-wrap; font-weight: 400; }
+.out p { margin: 0; font-size: var(--s-sm); line-height: 1.5; }
+.out-actions { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+.status { font: 500 var(--s-xs)/1.3 var(--f-mono); color: var(--t-content); }
+
+/* Reading column */
+.col { max-width: 44rem; margin-inline: auto; display: flex; flex-direction: column; gap: 1rem; }
+.col h2 { margin: 0 0 0.25rem; font: 700 var(--s-xl)/1.15 var(--f-mono); letter-spacing: -0.025em; text-wrap: balance; }
+.col h3 { margin: 1.25rem 0 0; font: 700 var(--s-md)/1.3 var(--f-mono); letter-spacing: -0.005em; }
+.col p { margin: 0; }
+.col ol, .col ul { margin: 0; padding-left: 1.4rem; display: flex; flex-direction: column; gap: 0.75rem; }
+.col ol li::marker { font-family: var(--f-mono); font-weight: 700; color: var(--ink-soft); }
+.col li strong { font-weight: 700; }
+.next { margin-top: 1.5rem !important; padding-top: 1rem; border-top: 1px solid var(--rule); font: 600 var(--s-sm)/1.4 var(--f-mono); }
+.small { font-size: var(--s-sm); color: var(--ink-soft); }
+
+.url-fig { margin: 0.25rem 0 0; padding: 1rem; background: var(--surface); border: 1px solid var(--rule); border-radius: 3px; overflow-x: auto; }
+.url-parts { display: flex; flex-wrap: wrap; row-gap: 0.75rem; }
+.part { display: flex; flex-direction: column; gap: 0.35rem; min-width: 0; }
+.part code { font-size: var(--s-sm); padding: 0.3rem 0.15rem; border-bottom: 3px solid var(--rule); word-break: break-all; }
+.part:nth-child(even) code { background: color-mix(in srgb, var(--ink) 7%, transparent); }
+.part-label { font: 700 0.6875rem/1 var(--f-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); padding-left: 0.15rem; }
+.parts-dl { margin: 0; display: grid; grid-template-columns: 7rem minmax(0, 1fr); gap: 0.6rem 1.25rem; }
+.parts-dl dt { font: 700 var(--s-xs)/1.6 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); }
+.parts-dl dd { margin: 0; }
+
+.cargo { margin: 0.5rem 0 0; display: flex; flex-direction: column; }
+.cargo-item { display: grid; grid-template-columns: 12rem minmax(0, 1fr); gap: 0.5rem 1.5rem; padding-block: 1rem; border-top: 1px solid var(--rule); }
+.cargo-item:last-child { border-bottom: 1px solid var(--rule); }
+.cargo-item dt { display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-start; }
+.cargo-item dt code { font-size: var(--s-xs); color: var(--ink-soft); line-height: 1.5; }
+.cargo-item dd { margin: 0; display: flex; flex-direction: column; gap: 0.35rem; }
+.cargo-item .do { font: 700 var(--s-xs)/1.3 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); }
+
+.where { margin: 0.25rem 0 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.where > div { padding: 1rem; border: 1px solid var(--rule); border-radius: 3px; display: flex; flex-direction: column; gap: 0.5rem; min-width: 0; }
+.where h4 { margin: 0; font: 700 var(--s-xs)/1.3 var(--f-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); }
+.where p { font-size: var(--s-sm); line-height: 1.55; }
+
+.stance { border-left: 3px solid var(--ink); padding-left: clamp(1rem, 3vw, 1.5rem); display: flex; flex-direction: column; gap: 1rem; }
+.sig { font: 600 var(--s-sm)/1.45 var(--f-mono); }
+
+footer { margin-top: 4rem; border-top: 1px solid var(--rule); }
+.foot { max-width: 44rem; margin-inline: auto; padding-block: 2rem 3rem; display: flex; flex-direction: column; gap: 1rem; font: 400 var(--s-xs)/1.6 var(--f-mono); color: var(--ink-soft); }
+.foot p { margin: 0; }
+.foot ul { margin: 0; padding-left: 1.2rem; display: flex; flex-direction: column; gap: 0.35rem; }
+
+@media (max-width: 760px) {
+  .outs, .where { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 640px) {
+  .param { grid-template-columns: minmax(0, 1fr) auto; }
+  .param .why { grid-column: 1 / -1; grid-row: 2; }
+  .steps li { grid-template-columns: minmax(0, 1fr); gap: 0.35rem; }
+  .cargo-item, .parts-dl { grid-template-columns: minmax(0, 1fr); }
+  .parts-dl dd { margin-bottom: 0.4rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .switch input, .switch input::after { transition: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="band">
+  <canvas id="static" width="192" height="96" aria-hidden="true"></canvas>
+  <div class="band-inner gut">
+    <nav class="crumb" aria-label="Breadcrumb"><a href="../../">Pedagogy Tools</a> · <a href="../">Research &amp; Sources</a></nav>
+    <p class="eyebrow">A field guide to links, citations and privacy</p>
+    <h1>Link Self&#8209;Defense</h1>
+    <p class="lede">Links often carry more than an address. They can record where you found a page, who shared it with you, and sometimes who you are. This guide shows you how to read a link, how to cite one correctly in APA Style, and how to share one without sending that extra information along.</p>
+  </div>
+</header>
+
+<nav class="tabs-bar" aria-label="Sections">
+  <div class="tabs gut" role="tablist">
+    <button class="tab" role="tab" id="tab-reader" data-tab="reader" aria-controls="p-reader" aria-selected="true">Reader</button>
+    <button class="tab" role="tab" id="tab-links" data-tab="links" aria-controls="p-links" aria-selected="false" tabindex="-1">How links work</button>
+    <button class="tab" role="tab" id="tab-apa" data-tab="apa" aria-controls="p-apa" aria-selected="false" tabindex="-1">Citing in APA 7</button>
+    <button class="tab" role="tab" id="tab-library" data-tab="library" aria-controls="p-library" aria-selected="false" tabindex="-1">Library links</button>
+    <button class="tab" role="tab" id="tab-defense" data-tab="defense" aria-controls="p-defense" aria-selected="false" tabindex="-1">Self-defense</button>
+  </div>
+</nav>
+
+<main>
+
+  <section class="panel gut" role="tabpanel" id="p-reader" aria-labelledby="tab-reader" tabindex="0">
+    <div class="reader-wrap">
+      <p class="reader-intro">Paste any link or DOI. The reader takes it apart, explains each piece, and gives you two results: a clean link you can share, and the form APA 7 asks for in a reference list. If the terms are new to you, start with <a href="#links" data-goto="links">How links work</a>.</p>
+      <div class="reader">
+        <div class="reader-head">
+          <h2 id="reader-h">Link reader</h2>
+          <p class="local"><span class="dot" aria-hidden="true"></span>Runs only in this page. What you paste never leaves your browser.</p>
+        </div>
+
+        <div class="field">
+          <label class="label" for="link-in">Paste a link or a DOI</label>
+          <textarea id="link-in" rows="3" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea>
+        </div>
+
+        <div class="field">
+          <div class="examples" role="group" aria-label="Load an example">
+            <button class="btn" type="button" data-ex="email">Email link</button>
+            <button class="btn" type="button" data-ex="ai">AI search</button>
+            <button class="btn" type="button" data-ex="youtube">YouTube share</button>
+            <button class="btn" type="button" data-ex="proxy">Library proxy</button>
+            <button class="btn" type="button" data-ex="scholar">Scholar link</button>
+            <button class="btn" type="button" data-ex="highlight">Search highlight</button>
+          </div>
+          <p class="ex-note">Examples use made-up tracking values on real or placeholder pages.</p>
+        </div>
+
+        <p id="error" class="notice" hidden></p>
+
+        <div id="results" class="results" aria-live="polite">
+          <div class="block">
+            <span class="label" id="anat-h">The link, piece by piece</span>
+            <p class="anatomy" id="anatomy" aria-labelledby="anat-h"></p>
+            <p class="ex-note">Select a highlighted piece to keep it or strip it.</p>
+          </div>
+
+          <div class="block" id="steps-block">
+            <span class="label">What the reader did</span>
+            <ul class="steps" id="steps"></ul>
+          </div>
+
+          <div class="block">
+            <span class="label">What rides along</span>
+            <div class="params" id="params"></div>
+          </div>
+
+          <div class="outs">
+            <div class="out">
+              <span class="label">Clean link</span>
+              <output id="clean" for="link-in"></output>
+              <div class="out-actions">
+                <button class="btn" type="button" id="copy-clean">Copy clean link</button>
+                <span class="status" id="clean-status" aria-live="polite"></span>
+              </div>
+              <p>Test it: open a private window, paste the link, and check that it loads the same page while you are signed out.</p>
+            </div>
+            <div class="out">
+              <span class="label">For your reference list (APA 7)</span>
+              <output id="cite-val" for="link-in"></output>
+              <div class="out-actions">
+                <button class="btn" type="button" id="copy-cite">Copy</button>
+                <span class="status" id="cite-status" aria-live="polite"></span>
+              </div>
+              <p id="cite-text"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel gut" role="tabpanel" id="p-links" aria-labelledby="tab-links" tabindex="0" hidden>
+    <div class="col">
+      <h2>How links work</h2>
+      <p>A web address, or URL, has up to five parts. Most pages can be reached with only the first three.</p>
+      <figure class="url-fig" aria-label="The five parts of a URL">
+        <div class="url-parts">
+          <span class="part"><code>https://</code><span class="part-label">Scheme</span></span>
+          <span class="part"><code>www.example.org</code><span class="part-label">Host</span></span>
+          <span class="part"><code>/articles/sleep-study</code><span class="part-label">Path</span></span>
+          <span class="part"><code>?utm_source=newsletter&amp;id=42</code><span class="part-label">Query</span></span>
+          <span class="part"><code>#methods</code><span class="part-label">Fragment</span></span>
+        </div>
+      </figure>
+      <dl class="parts-dl">
+        <dt>Scheme</dt><dd>How your browser connects to the site. Use <code>https</code> whenever it works.</dd>
+        <dt>Host</dt><dd>The site itself. Check it: a familiar name followed by an unfamiliar domain usually means the link has been routed through something else.</dd>
+        <dt>Path</dt><dd>The page on that site.</dd>
+        <dt>Query</dt><dd>Extra information after the <code>?</code>, written as <code>name=value</code> pairs joined by <code>&amp;</code>.</dd>
+        <dt>Fragment</dt><dd>A spot within the page, after the <code>#</code>. Your browser uses it to jump to that spot, and the site never receives it.</dd>
+      </dl>
+
+      <h3>The query string</h3>
+      <p>Some parameters in the query tell the site what to show. Remove a YouTube link&rsquo;s <code>v=</code> and the site no longer knows which video you meant. Many others exist only to record how you arrived. The reader sorts parameters into five kinds.</p>
+      <dl class="cargo">
+        <div class="cargo-item">
+          <dt><span class="pill tier-label">Label</span><code>utm_source, utm_medium, ref, via, feature</code></dt>
+          <dd><p>Says where you came from: a newsletter, a social site, a search, an AI tool. The destination&rsquo;s analytics count it, and anyone who reads the link can see it.</p><span class="do">Strip</span></dd>
+        </div>
+        <div class="cargo-item">
+          <dt><span class="pill tier-click">Click ID</span><code>fbclid, gclid, msclkid, _gl</code></dt>
+          <dd><p>A unique tag created for one click. Ad networks and the destination site can match it to an account and follow it from site to site.</p><span class="do">Strip</span></dd>
+        </div>
+        <div class="cargo-item">
+          <dt><span class="pill tier-share">Share ID</span><code>si, is, igsh, t on X</code></dt>
+          <dd><p>Ties the link to the account that shared it. When your reader opens it, the platform can connect the two of you.</p><span class="do">Strip</span></dd>
+        </div>
+        <div class="cargo-item">
+          <dt><span class="pill tier-token">Tokens and personal info</span><code>casa_token, sessionid, token, mc_eid, an email address</code></dt>
+          <dd><p>Can identify you or let someone into something meant for you. Some break the link for everyone else. Others quietly keep working, which is worse.</p><span class="do">Strip, always</span></dd>
+        </div>
+        <div class="cargo-item">
+          <dt><span class="pill tier-content">Content</span><code>v, t on YouTube, id, page, q</code></dt>
+          <dd><p>Tells the site what to show. Remove it and the link breaks or lands somewhere else.</p><span class="do">Keep</span></dd>
+        </div>
+      </dl>
+
+      <h3>Read the shape, not the list</h3>
+      <p>In early 2026 YouTube renamed the share ID on its links from <code>si=</code> to <code>is=</code>. Link cleaners that work from a list of known names let the new one through until their lists caught up. Anyone reading the link would still have recognized it.</p>
+      <p>The shape gives these parameters away. A value that is a run of random letters and digits, like <code>is=Xa9k2Lm0Pq7Rt3Zw</code>, is an ID. Treat every ID as tracking until the page proves it needs it: remove it, then test the link. The reader marks unfamiliar IDs as <span class="pill tier-unknownid">Unknown ID</span> and leaves the decision to you.</p>
+
+      <h3>Wrappers and redirects</h3>
+      <p>Some links are not the destination at all. Many school and workplace email systems rewrite every link so it passes through a scanning service first, and search engines and social sites do something similar. The wrapper hides the real address inside its own, and it can carry details about you, such as the email address the message was sent to. Shortened links such as bit.ly and t.co hide the destination entirely.</p>
+      <p>The reader unwraps the common wrappers. For a shortened link, open it and copy the address you land on.</p>
+
+      <p class="next"><a href="#apa" data-goto="apa">Next: Citing in APA 7</a></p>
+    </div>
+  </section>
+
+  <section class="panel gut" role="tabpanel" id="p-apa" aria-labelledby="tab-apa" tabindex="0" hidden>
+    <div class="col">
+      <h2>Citing links in APA 7</h2>
+      <p>The seventh edition of APA Style decides which address belongs at the end of a reference. Work down this list and stop at the first case that fits.</p>
+      <ol>
+        <li><strong>The work has a DOI.</strong> End the reference with the DOI written as a link, <code>https://doi.org/10.xxxx/xxxxx</code>, and leave the web address out. Include the DOI whether you read the work online or in print.</li>
+        <li><strong>It is a journal article from a library database (EBSCO, ProQuest, CINAHL and similar) with no DOI.</strong> Leave out the URL and the database name, and cite it as you would a print article. These works are widely available, so readers do not need your route to them.</li>
+        <li><strong>It comes from a database that publishes its own content, such as UpToDate or Natural Medicines.</strong> Give the database name and the address of the work. If that address only opens after signing in, or is tied to your session, give the database&rsquo;s home or sign-in page instead.</li>
+        <li><strong>It is an ordinary web page.</strong> Use the clean address. If the page is designed to change over time and is not archived, add the date you retrieved it.</li>
+      </ol>
+      <p>Whatever you end up with, open it in a private window before you submit. APA also accepts shortened DOIs and shortened URLs, provided you check that they lead to the right place.</p>
+
+      <h3>Formatting DOIs</h3>
+      <p>Write every DOI in the current form, <code>https://doi.org/</code> followed by the number, even when the article prints an older form such as <code>doi:10.1037/a0040251</code> or <code>http://dx.doi.org/10.1037/a0040251</code>. Paste either older form into the reader and it will rewrite it for you.</p>
+
+      <h3>Sources found with AI tools</h3>
+      <p>AI search tools often tag the links they hand you, for example <code>utm_source=chatgpt.com</code>. The tag tells the site, and everyone who reads your reference, where you found the source. Remove it like any other label.</p>
+      <p>Then check the source itself. AI tools can produce a citation that looks right and points to a different paper, or to nothing at all. Open the DOI and confirm that the title, authors and year match what you are citing.</p>
+
+      <h3>Google Scholar links</h3>
+      <p>Scholar sometimes adds <code>casa_token</code> to links that open through a campus subscription. It is an access token. Remove it, and use the article&rsquo;s DOI in your reference.</p>
+
+      <p class="small">Based on APA Style guidance on <a href="https://apastyle.apa.org/style-grammar-guidelines/references/dois-urls" target="_blank" rel="noreferrer noopener">DOIs and URLs</a> and <a href="https://apastyle.apa.org/style-grammar-guidelines/references/database-information" target="_blank" rel="noreferrer noopener">database information in references</a>. When your instructor&rsquo;s requirements differ, follow your instructor.</p>
+
+      <p class="next"><a href="#library" data-goto="library">Next: Library links</a></p>
+    </div>
+  </section>
+
+  <section class="panel gut" role="tabpanel" id="p-library" aria-labelledby="tab-library" tabindex="0" hidden>
+    <div class="col">
+      <h2>Library links</h2>
+      <p>When you read an article through your school&rsquo;s library, the library is paying the publisher for your access. To confirm that you belong, many libraries route your connection through a proxy server, which signs you in and then fetches the article on your behalf. You can see this in the address bar: the publisher&rsquo;s address changes to include your library&rsquo;s.</p>
+
+      <h3>Recognizing a proxied link</h3>
+      <ul>
+        <li>The publisher&rsquo;s name is written with hyphens and followed by another domain, as in <code>www-sciencedirect-com.ezproxy.library.example.edu</code>.</li>
+        <li>The address contains <code>login?url=</code> or <code>qurl=</code> followed by the real address.</li>
+        <li>The address ends in <code>.idm.oclc.org</code>, or passes through <code>openathens.net</code>.</li>
+        <li>Your browser showed your library&rsquo;s sign-in page before the article appeared.</li>
+      </ul>
+
+      <h3>Which link to use where</h3>
+      <div class="where">
+        <div>
+          <h4>In a reference list</h4>
+          <p>Never the proxied link. It works only for people signed in at your library, and it names your institution. Use the DOI, or, for a database article with no DOI, no URL at all. The reader removes common proxies for you.</p>
+        </div>
+        <div>
+          <h4>With classmates at your school</h4>
+          <p>Here the proxied link is often the right one, because it sends classmates through the same sign-in. Better still, use the database&rsquo;s own Permalink or Share button, which your library may have set up to include the proxy so the link keeps working.</p>
+        </div>
+      </div>
+
+      <h3>Finding your library&rsquo;s proxy</h3>
+      <p>You rarely need the proxy address itself, but knowing it helps when a link fails. Look on your library&rsquo;s website for pages titled off-campus access, connecting from home, or proxy bookmarklet. Reference managers such as Zotero can also recognize a library proxy after you sign in through it, and will then route links through it for you.</p>
+
+      <h3>Asking a librarian</h3>
+      <p>Librarians answer questions like this every day, and a specific question gets a quick, specific answer. Check your library&rsquo;s research guides or FAQ first. If the answer is not there, this message gives a librarian everything needed to help. Fill in the brackets before you send it.</p>
+      <div class="out">
+        <span class="label">Message to your library</span>
+        <p class="template" id="ask-text">Hello, I am a student in [program or course]. I want to share links to articles from [database name] in two ways: with classmates at our school, and in an APA 7 reference list. What is the best way to get a persistent link from [database name]? And what is our library&rsquo;s proxy address, so I can tell when a link will only work for people signed in through our library? Thank you.</p>
+        <div class="out-actions">
+          <button class="btn" type="button" id="copy-ask">Copy message</button>
+          <span class="status" id="ask-status" aria-live="polite"></span>
+        </div>
+      </div>
+
+      <p class="next"><a href="#defense" data-goto="defense">Next: Self-defense</a></p>
+    </div>
+  </section>
+
+  <section class="panel gut" role="tabpanel" id="p-defense" aria-labelledby="tab-defense" tabindex="0" hidden>
+    <div class="col">
+      <h2>Self-defense</h2>
+      <div class="stance">
+        <p>APA Style asks one question about a link: will it get your reader to the source? It does not ask what the link reveals about you, or what it does to your reader when they click. This section is about that second question, and it reflects my position as a member of the Electronic Frontier Foundation.</p>
+      </div>
+
+      <h3>What a link can reveal</h3>
+      <ul>
+        <li><strong>Where you found something.</strong> Labels such as <code>utm_source</code> name the newsletter, search engine or AI tool that sent you.</li>
+        <li><strong>Who shared it.</strong> Share IDs from YouTube, Instagram, TikTok and X can connect whoever opens the link to the account that shared it.</li>
+        <li><strong>Who you are.</strong> Email wrappers and newsletter links can carry your email address or a subscriber ID.</li>
+        <li><strong>What you were reading.</strong> Text fragments (<code>#:~:text=</code>) record the exact passage you highlighted.</li>
+        <li><strong>Where you study.</strong> Proxied links name your institution.</li>
+      </ul>
+
+      <h3>Your readers are your allies</h3>
+      <p>EFF&rsquo;s Surveillance Self-Defense guide asks you to plan around what you need to protect, from whom, and who your allies are, since your privacy overlaps with theirs. When you cite or share a link, your readers become part of that plan. A share ID in a citation ties every reader&rsquo;s click back to you, and copied references carry it into other people&rsquo;s work. Cleaning a link protects you and everyone who follows it. Most professions that handle other people&rsquo;s information already practice this kind of care. Links deserve the same reflex.</p>
+
+      <h3>Habits that last</h3>
+      <ul>
+        <li>Copy links from the address bar. Share buttons are where share IDs get added.</li>
+        <li>Read before you paste. Everything after the <code>?</code> is something to decide about.</li>
+        <li>Open links from email before you copy them, and take the address you land on.</li>
+        <li>Run the private-window test on every link you cite.</li>
+        <li>Make your own plan with EFF&rsquo;s guide, starting with <a href="https://ssd.eff.org/module/your-security-plan" target="_blank" rel="noreferrer noopener">Your Security Plan</a>.</li>
+      </ul>
+
+      <h3>This page passes its own audit</h3>
+      <p>This page is one self-contained file. It loads no fonts, scripts, images or analytics from anywhere else, and the link reader runs entirely in your browser. Links out of the page do not tell the next site where you came from. You can check this yourself:</p>
+      <ul>
+        <li>Load the page, turn off wifi, and keep using the reader. It still works.</li>
+        <li>Open your browser&rsquo;s developer tools, choose the Network tab, and paste a link. Nothing new appears.</li>
+      </ul>
+      <p>GitHub, which hosts this page, can record that it was loaded. After that, the page keeps to itself.</p>
+
+      <p class="sig">John Courie</p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="foot gut">
+    <p>John Courie &middot; 2026 &middot; Built with Claude</p>
+    <ul>
+      <li><a href="https://apastyle.apa.org/style-grammar-guidelines/references/dois-urls" target="_blank" rel="noreferrer noopener">APA Style: DOIs and URLs</a></li>
+      <li><a href="https://apastyle.apa.org/style-grammar-guidelines/references/database-information" target="_blank" rel="noreferrer noopener">APA Style: Database information in references</a></li>
+      <li><a href="https://ssd.eff.org/module/your-security-plan" target="_blank" rel="noreferrer noopener">EFF Surveillance Self-Defense: Your Security Plan</a></li>
+    </ul>
+  </div>
+</footer>
+
+<script>
+/* Link reader: pure functions, no network. */
+const LinkReader = (() => {
+  const TIERS = {
+    label:    { name: 'Label',         strip: true  },
+    click:    { name: 'Click ID',      strip: true  },
+    share:    { name: 'Share ID',      strip: true  },
+    token:    { name: 'Access token',  strip: true  },
+    personal: { name: 'Personal info', strip: true  },
+    extra:    { name: 'Not needed',    strip: true  },
+    content:  { name: 'Content',       strip: false },
+    unknown:  { name: 'Unknown',       strip: false },
+    unknownId:{ name: 'Unknown ID',    strip: false }
+  };
+
+  const AI_SOURCES = /(chatgpt|openai|perplexity|copilot|gemini\.google|bard\.google|claude\.ai|anthropic|you\.com|phind|meta\.ai|grok|deepseek)/i;
+  const EMAIL = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i;
+
+  const SHORTENERS = ['bit.ly','t.co','tinyurl.com','ow.ly','buff.ly','lnkd.in','goo.gl','is.gd','rb.gy','shorturl.at','cutt.ly','tiny.cc','vm.tiktok.com','a.co','amzn.to','amzn.eu','youtu.be.com','shorturl.com','t.ly','dlvr.it','fb.me','spoti.fi','apple.co','g.co'];
+
+  const PUBLISHERS = ['sciencedirect.com','onlinelibrary.wiley.com','wiley.com','journals.sagepub.com','sagepub.com','tandfonline.com','link.springer.com','springer.com','academic.oup.com','journals.lww.com','mdpi.com','frontiersin.org','nature.com','pubs.acs.org','cambridge.org','bmj.com','thelancet.com','jamanetwork.com','nejm.org','liebertpub.com','karger.com','thieme-connect.com','thieme-connect.de','hindawi.com','plos.org','cell.com','physiology.org','degruyter.com','emerald.com','ingentaconnect.com','journals.plos.org','biomedcentral.com','sciencedirect.com'];
+  const ACADEMIC_DB = [
+    ['ebscohost.com','EBSCO'],['ebsco.com','EBSCO'],['proquest.com','ProQuest'],['gale.com','Gale'],
+    ['ovid.com','Ovid'],['jstor.org','JSTOR'],['webofscience.com','Web of Science'],['scopus.com','Scopus'],
+    ['cochranelibrary.com','Cochrane Library']
+  ];
+  const PROPRIETARY_DB = [
+    ['naturalmedicines.therapeuticresearch.com','Natural Medicines','https://naturalmedicines.therapeuticresearch.com/'],
+    ['therapeuticresearch.com','Natural Medicines','https://naturalmedicines.therapeuticresearch.com/'],
+    ['uptodate.com','UpToDate','https://www.uptodate.com/']
+  ];
+
+  function hostIs(host, d) { return host === d || host.endsWith('.' + d); }
+  function safeDecode(s) { try { return decodeURIComponent(String(s).replace(/\+/g, ' ')); } catch (e) { return String(s); } }
+  function deepDecode(s) { let prev = s, cur = safeDecode(s); for (let i = 0; i < 3 && cur !== prev; i++) { prev = cur; cur = safeDecode(cur); } return cur; }
+  function dehyphen(label) { return label.replace(/--/g, '\u0000').replace(/-/g, '.').replace(/\u0000/g, '-'); }
+  function isYouTube(h) { return hostIs(h, 'youtube.com') || hostIs(h, 'youtu.be') || hostIs(h, 'youtube-nocookie.com'); }
+  function isX(h) { return hostIs(h, 'x.com') || hostIs(h, 'twitter.com'); }
+  function isAmazon(h) { return /(^|\.)amazon\.(com|ca|co\.uk|de|fr|it|es|co\.jp|in|com\.au|com\.mx|nl|se|pl|com\.br|sg|ae|sa|com\.tr|eg|com\.be)$/.test(h); }
+  function looksOpaque(v) {
+    if (!v || v.length < 10) return false;
+    if (!/^[A-Za-z0-9_\-~.%=+:/]+$/.test(v)) return false;
+    const letters = /[A-Za-z]/.test(v), digits = /\d/.test(v), mixed = /[a-z]/.test(v) && /[A-Z]/.test(v);
+    return (letters && digits) || (mixed && v.length >= 14);
+  }
+  function q(v) { return '“' + v + '”'; }
+  function short(v, n) { n = n || 60; return v.length > n ? v.slice(0, n - 1) + '…' : v; }
+
+  function parseQuery(search) {
+    if (!search) return [];
+    return search.split('&').filter(s => s.length).map(raw => {
+      const i = raw.indexOf('=');
+      let name = safeDecode(i < 0 ? raw : raw.slice(0, i));
+      let value = i < 0 ? '' : safeDecode(raw.slice(i + 1));
+      if (i < 0 && name.indexOf('=') > 0) { const j = name.indexOf('='); value = name.slice(j + 1); name = name.slice(0, j); }
+      return { raw, name, value };
+    });
+  }
+  function getParam(params, names) {
+    for (const p of params) if (names.indexOf(p.name.toLowerCase()) >= 0) return p.value;
+    return null;
+  }
+
+  function classify(name, value, host) {
+    const n = name.toLowerCase();
+    const v = value || '';
+    const dv = deepDecode(v);
+    const yt = isYouTube(host), xx = isX(host), amz = isAmazon(host);
+
+    if (EMAIL.test(dv)) return ['personal', 'Contains an email address (' + dv.match(EMAIL)[0] + '). Anyone who sees the link can read it.'];
+
+    // Host-specific rules first
+    if (yt) {
+      if (n === 'si') return ['share', 'YouTube share ID. When someone opens the link, YouTube can connect them to the account that shared it.'];
+      if (n === 'is') return ['share', 'YouTube’s renamed share ID (it was si= until early 2026). Same job: it ties the link to the account that shared it.'];
+      if (n === 'pp') return ['label', 'Encodes how you reached the video, which can include what you searched for.'];
+      if (n === 'feature') return ['label', 'Records which button or page the link was shared from.'];
+      if (n === 'ab_channel') return ['extra', 'Repeats the channel name. YouTube finds the video without it.'];
+      if (n === 'v') return ['content', 'The video’s ID. Keep it.'];
+      if (n === 't' || n === 'start') return ['content', 'Start time. Keep it if you are pointing at a specific moment.'];
+      if (n === 'list') return ['content', 'The playlist. Keep it only if you mean to cite the playlist.'];
+      if (n === 'index') return ['content', 'Position in the playlist. Goes with list=.'];
+    }
+    if (xx) {
+      if (n === 't') return ['share', 'X share token. It identifies this particular share.'];
+      if (n === 's') return ['label', 'Records which app or screen the post was shared from.'];
+    }
+    if (hostIs(host, 'tiktok.com') && ['_r','_t','is_from_webapp','sender_device','sender_web_id','share_app_id','share_link_id','u_code','user_id','sec_user_id'].indexOf(n) >= 0)
+      return ['share', 'TikTok share data. It can identify who shared the link and from which device.'];
+    if (amz) {
+      if (n === 'th' || n === 'psc') return ['content', 'Selects a specific size or format of the item. Keep it if that matters to your citation.'];
+      if (n === 'keywords' || n === 'k' || n === 'field-keywords') return ['label', 'Records the search you typed' + (dv ? ' (' + q(short(dv, 40)) + ')' : '') + '.'];
+      if (n === 'tag' || n === 'linkcode' || n === 'linkid' || n === 'ascsubtag') return ['label', 'Affiliate tracking. Someone earns a commission when this link leads to a purchase.'];
+      return ['extra', 'Amazon finds the item from its item number alone. This adds nothing your reader needs.'];
+    }
+    if (hostIs(host, 'sciencedirect.com') && n === 'via') return ['label', 'Records which ScienceDirect page you came from.'];
+
+    // Campaign labels
+    if (/^utm_/.test(n)) {
+      if (n === 'utm_source') {
+        const ai = AI_SOURCES.test(dv) ? ' This one names an AI tool.' : '';
+        return ['label', 'Names the site or tool that sent you' + (dv ? ' (' + q(short(dv, 40)) + ')' : '') + '. The destination’s analytics read it, and so does anyone who reads the link.' + ai];
+      }
+      if (n === 'utm_medium') return ['label', 'Names the kind of channel' + (dv ? ' (' + q(short(dv, 30)) + ')' : '') + ', such as email, social or referral.'];
+      if (n === 'utm_campaign') return ['label', 'Names the marketing campaign the link belongs to.'];
+      return ['label', 'Campaign detail for the destination’s analytics, such as which ad or button you clicked.'];
+    }
+    if (/^(mtm_|pk_|matomo_|piwik_|hsa_)/.test(n)) return ['label', 'Campaign label for the destination’s analytics.'];
+    if (['ref','ref_','ref_src','ref_url','referrer','referer','src','via','source','share_source','from_source','cmpid','cmp','campaign','mc_cid','smid','sr_share','ito','itm_source','itm_medium','itm_campaign','trk','trkcampaign','lipi','originalsubdomain','ncid','ocid','cid','feature','spm','scm','share_medium','share_plat','share_from','share_tag','sharesource','from','rss','output','partner'].indexOf(n) >= 0) {
+      if (n === 'mc_cid') return ['label', 'Names the email newsletter campaign that carried the link.'];
+      if (['from','output','partner','cid','source'].indexOf(n) >= 0 && !looksOpaque(v) && !/(email|newsletter|share|social|rss|feed|twitter|facebook|reddit|linkedin|app|referral|chatgpt|openai)/i.test(dv)) {
+        // ambiguous names: only call them labels when the value reads like a channel
+      } else {
+        return ['label', 'Records where you came from' + (dv ? ' (' + q(short(dv, 40)) + ')' : '') + '.'];
+      }
+    }
+
+    // Recipient / personal identifiers
+    if (['mc_eid','_hsenc','_hsmi','mkt_tok','vero_id','oly_enc_id','oly_anon_id','sub_id','subscriber_id','recipient','uid','user_id','userid','eid','email_id','ml_subscriber','ml_subscriber_hash','__s','_kx','ck_subscriber_id','wickedid','trk_contact','trk_msg','sc_uid','emc','email'].indexOf(n) >= 0)
+      return ['personal', 'Identifies the person the email or message was sent to. If you received the link, that is you.'];
+
+    // Click IDs
+    const CLICK = {
+      fbclid: 'Facebook click ID', gclid: 'Google Ads click ID', gclsrc: 'Google Ads click ID', gbraid: 'Google Ads click ID', wbraid: 'Google Ads click ID',
+      dclid: 'Google display ad click ID', msclkid: 'Microsoft Ads click ID', yclid: 'Yandex click ID', ysclid: 'Yandex click ID', twclid: 'X ad click ID',
+      ttclid: 'TikTok ad click ID', li_fat_id: 'LinkedIn click ID', epik: 'Pinterest click ID', sccid: 'Snapchat click ID', irclickid: 'Affiliate click ID',
+      rb_clickid: 'Click ID', s_kwcid: 'Adobe ad click ID', ef_id: 'Adobe ad click ID', _gl: 'Google Analytics linker', _ga: 'Google Analytics ID',
+      wickedid: 'Click ID', srsltid: 'Google Merchant click ID', igshid: null, _branch_match_id: 'Branch click ID', _branch_referrer: 'Branch referral data',
+      gad_source: 'Google Ads source', gad_campaignid: 'Google Ads campaign ID', vgo_ee: 'Click ID', mkevt: 'eBay tracking', mkcid: 'eBay tracking', mkrid: 'eBay tracking', campid: 'eBay affiliate ID'
+    };
+    if (Object.prototype.hasOwnProperty.call(CLICK, n) && CLICK[n]) {
+      if (n === '_gl' || n === '_ga') return ['click', CLICK[n] + '. Carries your analytics ID from one site to the next, so the two sites can recognize you as the same visitor.'];
+      return ['click', CLICK[n] + '. A unique tag for one click. The ad network and the destination site can match it to an account and follow it across sites.'];
+    }
+
+    // Share IDs (any host)
+    if (['si','igsh','igshid','share_id','shareid','sharer','sharerid','mibextid','rdid','share_url','sh','shared','sender','sender_id','context_id','invite','invite_code','referral_code','refcode'].indexOf(n) >= 0)
+      return ['share', 'Share ID. The platform can use it to connect whoever opens the link to the account that shared it.'];
+
+    // Session and access tokens
+    if (['casa_token'].indexOf(n) >= 0) return ['token', 'Google Scholar campus-access token. It can let whoever holds the link use your library’s subscription. Never put one in a reference.'];
+    if (['token','access_token','accesstoken','auth','authtoken','auth_token','sessionid','session_id','session','sid','jsessionid','phpsessid','aspsessionid','key','apikey','api_key','sig','signature','x-amz-signature','x-amz-credential','x-amz-security-token','x-amz-date','x-amz-expires','x-amz-signedheaders','x-amz-algorithm','key-pair-id','skoid','sktid','code','state','id_token','refresh_token','otp','magic','login_token','ticket','sso','saml','samlrequest','relaystate','password','pwd','secret','nonce'].indexOf(n) >= 0)
+      return ['token', 'Session or access token. It may let whoever has the link into something meant for you, or it may expire and break the link. A reference should never carry one.'];
+
+    // Content we recognize
+    const CONTENT = ['v','id','p','page','pg','article','articleid','pii','doi','isbn','issn','q','query','search','term','lang','hl','language','start','tab','section','chapter','vol','volume','issue','year','pmid','pmcid','item','productid','product','monograph','topic','name','type','format','view','version','ver','rev','oldid','title','curid','m','list','index','t'];
+    if (CONTENT.indexOf(n) >= 0) {
+      if (['q','query','search','term'].indexOf(n) >= 0) return ['content', 'Search terms. They decide what the page shows. Keep them only if you mean to point at a search.'];
+      if (n === 'lang' || n === 'hl' || n === 'language') return ['content', 'Language setting. Harmless; drop it if your reader might prefer another language.'];
+      return ['content', 'Tells the site which item or page to show. Removing it will likely break the link.'];
+    }
+
+    if (looksOpaque(v)) return ['unknownId', 'Unrecognized, and the value looks like a random ID. IDs like this usually track something. Try the link without it; keep it only if the page breaks.'];
+    return ['unknown', 'Unrecognized. The value is readable, so it may control what the page shows. Keep it unless the page loads the same without it.'];
+  }
+
+  function normalizeInput(raw) {
+    let s = String(raw || '').trim();
+    s = s.replace(/^[<"'“‘(\[]+/, '').replace(/[>"'”’)\]]+$/, '').trim();
+    s = s.replace(/[.,;]+$/, '');
+    if (!s) return { error: 'empty' };
+    const doiOnly = s.match(/^(?:doi:\s*|DOI:\s*|https?:\/\/(?:dx\.)?doi\.org\/)?(10\.\d{4,9}\/\S+)$/i);
+    if (doiOnly && !/^https?:\/\//i.test(s)) return { url: 'https://doi.org/' + doiOnly[1], note: 'Read this as a DOI and wrote it the way APA 7 wants: as a full https://doi.org/ link.' };
+    if (!/^[a-z][a-z0-9+.-]*:\/\//i.test(s)) {
+      if (/^[\w-]+(\.[\w-]+)+(:\d+)?([\/?#]|$)/.test(s)) s = 'https://' + s;
+      else return { error: 'notlink' };
+    }
+    return { url: s };
+  }
+
+  function unwrapOnce(u, steps) {
+    const host = u.hostname.toLowerCase();
+    const params = parseQuery(u.search.slice(1));
+    const target = (names) => { const v = getParam(params, names); return v && /^https?:\/\//i.test(v.trim()) ? v.trim() : null; };
+
+    // Library proxy sign-in link (EZproxy and similar): .../login?url=... or ?qurl=...
+    if (/proxy|openathens/.test(host) && /\/login/i.test(u.pathname)) {
+      const rawUrl = (u.search.match(/[?&]url=(.*)$/i) || [])[1];
+      const t = target(['qurl']) || (rawUrl ? (/^https?%3A/i.test(rawUrl) ? safeDecode(rawUrl) : rawUrl) : null);
+      if (t && /^https?:\/\//i.test(t)) { steps.push({ kind: 'proxy', text: 'Unwrapped a library proxy sign-in link. That kind of address sends every reader to a library sign-in page first.' }); return t; }
+    }
+    // Library proxy host: www-sciencedirect-com.ezproxy.library.example.edu, www-jstor-org.example.idm.oclc.org,
+    // or the older dotted form www.jstor.org.ezproxy.library.example.edu
+    {
+      const labels = host.split('.');
+      let pi = -1;
+      for (let i = 1; i < labels.length - 1; i++) {
+        if (/proxy/.test(labels[i]) || (labels[i] === 'idm' && labels[i + 1] === 'oclc')) { pi = i; break; }
+      }
+      if (pi > 0) {
+        const first = labels[0];
+        const prefix = labels.slice(0, pi).join('.');
+        let orig = null;
+        if (prefix.indexOf('.') > 0 && /\.(com|org|net|edu|gov|int|io|info|uk|de|fr|nl|ca|au|jp|ch|se)$/.test(prefix)) orig = prefix;
+        else if (first.indexOf('-') > 0 && /-(com|org|net|edu|gov|int|io|info|co-uk|ac-uk|org-uk|de|fr|nl|ca|au|jp|ch|se)$/.test(first)) orig = dehyphen(first);
+        if (orig) {
+          steps.push({ kind: 'proxy', text: 'Removed a library proxy. The proxied address works only for people signed in to that library, and it names the institution. The publisher’s own address is ' + orig + '.' });
+          return u.protocol + '//' + orig + u.pathname + u.search + u.hash;
+        }
+      }
+    }
+    // Microsoft Safe Links (email)
+    if (hostIs(host, 'safelinks.protection.outlook.com')) {
+      const t = target(['url']);
+      if (t) {
+        const data = deepDecode(getParam(params, ['data']) || '');
+        const em = data.match(EMAIL);
+        steps.push({ kind: em ? 'personal' : 'wrapper', text: 'Unwrapped a Microsoft Safe Links address from email.' + (em ? ' The wrapper carried an email address (' + em[0] + '). Anyone you send the wrapped link to could read it.' : ' Wrapped links carry details about the message they came from.') });
+        return t;
+      }
+    }
+    // Proofpoint URL Defense (email)
+    if (hostIs(host, 'urldefense.com')) {
+      const full = u.href;
+      const v3 = full.match(/\/v3\/__(.+?)__;/);
+      if (v3) { steps.push({ kind: 'wrapper', text: 'Unwrapped a Proofpoint URL Defense address from email.' }); return v3[1]; }
+    }
+    if (hostIs(host, 'urldefense.proofpoint.com')) {
+      const raw = (u.search.match(/[?&]u=([^&]+)/) || [])[1];
+      if (raw) { const t = safeDecode(raw.replace(/-/g, '%').replace(/_/g, '/')); if (/^https?:\/\//.test(t)) { steps.push({ kind: 'wrapper', text: 'Unwrapped a Proofpoint URL Defense address from email.' }); return t; } }
+    }
+    // Google redirect
+    if (/(^|\.)google\.[a-z.]+$/.test(host) && u.pathname === '/url') {
+      const t = target(['url', 'q']);
+      if (t) { steps.push({ kind: 'wrapper', text: 'Unwrapped a Google redirect. Copying a link from a search results page can give you Google’s tracking wrapper instead of the page.' }); return t; }
+    }
+    // Facebook, LinkedIn, YouTube, OpenAthens redirects
+    if ((host === 'l.facebook.com' || host === 'lm.facebook.com' || host === 'l.messenger.com') && /l\.php/.test(u.pathname)) {
+      const t = target(['u']); if (t) { steps.push({ kind: 'wrapper', text: 'Unwrapped a Facebook outbound redirect.' }); return t; }
+    }
+    if (hostIs(host, 'linkedin.com') && /\/redir\//.test(u.pathname)) {
+      const t = target(['url']); if (t) { steps.push({ kind: 'wrapper', text: 'Unwrapped a LinkedIn redirect.' }); return t; }
+    }
+    if (isYouTube(host) && u.pathname === '/redirect') {
+      const t = target(['q']); if (t) { steps.push({ kind: 'wrapper', text: 'Unwrapped a YouTube outbound redirect.' }); return t; }
+    }
+    if (hostIs(host, 'openathens.net')) {
+      const t = target(['url']); if (t) { steps.push({ kind: 'proxy', text: 'Unwrapped an OpenAthens library redirect.' }); return t; }
+    }
+    return null;
+  }
+
+  function extractDoi(u) {
+    const host = u.hostname.toLowerCase();
+    let path = safeDecode(u.pathname);
+    if (host === 'doi.org' || host === 'dx.doi.org' || host === 'www.doi.org') {
+      const d = path.replace(/^\//, '');
+      if (/^10\.\d{4,9}\//.test(d)) return d;
+    }
+    const hay = path + ' ' + safeDecode(u.search);
+    const m = hay.match(/(10\.\d{4,9}\/[^\s?#&"<>]+)/);
+    if (!m) return null;
+    let d = m[1];
+    d = d.replace(/\/(abstract|full|pdf|epdf|pdfdirect|fulltext|html|meta|references|suppl_file|figures|tables|citedby|epub|reader)(\/.*)?$/i, '');
+    d = d.replace(/[.,;)\]]+$/, '');
+    return d;
+  }
+
+  function siteInfo(host) {
+    for (const [d, name, home] of PROPRIETARY_DB) if (hostIs(host, d)) return { type: 'proprietary', name, home };
+    for (const [d, name] of ACADEMIC_DB) if (hostIs(host, d)) return { type: 'academic', name };
+    if (hostIs(host, 'pubmed.ncbi.nlm.nih.gov')) return { type: 'index', name: 'PubMed' };
+    if (hostIs(host, 'pmc.ncbi.nlm.nih.gov') || (hostIs(host, 'ncbi.nlm.nih.gov'))) return { type: 'index', name: 'PubMed Central' };
+    if (/(^|\.)scholar\.google\./.test(host)) return { type: 'search', name: 'Google Scholar' };
+    if (host === 'doi.org' || host === 'dx.doi.org' || host === 'www.doi.org') return { type: 'doi', name: 'DOI' };
+    for (const d of PUBLISHERS) if (hostIs(host, d)) return { type: 'publisher', name: d };
+    if (SHORTENERS.indexOf(host) >= 0) return { type: 'shortener', name: host };
+    return { type: 'web', name: host };
+  }
+
+  function analyze(raw) {
+    const norm = normalizeInput(raw);
+    if (norm.error) return { ok: false, error: norm.error };
+    const steps = [];
+    if (norm.note) steps.push({ kind: 'doi', text: norm.note });
+    let href = norm.url, u;
+    try { u = new URL(href); } catch (e) { return { ok: false, error: 'notlink' }; }
+    if (!/^https?:$/.test(u.protocol)) return { ok: false, error: 'notlink' };
+    for (let i = 0; i < 6; i++) {
+      const next = unwrapOnce(u, steps);
+      if (!next) break;
+      try { u = new URL(next); } catch (e) { break; }
+    }
+    const host = u.hostname.toLowerCase();
+    let path = u.pathname;
+    let pathTokens = [];
+
+    // ;jsessionid= and similar matrix params in the path
+    const mp = path.match(/;(jsessionid|sessionid|sid|phpsessid)=[^/?#]*/i);
+    if (mp) { path = path.replace(mp[0], ''); pathTokens.push(mp[0].slice(1)); steps.push({ kind: 'token', text: 'Removed a session ID from inside the address (' + short(mp[0].slice(1), 40) + '). Session IDs belong to your visit and break for everyone else.' }); }
+
+    // Amazon: shorten to the item number
+    if (isAmazon(host)) {
+      const am = path.match(/\/(?:dp|gp\/product|gp\/aw\/d|exec\/obidos\/asin|o\/asin)\/([A-Z0-9]{10})/i);
+      if (am) {
+        const np = '/dp/' + am[1].toUpperCase();
+        if (np !== path) steps.push({ kind: 'extra', text: 'Shortened the Amazon address to the item number (' + am[1].toUpperCase() + '). The product name and the ref= trail in the path add nothing your reader needs.' });
+        path = np;
+      }
+    }
+
+    const params = parseQuery(u.search.slice(1)).map(p => {
+      const [tier, why] = classify(p.name, p.value, host);
+      return Object.assign(p, { tier, why, keep: !TIERS[tier].strip });
+    });
+
+    // Fragment
+    let frag = null;
+    if (u.hash && u.hash.length > 1) {
+      const h = u.hash.slice(1);
+      const ti = h.indexOf(':~:');
+      if (ti >= 0) {
+        const anchor = h.slice(0, ti);
+        frag = { raw: h, anchor, tier: 'label', keep: false,
+          why: 'Text fragment' + (/text=/.test(h) ? ' (' + q(short(safeDecode((h.match(/text=([^&]*)/) || [, ''])[1]), 40)) + ')' : '') + '. It highlights the exact passage you were reading. Search engines and AI tools add these.' + (anchor ? ' The section anchor before it is kept.' : '') };
+      } else if (/(utm_|xtor=|at_medium|at_campaign)/i.test(h)) {
+        frag = { raw: h, anchor: '', tier: 'label', keep: false, why: 'Tracking labels tucked after the #. They work like utm_ tags.' };
+      } else {
+        frag = { raw: h, anchor: h, tier: 'content', keep: true, why: 'Section anchor. It jumps to a spot on the page. Keep it if that spot matters.' };
+      }
+    }
+
+    const doi = extractDoi(u);
+    const site = siteInfo(host);
+    if (doi && (host === 'dx.doi.org' || host === 'www.doi.org' || u.protocol === 'http:') && site.type === 'doi')
+      steps.push({ kind: 'doi', text: 'Rewrote an older DOI link in the current https://doi.org/ form, as APA 7 asks.' });
+    if (site.type === 'shortener')
+      steps.push({ kind: 'wrapper', text: 'This is a shortened link. It hides where it goes, and the shortening service can log each click. Open it and copy the address you land on. (APA accepts checked short links; your reader may still like to see the destination.)' });
+
+    const aiParam = params.find(p => /^utm_source$|^ref$|^source$|^src$/i.test(p.name) && AI_SOURCES.test(deepDecode(p.value)));
+    const ai = aiParam ? deepDecode(aiParam.value) : null;
+
+    return { ok: true, input: String(raw).trim(), protocol: u.protocol, host: u.host, hostname: host, path, params, frag, doi, site, ai, steps, pathTokens };
+  }
+
+  function build(a) {
+    if (!a || !a.ok) return '';
+    const protocol = a.site.type === 'doi' ? 'https:' : a.protocol;
+    const host = a.site.type === 'doi' ? 'doi.org' : a.host;
+    const kept = a.params.filter(p => p.keep).map(p => p.raw);
+    let s = protocol + '//' + host + a.path + (kept.length ? '?' + kept.join('&') : '');
+    if (a.frag) {
+      if (a.frag.keep) s += '#' + a.frag.raw;
+      else if (a.frag.anchor) s += '#' + a.frag.anchor;
+    }
+    return s;
+  }
+
+  function cite(a) {
+    if (!a || !a.ok) return null;
+    const clean = build(a);
+    if (a.doi) return { kind: 'doi', value: 'https://doi.org/' + a.doi,
+      text: 'This work has a DOI. In an APA 7 reference, end with the DOI in this form and leave the web address out.' };
+    switch (a.site.type) {
+      case 'proprietary': return { kind: 'proprietary', value: a.site.name + '. ' + clean,
+        text: a.site.name + ' publishes content you can only get inside the database, so APA 7 asks for the database name and the address of the work. If that address only opens after you log in, give the database home page instead: ' + a.site.home };
+      case 'academic': return { kind: 'none', value: '(no URL)',
+        text: 'This is a library database (' + a.site.name + '). If the article has a DOI, cite the DOI. If it has none, APA 7 says to leave out the URL and the database name and cite it like a print article.' };
+      case 'publisher': return { kind: 'finddoi', value: clean,
+        text: 'This is a publisher’s article page. Look for the DOI near the title and cite https://doi.org/ plus that number. If the article truly has no DOI, use this clean address.' };
+      case 'index': return { kind: 'finddoi', value: clean,
+        text: a.site.name + ' is an index. Cite the article itself: find its DOI on this page and use that.' };
+      case 'search': return { kind: 'none', value: '(cite the article, not the search)',
+        text: 'This is a search page. Click through to the article and cite that instead.' };
+      case 'shortener': return { kind: 'web', value: clean,
+        text: 'Open the short link, copy the full address you land on, and run it through this page.' };
+      default: return { kind: 'web', value: clean,
+        text: 'Use the clean address. If the page is meant to change over time and is not archived, add the date you retrieved it.' };
+    }
+  }
+
+  return { analyze, build, cite, TIERS };
+})();
+if (typeof module !== 'undefined') module.exports = LinkReader;
+
+
+(() => {
+  const EXAMPLES = {
+    email: 'https://nam12.safelinks.protection.outlook.com/?url=https%3A%2F%2Fnews.example.org%2Fhealth%2Fkava-liver-review%3Futm_source%3Dnewsletter%26utm_medium%3Demail%26mc_eid%3D8f2c91ab47&data=05%7C02%7Cstudent%40example.edu%7C3f2a9b1c44d84e0a8c1f08dcf0a1b2c3%7C0%7C0%7C638650123456789012&sdata=AbCdEf123GhIjKl456%3D&reserved=0',
+    ai: 'https://www.nccih.nih.gov/health/turmeric?utm_source=chatgpt.com',
+    youtube: 'https://youtu.be/dQw4w9WgXcQ?is=Xa9k2Lm0Pq7Rt3Zw&t=43',
+    proxy: 'https://www-sciencedirect-com.ezproxy.library.example.edu/science/article/abs/pii/0749596X8790060X?via%3Dihub',
+    scholar: 'https://www-tandfonline-com.ezproxy.library.example.edu/doi/abs/10.1080/0144341930130314?casa_token=8vQx2Lk0pAAAAAA:Zr7mKq1TfP0eWbN3sXh9',
+    highlight: 'https://ods.od.nih.gov/factsheets/Magnesium-HealthProfessional/#:~:text=magnesium%20deficiency'
+  };
+  const KIND = {
+    proxy: ['Library proxy', 'accent'], wrapper: ['Wrapper', 'label'], personal: ['Personal info', 'token'],
+    token: ['Session', 'token'], doi: ['DOI', 'content'], extra: ['Trimmed', 'unknown'], ai: ['AI tool', 'label']
+  };
+  const TIERCLASS = { label: 'label', click: 'click', share: 'share', token: 'token', personal: 'token', extra: 'unknown', content: 'content', unknown: 'unknown', unknownId: 'unknownid' };
+  const $ = (id) => document.getElementById(id);
+  const input = $('link-in');
+  let state = null;
+
+  /* Tabs */
+  const tabs = Array.from(document.querySelectorAll('[role="tab"]'));
+  const keys = tabs.map((t) => t.dataset.tab);
+  function selectTab(key, opts) {
+    opts = opts || {};
+    if (keys.indexOf(key) < 0) key = 'reader';
+    tabs.forEach((t) => {
+      const on = t.dataset.tab === key;
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+      t.tabIndex = on ? 0 : -1;
+      $('p-' + t.dataset.tab).hidden = !on;
+      if (on && opts.focus) t.focus();
+      if (on) t.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    });
+    if (opts.push) {
+      try { history.replaceState(null, '', key === 'reader' ? location.pathname + location.search : '#' + key); } catch (e) {}
+    }
+    if (opts.scroll) {
+      const bar = document.querySelector('.tabs-bar');
+      const top = bar.getBoundingClientRect().top + window.scrollY;
+      if (window.scrollY > top) window.scrollTo({ top: top, behavior: 'auto' });
+    }
+  }
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => selectTab(t.dataset.tab, { push: true, scroll: true }));
+    t.addEventListener('keydown', (e) => {
+      let j = null;
+      if (e.key === 'ArrowRight') j = (i + 1) % tabs.length;
+      else if (e.key === 'ArrowLeft') j = (i - 1 + tabs.length) % tabs.length;
+      else if (e.key === 'Home') j = 0;
+      else if (e.key === 'End') j = tabs.length - 1;
+      if (j !== null) { e.preventDefault(); selectTab(tabs[j].dataset.tab, { focus: true, push: true }); }
+    });
+  });
+  document.querySelectorAll('[data-goto]').forEach((a) => a.addEventListener('click', (e) => {
+    e.preventDefault();
+    selectTab(a.dataset.goto, { push: true, scroll: true });
+  }));
+  window.addEventListener('hashchange', () => selectTab(location.hash.slice(1), { scroll: true }));
+  selectTab(location.hash.slice(1) || 'reader');
+
+  function h(tag, attrs, kids) {
+    const e = document.createElement(tag);
+    if (attrs) for (const k in attrs) {
+      if (k === 'class') e.className = attrs[k];
+      else if (k === 'text') e.textContent = attrs[k];
+      else if (k.slice(0, 2) === 'on') e.addEventListener(k.slice(2), attrs[k]);
+      else e.setAttribute(k, attrs[k]);
+    }
+    (kids || []).forEach((c) => { if (c != null) e.append(c); });
+    return e;
+  }
+  function trunc(s, n) { return s.length > n ? s.slice(0, n - 1) + '…' : s; }
+  function tierName(t) { return LinkReader.TIERS[t].name; }
+
+  function run() {
+    const a = LinkReader.analyze(input.value);
+    const err = $('error');
+    if (!a.ok) {
+      state = null;
+      $('results').hidden = true;
+      err.hidden = false;
+      err.textContent = a.error === 'empty'
+        ? 'Paste a link above to see what it carries.'
+        : 'That does not look like a web address. Paste the whole link, starting with https://, or a DOI.';
+      return;
+    }
+    err.hidden = true;
+    $('results').hidden = false;
+    if (a.ai) a.steps.push({ kind: 'ai', text: 'This link says you found it through an AI tool (' + a.ai + '). Anyone who reads your reference can see that.' });
+    state = a;
+    renderSteps();
+    renderParams();
+    renderAnatomy();
+    renderOut();
+  }
+
+  function renderSteps() {
+    const ul = $('steps');
+    ul.replaceChildren();
+    $('steps-block').hidden = state.steps.length === 0;
+    state.steps.forEach((s) => {
+      const k = KIND[s.kind] || ['Note', 'unknown'];
+      ul.append(h('li', null, [h('span', { class: 'pill tier-' + k[1], text: k[0] }), h('span', { text: s.text })]));
+    });
+  }
+
+  function toggle(item, on) {
+    item.keep = on;
+    renderAnatomy();
+    renderOut();
+    const row = document.querySelector('[data-row="' + item._id + '"]');
+    if (row) {
+      row.classList.toggle('off', !on);
+      const cb = row.querySelector('input');
+      if (cb && cb.checked !== on) cb.checked = on;
+    }
+  }
+
+  function renderParams() {
+    const box = $('params');
+    box.replaceChildren();
+    const items = state.params.slice();
+    if (state.frag) items.push(Object.assign(state.frag, { _frag: true, name: '#', value: state.frag.raw }));
+    if (!items.length) {
+      box.append(h('p', { class: 'empty', text: 'Nothing rides along on this link. The address alone gets your reader there.' }));
+      return;
+    }
+    items.forEach((p, i) => {
+      p._id = 'p' + i;
+      const tc = TIERCLASS[p.tier] || 'unknown';
+      const cbId = 'keep-' + i;
+      const kv = h('div', { class: 'kv' }, [
+        h('span', { class: 'pill tier-' + tc, text: p._frag ? (p.tier === 'content' ? 'Anchor' : 'Highlight') : tierName(p.tier) }),
+        h('code', null, p._frag ? ['#' + p.raw] : [p.name + (p.value !== '' ? '=' : ''), h('span', { class: 'val', text: trunc(p.value, 120) })])
+      ]);
+      const sw = h('label', { class: 'switch', for: cbId }, [
+        h('input', { type: 'checkbox', id: cbId, 'aria-label': 'Keep ' + (p._frag ? 'the part after #' : p.name) }),
+        'Keep'
+      ]);
+      const cb = sw.querySelector('input');
+      cb.checked = !!p.keep;
+      cb.addEventListener('change', () => toggle(p, cb.checked));
+      box.append(h('div', { class: 'param' + (p.keep ? '' : ' off'), 'data-row': p._id }, [kv, h('p', { class: 'why', text: p.why }), sw]));
+    });
+  }
+
+  function renderAnatomy() {
+    const el = $('anatomy');
+    el.replaceChildren();
+    const a = state;
+    const host = a.site.type === 'doi' ? 'doi.org' : a.host;
+    const proto = a.site.type === 'doi' ? 'https:' : a.protocol;
+    el.append(h('span', { class: 'base', text: proto + '//' + host + a.path }));
+    a.params.forEach((p, i) => {
+      el.append(h('span', { class: 'sep', text: i === 0 ? '?' : '&' }));
+      el.append(h('button', {
+        type: 'button', class: 'chip tier-' + (TIERCLASS[p.tier] || 'unknown') + (p.keep ? '' : ' off'),
+        title: tierName(p.tier) + (p.keep ? ': kept' : ': stripped'), 'aria-pressed': p.keep ? 'true' : 'false',
+        text: p.name + (p.value !== '' ? '=' + trunc(p.value, 34) : ''), onclick: () => toggle(p, !p.keep)
+      }));
+    });
+    if (a.frag) {
+      el.append(h('span', { class: 'sep', text: '#' }));
+      el.append(h('button', {
+        type: 'button', class: 'chip tier-' + (TIERCLASS[a.frag.tier] || 'unknown') + (a.frag.keep ? '' : ' off'),
+        title: a.frag.keep ? 'Kept' : 'Stripped', 'aria-pressed': a.frag.keep ? 'true' : 'false',
+        text: trunc(a.frag.raw, 48), onclick: () => toggle(a.frag, !a.frag.keep)
+      }));
+    }
+  }
+
+  function renderOut() {
+    $('clean').textContent = LinkReader.build(state);
+    const c = LinkReader.cite(state);
+    $('cite-val').textContent = c.value;
+    $('cite-text').textContent = c.text;
+    $('copy-cite').disabled = /^\(/.test(c.value);
+    $('clean-status').textContent = '';
+    $('cite-status').textContent = '';
+  }
+
+  function copyFrom(outId, statusId) {
+    const out = $(outId), status = $(statusId);
+    const text = out.textContent;
+    const selectIt = () => {
+      const r = document.createRange();
+      r.selectNodeContents(out);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(r);
+      status.textContent = 'Selected. Press Ctrl+C or ⌘C to copy.';
+    };
+    try {
+      navigator.clipboard.writeText(text).then(() => { status.textContent = 'Copied'; }, selectIt);
+    } catch (e) { selectIt(); }
+  }
+  $('copy-clean').addEventListener('click', () => copyFrom('clean', 'clean-status'));
+  $('copy-cite').addEventListener('click', () => copyFrom('cite-val', 'cite-status'));
+  $('copy-ask').addEventListener('click', () => copyFrom('ask-text', 'ask-status'));
+
+  const exButtons = document.querySelectorAll('[data-ex]');
+  function markExample(key) { exButtons.forEach((b) => b.setAttribute('aria-pressed', b.dataset.ex === key ? 'true' : 'false')); }
+  exButtons.forEach((b) => b.addEventListener('click', () => {
+    input.value = EXAMPLES[b.dataset.ex];
+    markExample(b.dataset.ex);
+    run();
+  }));
+
+  let t;
+  input.addEventListener('input', () => {
+    clearTimeout(t);
+    const key = Object.keys(EXAMPLES).find((k) => EXAMPLES[k] === input.value.trim());
+    markExample(key || '');
+    t = setTimeout(run, 140);
+  });
+
+  input.value = EXAMPLES.email;
+  markExample('email');
+  run();
+
+  /* Static: drawn locally on a small canvas and scaled up. */
+  const canvas = $('static');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const img = ctx.createImageData(W, H);
+  let lo = [177, 183, 186], hi = [228, 231, 232];
+  function hex(s) {
+    s = (s || '').trim().replace('#', '');
+    if (s.length === 3) s = s.split('').map((c) => c + c).join('');
+    const n = parseInt(s, 16);
+    return isNaN(n) ? null : [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  }
+  function frame() {
+    const d = img.data;
+    for (let i = 0; i < d.length; i += 4) {
+      const r = Math.random();
+      d[i] = lo[0] + (hi[0] - lo[0]) * r;
+      d[i + 1] = lo[1] + (hi[1] - lo[1]) * r;
+      d[i + 2] = lo[2] + (hi[2] - lo[2]) * r;
+      d[i + 3] = 255;
+    }
+    ctx.putImageData(img, 0, 0);
+  }
+  function readColors() {
+    const cs = getComputedStyle(document.documentElement);
+    lo = hex(cs.getPropertyValue('--static-lo')) || lo;
+    hi = hex(cs.getPropertyValue('--static-hi')) || hi;
+    frame();
+  }
+  readColors();
+  const mq = window.matchMedia('(prefers-color-scheme: dark)');
+  if (mq.addEventListener) mq.addEventListener('change', readColors);
+  new MutationObserver(readColors).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+  const still = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let visible = true, timer = null;
+  function schedule() {
+    clearInterval(timer);
+    timer = null;
+    if (!still.matches && visible && !document.hidden) timer = setInterval(frame, 90);
+  }
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver((es) => { visible = es[0].isIntersecting; schedule(); }).observe(canvas);
+  }
+  document.addEventListener('visibilitychange', schedule);
+  if (still.addEventListener) still.addEventListener('change', schedule);
+  schedule();
+})();
+</script>
+</body>
+</html>
