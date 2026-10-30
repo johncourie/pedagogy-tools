@@ -1,0 +1,734 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Claim Strength Calibrator</title>
+<meta name="description" content="An interactive exercise in matching the strength of a written claim to the evidence behind it — the skill that separates careful writing from overstated writing.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap">
+<style>
+/* Layout: a dark instrument-panel header carries the title and a thin spectrum line;
+   a sticky tab strip switches views; content reads in a single column with
+   the gauge and evidence/claim cards as the raised objects. */
+:root {
+  --bg: #edeef0;
+  --surface: #f8f8f9;
+  --well: #e0e2e5;
+  --ink: #14171a;
+  --ink-soft: #555d66;
+  --ink-muted: #8690998a;
+  --rule: #c2c8ce;
+  --band-bg: #14171a;
+  --band-ink: #edeef0;
+
+  --cal: #197a56;
+  --cal-bg: #e6f4ee;
+  --under: #2a6a9c;
+  --under-bg: #e4eff8;
+  --over: #b87314;
+  --over-bg: #fdf0db;
+  --severe: #b82e2e;
+  --severe-bg: #fce6e6;
+
+  --f-display: "Instrument Serif", Georgia, "Times New Roman", serif;
+  --f-body: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --f-mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111418; --surface: #1a1e23; --well: #0e1114; --ink: #d6dade; --ink-soft: #8a929c;
+    --ink-muted: #8a929c66; --rule: #2e353c; --band-bg: #0a0c0f; --band-ink: #d6dade;
+    --cal: #3ebc88; --cal-bg: #162e24; --under: #5ba4d4; --under-bg: #162638;
+    --over: #e8a03a; --over-bg: #2e2214; --severe: #e05555; --severe-bg: #2e1616;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111418; --surface: #1a1e23; --well: #0e1114; --ink: #d6dade; --ink-soft: #8a929c;
+  --ink-muted: #8a929c66; --rule: #2e353c; --band-bg: #0a0c0f; --band-ink: #d6dade;
+  --cal: #3ebc88; --cal-bg: #162e24; --under: #5ba4d4; --under-bg: #162638;
+  --over: #e8a03a; --over-bg: #2e2214; --severe: #e05555; --severe-bg: #2e1616;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 16px/1.65 var(--f-body); -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+a { color: var(--under); text-underline-offset: 0.18em; text-decoration-thickness: 1px; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 2px solid var(--under); outline-offset: 2px; }
+.gut { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+/* Band header */
+.band { background: var(--band-bg); position: relative; overflow: hidden; }
+.spectrum-line { position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: linear-gradient(to right, var(--under) 0%, var(--cal) 25%, var(--cal) 40%, var(--over) 65%, var(--severe) 100%); }
+.band-inner { position: relative; z-index: 1; max-width: 54rem; margin-inline: auto; padding-block: clamp(2.25rem, 6vw, 3.75rem) clamp(2rem, 5vw, 3rem); display: flex; flex-direction: column; gap: 0.85rem; }
+.crumb { margin: 0; font: 500 0.75rem/1.4 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); }
+.crumb a { color: inherit; text-decoration: none; }
+.crumb a:hover { text-decoration: underline; }
+.eyebrow { margin: 0; font: 600 0.75rem/1.4 var(--f-body); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); }
+h1 { margin: 0; font: 400 clamp(2.2rem, 7vw, 3.8rem)/1.0 var(--f-display); letter-spacing: -0.015em; color: var(--band-ink); }
+.lede { margin: 0; max-width: 38rem; font-size: clamp(0.95rem, 2vw, 1.1rem); line-height: 1.55; color: var(--ink-soft); }
+
+/* Tabs */
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.tabs-bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); border-bottom: 1px solid var(--rule); }
+.tabs { max-width: 54rem; margin-inline: auto; display: flex; gap: 0; overflow-x: auto; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab { flex: none; font: 600 0.72rem/1 var(--f-body); letter-spacing: 0.06em; text-transform: uppercase; padding: 0.9rem 1rem; border: 0; border-bottom: 2px solid transparent; background: none; color: var(--ink-soft); white-space: nowrap; cursor: pointer; }
+.tab:hover { color: var(--ink); }
+.tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--ink); }
+
+.panel { padding-block: 2rem 4rem; }
+.panel:focus-visible { outline: none; }
+
+/* Calibrator */
+.cal-wrap { max-width: 54rem; margin-inline: auto; display: flex; flex-direction: column; gap: 1.5rem; }
+.cal-header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.5rem 1.5rem; }
+.cal-header h2 { margin: 0; font: 400 1.6rem/1.2 var(--f-display); }
+.cal-progress { font: 500 0.8rem/1 var(--f-mono); color: var(--ink-soft); letter-spacing: 0.04em; }
+.score { font: 600 0.75rem/1.3 var(--f-body); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft); }
+.score strong { color: var(--cal); font-weight: 700; }
+
+.case-card { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: clamp(1.25rem, 3vw, 1.75rem); display: flex; flex-direction: column; gap: 1.25rem; }
+
+.evidence-block { display: flex; flex-direction: column; gap: 0.5rem; }
+.block-label { font: 600 0.7rem/1.3 var(--f-body); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); }
+.evidence-text { margin: 0; padding: 1rem 1.1rem; background: var(--well); border-radius: 4px; font-size: 0.9375rem; line-height: 1.65; }
+.evidence-text .src { display: block; margin-top: 0.5rem; font-size: 0.8125rem; color: var(--ink-soft); font-style: italic; }
+
+.claim-block { display: flex; flex-direction: column; gap: 0.5rem; }
+.claim-text { margin: 0; padding: 1rem 1.1rem; background: var(--surface); border: 2px solid var(--rule); border-radius: 4px; font: 400 1.15rem/1.5 var(--f-display); }
+.claim-text::before { content: "\201c"; color: var(--ink-muted); }
+.claim-text::after { content: "\201d"; color: var(--ink-muted); }
+
+.pattern-tag { display: inline-block; font: 600 0.65rem/1 var(--f-body); letter-spacing: 0.08em; text-transform: uppercase; padding: 0.3em 0.6em; border-radius: 3px; background: var(--well); color: var(--ink-soft); }
+
+/* Answer buttons */
+.answers { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; }
+.answer-btn { font: 600 0.78rem/1.2 var(--f-body); letter-spacing: 0.02em; color: var(--ink); background: var(--surface); border: 2px solid var(--rule); border-radius: 5px; padding: 0.75rem 0.5rem; cursor: pointer; text-align: center; transition: border-color 0.15s, background 0.15s; min-width: 0; }
+.answer-btn:hover:not(:disabled) { border-color: var(--ink-soft); background: var(--well); }
+.answer-btn:disabled { cursor: default; opacity: 0.85; }
+.answer-btn[data-v="calibrated"] { --ac: var(--cal); --ac-bg: var(--cal-bg); }
+.answer-btn[data-v="understated"] { --ac: var(--under); --ac-bg: var(--under-bg); }
+.answer-btn[data-v="overstated"] { --ac: var(--over); --ac-bg: var(--over-bg); }
+.answer-btn[data-v="seriously"] { --ac: var(--severe); --ac-bg: var(--severe-bg); }
+.answer-btn.correct { border-color: var(--ac); background: var(--ac-bg); color: var(--ac); }
+.answer-btn.wrong { border-color: var(--severe); background: var(--severe-bg); color: var(--severe); opacity: 1; }
+
+/* Gauge */
+.gauge-wrap { display: flex; flex-direction: column; gap: 0.6rem; }
+.gauge { height: 8px; border-radius: 4px; display: flex; overflow: hidden; gap: 2px; }
+.gauge-seg { flex: 1; border-radius: 3px; opacity: 0.25; transition: opacity 0.3s; }
+.gauge-seg.active { opacity: 1; }
+.gauge-seg[data-v="calibrated"] { background: var(--cal); }
+.gauge-seg[data-v="understated"] { background: var(--under); }
+.gauge-seg[data-v="overstated"] { background: var(--over); }
+.gauge-seg[data-v="seriously"] { background: var(--severe); }
+.gauge-labels { display: flex; gap: 2px; }
+.gauge-label { flex: 1; font: 500 0.65rem/1.3 var(--f-body); letter-spacing: 0.04em; text-align: center; color: var(--ink-muted); text-transform: uppercase; transition: color 0.3s; }
+.gauge-label.active { font-weight: 700; }
+.gauge-label[data-v="calibrated"].active { color: var(--cal); }
+.gauge-label[data-v="understated"].active { color: var(--under); }
+.gauge-label[data-v="overstated"].active { color: var(--over); }
+.gauge-label[data-v="seriously"].active { color: var(--severe); }
+
+/* Feedback */
+.feedback { display: flex; flex-direction: column; gap: 0.75rem; padding: 1rem 1.1rem; border-radius: 4px; border-left: 3px solid var(--rule); background: var(--well); }
+.feedback.cal { border-left-color: var(--cal); }
+.feedback.under { border-left-color: var(--under); }
+.feedback.over { border-left-color: var(--over); }
+.feedback.severe { border-left-color: var(--severe); }
+.fb-verdict { margin: 0; font: 600 0.85rem/1.4 var(--f-body); }
+.fb-verdict .v-cal { color: var(--cal); }
+.fb-verdict .v-under { color: var(--under); }
+.fb-verdict .v-over { color: var(--over); }
+.fb-verdict .v-severe { color: var(--severe); }
+.fb-explain { margin: 0; font-size: 0.9375rem; line-height: 1.6; }
+.fb-pattern { margin: 0; font: 500 0.8125rem/1.5 var(--f-body); color: var(--ink-soft); }
+
+/* Navigation */
+.cal-nav { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.nav-btn { font: 600 0.8rem/1 var(--f-body); letter-spacing: 0.04em; color: var(--ink); background: var(--surface); border: 1px solid var(--rule); border-radius: 4px; padding: 0.65rem 1.25rem; cursor: pointer; }
+.nav-btn:hover:not(:disabled) { background: var(--well); border-color: var(--ink-soft); }
+.nav-btn:disabled { opacity: 0.35; cursor: default; }
+.nav-btn.primary { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+.nav-btn.primary:hover:not(:disabled) { opacity: 0.88; }
+
+/* Summary */
+.summary { display: flex; flex-direction: column; gap: 1.5rem; align-items: center; text-align: center; padding: 2rem 1rem; }
+.summary h2 { margin: 0; font: 400 2rem/1.15 var(--f-display); }
+.summary-score { font: 300 4rem/1 var(--f-body); letter-spacing: -0.02em; }
+.summary-score .num { font-weight: 700; }
+.summary-msg { margin: 0; max-width: 32rem; font-size: 1rem; line-height: 1.6; color: var(--ink-soft); }
+.summary-detail { display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 28rem; }
+.sd-row { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid var(--rule); font-size: 0.875rem; }
+.sd-row .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+
+/* Progress dots */
+.dots { display: flex; gap: 0.35rem; justify-content: center; flex-wrap: wrap; }
+.dot-item { width: 10px; height: 10px; border-radius: 50%; background: var(--well); border: 1px solid var(--rule); transition: background 0.2s, border-color 0.2s; }
+.dot-item.current { border-color: var(--ink); background: var(--ink); }
+.dot-item.correct { background: var(--cal); border-color: var(--cal); }
+.dot-item.wrong { background: var(--severe); border-color: var(--severe); }
+
+/* Reading column (reference tabs) */
+.col { max-width: 44rem; margin-inline: auto; display: flex; flex-direction: column; gap: 1rem; }
+.col h2 { margin: 0; font: 400 clamp(1.6rem, 4vw, 2.2rem)/1.1 var(--f-display); text-wrap: balance; }
+.col h3 { margin: 1.5rem 0 0; font: 700 1rem/1.3 var(--f-body); letter-spacing: -0.005em; }
+.col p { margin: 0; }
+.col ul, .col ol { margin: 0; padding-left: 1.4rem; display: flex; flex-direction: column; gap: 0.65rem; }
+.col li::marker { color: var(--ink-soft); }
+
+/* Spectrum reference */
+.spectrum-ref { display: flex; flex-direction: column; gap: 0; margin: 0.5rem 0 0; }
+.spec-item { display: grid; grid-template-columns: 10rem minmax(0, 1fr); gap: 1rem; padding: 1.25rem 0; border-top: 1px solid var(--rule); }
+.spec-item:last-child { border-bottom: 1px solid var(--rule); }
+.spec-head { display: flex; flex-direction: column; gap: 0.4rem; align-items: flex-start; }
+.spec-badge { display: inline-block; font: 700 0.65rem/1 var(--f-body); letter-spacing: 0.08em; text-transform: uppercase; padding: 0.35em 0.65em; border-radius: 3px; white-space: nowrap; }
+.spec-badge.b-cal { color: var(--cal); background: var(--cal-bg); }
+.spec-badge.b-under { color: var(--under); background: var(--under-bg); }
+.spec-badge.b-over { color: var(--over); background: var(--over-bg); }
+.spec-badge.b-severe { color: var(--severe); background: var(--severe-bg); }
+.spec-body { display: flex; flex-direction: column; gap: 0.5rem; min-width: 0; }
+.spec-body p { font-size: 0.9375rem; line-height: 1.55; }
+.spec-markers { margin: 0; font: 500 0.8125rem/1.6 var(--f-mono); color: var(--ink-soft); }
+
+/* Failure mode cards */
+.fm-card { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 1.25rem 1.5rem; display: flex; flex-direction: column; gap: 0.75rem; margin: 0.5rem 0; }
+.fm-card h4 { margin: 0; font: 700 0.9375rem/1.3 var(--f-body); }
+.fm-card p { margin: 0; font-size: 0.9375rem; line-height: 1.55; }
+.fm-example { display: flex; flex-direction: column; gap: 0.5rem; padding: 0.85rem 1rem; background: var(--well); border-radius: 4px; font-size: 0.875rem; }
+.fm-example .fm-label { font: 600 0.65rem/1 var(--f-body); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); }
+.fm-arrow { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8125rem; color: var(--ink-soft); }
+.fm-arrow::before { content: "\2192"; font-size: 1rem; }
+.fm-fix { margin: 0; font-size: 0.875rem; line-height: 1.55; padding-left: 1rem; border-left: 2px solid var(--cal); color: var(--ink-soft); }
+
+/* Stance block */
+.stance { border-left: 3px solid var(--ink); padding-left: clamp(1rem, 3vw, 1.5rem); display: flex; flex-direction: column; gap: 0.75rem; }
+.sig { font: 600 0.9rem/1.4 var(--f-body); }
+
+.next-link { margin-top: 1.5rem !important; padding-top: 1rem; border-top: 1px solid var(--rule); font: 600 0.875rem/1.4 var(--f-body); }
+
+footer { margin-top: 3rem; border-top: 1px solid var(--rule); }
+.foot { max-width: 44rem; margin-inline: auto; padding-block: 2rem 3rem; font: 400 0.75rem/1.6 var(--f-body); color: var(--ink-soft); display: flex; flex-direction: column; gap: 0.5rem; }
+.foot p { margin: 0; }
+
+@media (max-width: 640px) {
+  .answers { grid-template-columns: repeat(2, 1fr); }
+  .spec-item { grid-template-columns: minmax(0, 1fr); gap: 0.5rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0s !important; }
+}
+</style>
+</head>
+<body>
+
+<header class="band">
+  <div class="spectrum-line" aria-hidden="true"></div>
+  <div class="band-inner gut">
+    <nav class="crumb" aria-label="Breadcrumb"><a href="../../../">Pedagogy Tools</a> &middot; <a href="../../">Research &amp; Sources</a> &middot; <a href="../">Current version</a></nav>
+    <p class="eyebrow">An exercise in evidence&ndash;claim alignment</p>
+    <h1>Claim Strength Calibrator</h1>
+    <p class="lede">Claims in research writing should match the evidence behind them&mdash;no stronger, no weaker. This tool gives you practice reading evidence and judging whether a claim is calibrated to it.</p>
+  </div>
+</header>
+
+<nav class="tabs-bar" aria-label="Sections">
+  <div class="tabs gut" role="tablist">
+    <button class="tab" role="tab" id="tab-cal" data-tab="cal" aria-controls="p-cal" aria-selected="true">Calibrator</button>
+    <button class="tab" role="tab" id="tab-spectrum" data-tab="spectrum" aria-controls="p-spectrum" aria-selected="false" tabindex="-1">The Spectrum</button>
+    <button class="tab" role="tab" id="tab-modes" data-tab="modes" aria-controls="p-modes" aria-selected="false" tabindex="-1">Failure Modes</button>
+    <button class="tab" role="tab" id="tab-why" data-tab="why" aria-controls="p-why" aria-selected="false" tabindex="-1">Why It Matters</button>
+  </div>
+</nav>
+
+<main>
+
+  <section class="panel gut" role="tabpanel" id="p-cal" aria-labelledby="tab-cal" tabindex="0">
+    <div class="cal-wrap" id="calibrator"></div>
+  </section>
+
+  <section class="panel gut" role="tabpanel" id="p-spectrum" aria-labelledby="tab-spectrum" tabindex="0" hidden>
+    <div class="col">
+      <h2>The four levels of claim strength</h2>
+      <p>Every claim you write about evidence falls somewhere on this spectrum. The goal is the first level. The others are common in student writing and in published sources.</p>
+
+      <div class="spectrum-ref">
+        <div class="spec-item">
+          <div class="spec-head">
+            <span class="spec-badge b-cal">Well-calibrated</span>
+          </div>
+          <div class="spec-body">
+            <p>The claim accurately reflects what the evidence shows&mdash;its type, its scope, its certainty, and its limitations. Nothing is added, and nothing important is left out.</p>
+            <p class="spec-markers">Language markers: &ldquo;In one RCT&hellip;&rdquo; &ldquo;A pilot study found&hellip;&rdquo; &ldquo;is associated with&hellip;&rdquo; &ldquo;among postmenopausal women&hellip;&rdquo; &ldquo;using a standardized extract&hellip;&rdquo;</p>
+          </div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-head">
+            <span class="spec-badge b-under">Understated</span>
+          </div>
+          <div class="spec-body">
+            <p>The claim is weaker than the evidence supports. A Cochrane review becomes &ldquo;preliminary evidence,&rdquo; a well-replicated finding becomes &ldquo;some studies suggest.&rdquo; Understating sounds cautious but misrepresents the evidence just as surely as overstating does.</p>
+            <p class="spec-markers">Language markers: &ldquo;might&hellip;&rdquo; &ldquo;some preliminary evidence suggests&hellip;&rdquo; &ldquo;it is possible that&hellip;&rdquo; applied to strong findings</p>
+          </div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-head">
+            <span class="spec-badge b-over">Overstated</span>
+          </div>
+          <div class="spec-body">
+            <p>The claim goes beyond what the evidence supports. A hedge is dropped, a population is widened, a preparation is generalized, or a finding is presented as more certain than it is. The evidence is real&mdash;the claim just stretches it.</p>
+            <p class="spec-markers">Language markers: definitive verbs (&ldquo;reduces,&rdquo; &ldquo;prevents,&rdquo; &ldquo;treats&rdquo;) where the source used tentative ones; missing qualifiers (&ldquo;women&rdquo; instead of &ldquo;postmenopausal women&rdquo;); &ldquo;the herb&rdquo; instead of the specific preparation studied</p>
+          </div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-head">
+            <span class="spec-badge b-severe">Seriously overstated</span>
+          </div>
+          <div class="spec-body">
+            <p>The claim far exceeds the evidence. An in vitro result becomes clinical advice. An association becomes a cause. A traditional use report becomes proof of efficacy. The evidence exists, but it does not come close to supporting what is written.</p>
+            <p class="spec-markers">Language markers: causal language from observational data (&ldquo;prevents,&rdquo; &ldquo;causes&rdquo;); &ldquo;clinically proven&rdquo; from preclinical work; &ldquo;well-established treatment&rdquo; from traditional use alone; multiple escalations compounding in one sentence</p>
+          </div>
+        </div>
+      </div>
+
+      <h3>The asymmetry</h3>
+      <p>In the Saez&ndash;Zucman audit, 97% of the major and moderate errors with a clear direction overstated the paper&rsquo;s claims. Student writing shows the same asymmetry: the overwhelming majority of calibration errors make claims stronger than the evidence, not weaker. This is not because students are dishonest. It is because every step in the writing process&mdash;paraphrasing, summarizing, simplifying, wanting the paper to be interesting&mdash;exerts a gentle upward pressure on claim strength. The drift is invisible unless you have trained yourself to see it.</p>
+
+      <p class="next-link"><a href="#modes" data-goto="modes">Next: Failure Modes</a></p>
+    </div>
+  </section>
+
+  <section class="panel gut" role="tabpanel" id="p-modes" aria-labelledby="tab-modes" tabindex="0" hidden>
+    <div class="col">
+      <h2>Six ways claims get overstated</h2>
+      <p>These are the recurring patterns. Most overstated claims in student monograph writing fall into one or more of these categories. Learning to name the pattern makes it easier to catch in your own drafts.</p>
+
+      <div class="fm-card">
+        <h4>1. Hedge dropping</h4>
+        <p>The source uses cautious language&mdash;&ldquo;may,&rdquo; &ldquo;appears to,&rdquo; &ldquo;is associated with&rdquo;&mdash;and the student&rsquo;s version removes it.</p>
+        <div class="fm-example">
+          <span class="fm-label">Source says</span>
+          <p>&ldquo;Valerian root extract <strong>may improve</strong> subjective sleep quality&rdquo;</p>
+          <div class="fm-arrow">Student writes: &ldquo;Valerian root <strong>improves</strong> sleep quality&rdquo;</div>
+        </div>
+        <p class="fm-fix"><strong>Fix:</strong> Keep the hedge. If the source hedged, it hedged for a reason. Your job is to report the finding, not to strengthen it.</p>
+      </div>
+
+      <div class="fm-card">
+        <h4>2. Evidence type escalation</h4>
+        <p>The student writes a claim appropriate to a stronger kind of study than the one actually cited. Cell studies get described as though they were clinical evidence. Pilot studies get the language of confirmed findings.</p>
+        <div class="fm-example">
+          <span class="fm-label">Evidence</span>
+          <p>In vitro: berberine inhibits CYP3A4 at 50&ndash;100 &micro;M</p>
+          <div class="fm-arrow">Claim: &ldquo;Berberine causes clinically significant drug interactions&rdquo;</div>
+        </div>
+        <p class="fm-fix"><strong>Fix:</strong> Name the study type in your sentence. &ldquo;In cell culture, berberine inhibited&hellip;&rdquo; forces the claim to stay at the right level.</p>
+      </div>
+
+      <div class="fm-card">
+        <h4>3. Population generalization</h4>
+        <p>The study examined a specific group&mdash;postmenopausal women, adults with mild-to-moderate dementia, competitive athletes&mdash;and the claim drops the qualifier, widening it to everyone.</p>
+        <div class="fm-example">
+          <span class="fm-label">Evidence</span>
+          <p>RCT in postmenopausal women (n=80): black cohosh reduced hot flash frequency by 26%</p>
+          <div class="fm-arrow">Claim: &ldquo;Black cohosh is effective for menopausal symptoms&rdquo;</div>
+        </div>
+        <p class="fm-fix"><strong>Fix:</strong> Carry the population through. If the study only enrolled postmenopausal women, your claim is about postmenopausal women.</p>
+      </div>
+
+      <div class="fm-card">
+        <h4>4. Preparation conflation</h4>
+        <p>The study tested a specific preparation&mdash;a standardized extract at a specific dose&mdash;and the claim refers to &ldquo;the herb&rdquo; as though any preparation would work the same way.</p>
+        <div class="fm-example">
+          <span class="fm-label">Evidence</span>
+          <p>Meta-analysis of EGb 761 (standardized ginkgo extract, 240 mg/day) in dementia patients</p>
+          <div class="fm-arrow">Claim: &ldquo;Ginkgo supports cognitive function&rdquo;</div>
+        </div>
+        <p class="fm-fix"><strong>Fix:</strong> Name the preparation. A study of EGb 761 is a study of EGb 761, not a study of ginkgo leaf tea, ginkgo tincture, or ginkgo in general.</p>
+      </div>
+
+      <div class="fm-card">
+        <h4>5. Correlation &rarr; causation</h4>
+        <p>An observational study finds an association, and the claim uses causal language: &ldquo;prevents,&rdquo; &ldquo;causes,&rdquo; &ldquo;protects against.&rdquo; The association may be real, but the study cannot tell you why it exists.</p>
+        <div class="fm-example">
+          <span class="fm-label">Evidence</span>
+          <p>Prospective cohort: higher dietary turmeric intake associated with lower colorectal cancer rates (OR 0.73)</p>
+          <div class="fm-arrow">Claim: &ldquo;Turmeric consumption prevents colorectal cancer&rdquo;</div>
+        </div>
+        <p class="fm-fix"><strong>Fix:</strong> Use associational language for associations. &ldquo;Higher intake was associated with lower rates&rdquo; is the claim the study supports.</p>
+      </div>
+
+      <div class="fm-card">
+        <h4>6. Traditional use &rarr; efficacy</h4>
+        <p>A traditional use report documents historical practice: people used the plant for a purpose. The claim treats that history as evidence the plant works for that purpose.</p>
+        <div class="fm-example">
+          <span class="fm-label">Evidence</span>
+          <p>Elderberry used in European folk medicine for colds and influenza for centuries</p>
+          <div class="fm-arrow">Claim: &ldquo;Elderberry is a well-established treatment for upper respiratory infections&rdquo;</div>
+        </div>
+        <p class="fm-fix"><strong>Fix:</strong> Report the use, not the conclusion. &ldquo;Elderberry has a long history of use in European folk medicine for cold and flu symptoms&rdquo; says the same thing without pretending it says more.</p>
+      </div>
+
+      <h3>Compounding</h3>
+      <p>These patterns often appear together. A single sentence can drop a hedge, generalize the population, and conflate the preparation simultaneously. Each step feels small; together they can move a claim two or three levels up the spectrum. That compounding is why careful writers check each dimension separately.</p>
+
+      <p class="next-link"><a href="#why" data-goto="why">Next: Why It Matters</a></p>
+    </div>
+  </section>
+
+  <section class="panel gut" role="tabpanel" id="p-why" aria-labelledby="tab-why" tabindex="0" hidden>
+    <div class="col">
+      <h2>Why this matters</h2>
+      <div class="stance">
+        <p>Every claim you write is a small act of either precision or distortion. You may never intend to mislead anyone. But the cumulative effect of small overstatements across thousands of monographs, blog posts, and product pages is a body of herbal literature that says more than anyone has actually shown. That literature then gets cited, summarized, and re-summarized, each pass ratcheting the claims a little higher. By the time a practitioner reads the sentence, it bears no resemblance to the evidence it rests on.</p>
+        <p>This is how an in vitro study becomes &ldquo;clinically proven.&rdquo; This is how a pilot study becomes &ldquo;well-established.&rdquo; Not through any single dishonest act, but through a thousand small failures of calibration.</p>
+      </div>
+
+      <h3>The upward ratchet</h3>
+      <p>Writing exerts a natural upward pressure on claim strength. When you paraphrase, you tend to simplify, and simplification drops qualifiers. When you summarize, you tend to generalize, and generalization widens populations and preparations. When you want your writing to be readable, you reach for clean, declarative sentences, and declarative sentences sound more certain than the evidence warrants. None of this is intentional. All of it is predictable.</p>
+      <p>The skill this tool practices&mdash;reading a claim against its evidence and asking whether the strength matches&mdash;is the same skill every reviewer and editor applies. Practicing it before someone else catches your overstatements is how you become the writer whose work can be trusted.</p>
+
+      <h3>What the audits show</h3>
+      <p>The Saez&ndash;Zucman audit pointed systematic AI analysis at 138 economics papers by two prominent researchers. It found 2,035 problems, of which 147 were serious enough to change a headline number. Among the major and moderate errors with a clear direction, 97% overstated the paper&rsquo;s claims. Not 60%. Not 75%. Ninety-seven percent.</p>
+      <p>That asymmetry is not special to economics. It reflects a structural truth: every stage of research communication&mdash;writing, editing, publicizing, summarizing, citing&mdash;pushes claims upward. Downward errors get caught because they make the work look less interesting. Upward errors survive because they make the work look more interesting. The only defense is a writer who checks the match between claim and evidence as a matter of habit, before anyone else reads it.</p>
+
+      <h3>The ion cannon on the horizon</h3>
+      <p>The tools to run this kind of audit against any corpus&mdash;systematically, at negligible cost&mdash;are nearly here. The Saez&ndash;Zucman audit was a proof of concept. Within a few years, the same analysis will be pointed at entire fields, including herbal medicine. When it arrives, every overstated claim in every published monograph will be findable, traceable, and quotable. The practitioners whose writing survives that audit will be the ones who learned to calibrate their claims now.</p>
+
+      <p class="sig">John Courie</p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="foot gut">
+    <p>John Courie &middot; 2026 &middot; Built with Claude &middot; Version 1, archived 2026-10-30. The current version is at <a href="../">claim-calibrator/</a>.</p>
+    <p>The evidence scenarios in the Calibrator use simplified citations for readability. In monograph writing, always cite the primary source in full.</p>
+  </div>
+</footer>
+
+<script>
+const CASES = [
+  {
+    evidence: "A 2019 systematic review of 6 RCTs (n=345) found that valerian root extract may improve subjective sleep quality scores, though effect sizes were small and heterogeneity across studies was high.",
+    source: "Smith et al., 2019",
+    claim: "Valerian root improves sleep quality.",
+    answer: "overstated",
+    pattern: "Hedge dropping",
+    explanation: 'The review said "may improve" with small effect sizes and high heterogeneity. Dropping "may" and all the qualifiers converts a tentative, uncertain finding into a definitive statement. The evidence points in that direction but does not arrive there.'
+  },
+  {
+    evidence: "In vitro studies show that berberine inhibits CYP3A4 enzyme activity at concentrations of 50–100 µM in human liver microsomes.",
+    source: "Chen et al., 2021",
+    claim: "Berberine causes clinically significant drug interactions through CYP3A4 inhibition.",
+    answer: "seriously",
+    pattern: "Evidence type escalation",
+    explanation: "In vitro enzyme inhibition at high concentrations does not predict clinical outcomes. The concentrations tested may far exceed what is achievable in vivo after oral dosing. Going from a cell study to clinical advice skips animal studies, pharmacokinetic modeling, and clinical trials."
+  },
+  {
+    evidence: "A double-blind RCT (n=120) found that participants taking 300 mg of ashwagandha root extract twice daily for 8 weeks showed statistically significant reductions in serum cortisol compared to placebo (p<0.01, d=0.76).",
+    source: "Chandrasekhar et al., 2012",
+    claim: "In one RCT, 600 mg/day of ashwagandha root extract significantly reduced serum cortisol over 8 weeks compared to placebo.",
+    answer: "calibrated",
+    pattern: "None — this claim is well-calibrated",
+    explanation: 'The claim accurately restates the finding. "In one RCT" preserves the single-study limitation. The dose and preparation are specified. The outcome, comparator, and timeframe all match. Nothing is added and nothing important is left out.'
+  },
+  {
+    evidence: "A 12-week RCT in postmenopausal women (n=80) found that black cohosh extract (20 mg isopropanolic extract, daily) reduced hot flash frequency by 26% compared to placebo.",
+    source: "Osmers et al., 2005",
+    claim: "Black cohosh is effective for menopausal symptoms.",
+    answer: "overstated",
+    pattern: "Population generalization + preparation conflation",
+    explanation: "Three problems compound here. The study measured hot flash frequency specifically, not “menopausal symptoms” broadly. It enrolled postmenopausal women, not all women in menopause. And “is effective” goes beyond what a single RCT showing a 26% reduction can establish. Each stretch is small; together they move the claim well past the evidence."
+  },
+  {
+    evidence: "A meta-analysis of 9 RCTs found that a standardized extract of Ginkgo biloba (EGb 761, 240 mg/day) showed modest improvements in cognitive function in patients with mild-to-moderate dementia.",
+    source: "Birks & Grimley Evans, 2009",
+    claim: "Ginkgo supports cognitive function.",
+    answer: "overstated",
+    pattern: "Preparation conflation + population generalization",
+    explanation: "The evidence is specific to one standardized extract (EGb 761) at one dose in one population (dementia patients). “Ginkgo” without qualification could mean any preparation. “Supports cognitive function” in general extends the finding to healthy people, different preparations, and different doses."
+  },
+  {
+    evidence: "Elderberry (Sambucus nigra) has been used in European folk medicine for colds and influenza for centuries.",
+    source: "Ulbricht et al., 2014",
+    claim: "Elderberry is a well-established treatment for upper respiratory infections.",
+    answer: "seriously",
+    pattern: "Traditional use → efficacy",
+    explanation: "Traditional use documents historical practice, not clinical efficacy. “Well-established treatment” implies demonstrated effectiveness through clinical evidence. Centuries of use tells us people believed it worked. It does not tell us it works. Several RCTs of elderberry do exist—but this evidence doesn’t cite them."
+  },
+  {
+    evidence: "A prospective cohort study (n=10,000) found that higher dietary intake of turmeric was associated with lower rates of colorectal cancer over 15 years (OR 0.73, 95% CI 0.55–0.97).",
+    source: "Shin et al., 2020",
+    claim: "Turmeric consumption prevents colorectal cancer.",
+    answer: "seriously",
+    pattern: "Correlation → causation",
+    explanation: "An observational association—even a prospective one—cannot establish causation. People who eat more turmeric likely differ in many ways: overall diet quality, socioeconomic status, other health behaviors. “Prevents” is a causal claim. The study found a statistical association, which is a very different thing."
+  },
+  {
+    evidence: "Kava (Piper methysticum) preparations have been associated with rare cases of severe hepatotoxicity, including liver failure requiring transplantation, though causality assessment is complicated by concurrent medications and pre-existing liver disease in most reported cases.",
+    source: "Teschke et al., 2012",
+    claim: "Rare cases of serious liver injury have been reported in people using kava, though other factors were present in most cases and a direct causal link has not been established.",
+    answer: "calibrated",
+    pattern: "None — this claim is well-calibrated",
+    explanation: "The claim preserves the rarity, the severity, the presence of confounding factors, and the unresolved causality. It does not dismiss the safety signal and does not overstate the causal evidence. This is the kind of careful, balanced claim that safety discussions require."
+  },
+  {
+    evidence: "A Cochrane review of 29 RCTs (n=5,489) concluded that St. John’s wort is significantly more effective than placebo for major depression and has comparable efficacy to standard antidepressants, with fewer side effects.",
+    source: "Linde et al., 2008",
+    claim: "There is some preliminary evidence suggesting St. John’s wort might have antidepressant properties.",
+    answer: "understated",
+    pattern: "Understating strong evidence",
+    explanation: "A Cochrane review of 29 RCTs with nearly 5,500 participants finding comparable efficacy to standard antidepressants is not “preliminary evidence.” It is a large, well-conducted evidence synthesis. “Might” and “some” make the finding sound uncertain when it is among the strongest in herbal medicine. Hedging this far misrepresents the evidence just as surely as overstating would."
+  },
+  {
+    evidence: "A pilot study (n=30, no control group) found that participants reported reduced anxiety scores on a self-report questionnaire after 4 weeks of drinking passionflower tea nightly.",
+    source: "Ngan & Conduit, 2011",
+    claim: "Passionflower has anxiolytic effects.",
+    answer: "overstated",
+    pattern: "Evidence type escalation",
+    explanation: "A 30-person pilot with no control group provides only a preliminary signal. Self-reported anxiety scores can improve from expectation alone, which is exactly what a control group would detect. “Has anxiolytic effects” states a pharmacological fact that this study design cannot establish. The correct claim is that the pilot found self-reported improvement, and a controlled trial is needed."
+  },
+  {
+    evidence: "In a survey of 500 practicing herbalists in the UK, 78% reported using chamomile preparations for anxiety-related complaints in their clinical practice.",
+    source: "Smith & Jones, 2020",
+    claim: "Chamomile is widely used by practicing herbalists for anxiety-related complaints.",
+    answer: "calibrated",
+    pattern: "None — this claim is well-calibrated",
+    explanation: "The claim reports practitioner behavior, not efficacy. “Is widely used” accurately reflects a 78% prevalence in a survey. It does not say the herb works for anxiety, only that practitioners use it for that purpose. This is a clean, accurate summary of a practice survey."
+  },
+  {
+    evidence: "An in vitro study found that an ethanolic extract of Echinacea purpurea root at 500 µg/mL increased NK cell activity by 15% in a cell culture model.",
+    source: "Raduner et al., 2006",
+    claim: "Echinacea strengthens the immune system and helps the body fight infections.",
+    answer: "seriously",
+    pattern: "Multiple compounding escalations",
+    explanation: "This sentence compounds at least four escalations: in vitro → in vivo, one immune marker → “the immune system,” cell culture → “fight infections,” and a specific extract at a specific concentration → the whole genus. Each step is individually unjustified. Together they produce a claim that bears almost no resemblance to the evidence."
+  },
+  {
+    evidence: "A case-control study found that regular use of comfrey-containing products was associated with a 3.5-fold increased risk of hepatic veno-occlusive disease, though the absolute risk remains very low (estimated at fewer than 1 per 100,000 users per year).",
+    source: "Edgar et al., 2011",
+    claim: "Comfrey carries a 3.5-times higher risk of serious liver disease.",
+    answer: "overstated",
+    pattern: "Relative risk without absolute risk",
+    explanation: "The relative risk is technically accurate, but presenting it without the absolute risk creates a misleading impression of danger. A 3.5-fold increase of a very rare event is still very rare. The claim is not wrong in a strict sense, but it frames the risk in the most alarming way possible by omitting the context that makes the number interpretable."
+  },
+  {
+    evidence: "A 2022 umbrella review examined 14 systematic reviews of milk thistle (Silybum marianum) for liver disease. While some individual trials reported benefits, most reviews concluded that evidence is insufficient to recommend milk thistle for any liver condition.",
+    source: "Based on Cochrane and allied reviews",
+    claim: "The evidence for milk thistle in liver disease is mixed, with most systematic reviews finding insufficient evidence to support clinical recommendations.",
+    answer: "calibrated",
+    pattern: "None — this claim is well-calibrated",
+    explanation: "The claim accurately reflects the state of the evidence. It acknowledges the positive individual findings (“mixed”) while accurately reporting the overall conclusion of most reviews (insufficient for recommendations). No dimension is stretched."
+  }
+];
+
+const ANSWERS = {
+  calibrated: { label: "Well-calibrated", short: "Well-calibrated", cls: "cal" },
+  understated: { label: "Understated", short: "Understated", cls: "under" },
+  overstated: { label: "Overstated", short: "Overstated", cls: "over" },
+  seriously: { label: "Seriously overstated", short: "Seriously overstated", cls: "severe" }
+};
+const ORDER = ["calibrated", "understated", "overstated", "seriously"];
+
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
+
+const App = (() => {
+  const wrap = document.getElementById("calibrator");
+  let cases, idx, results, answered;
+
+  function start() {
+    cases = shuffle(CASES);
+    idx = 0;
+    results = [];
+    answered = false;
+    render();
+  }
+
+  function render() {
+    if (idx >= cases.length) { renderSummary(); return; }
+    const c = cases[idx];
+    const n = idx + 1;
+    const total = cases.length;
+    const correct = results.filter(r => r).length;
+
+    wrap.innerHTML = `
+      <div class="cal-header">
+        <h2>Case ${n} of ${total}</h2>
+        <div>
+          <span class="score">${results.length > 0 ? `Score: <strong>${correct}/${results.length}</strong>` : ""}</span>
+        </div>
+      </div>
+      <div class="dots" aria-label="Progress">${cases.map((_, i) => {
+        let cls = "dot-item";
+        if (i === idx) cls += " current";
+        else if (i < results.length) cls += results[i] ? " correct" : " wrong";
+        return `<span class="${cls}"></span>`;
+      }).join("")}</div>
+      <div class="case-card">
+        <div class="evidence-block">
+          <span class="block-label">The evidence</span>
+          <p class="evidence-text">${c.evidence}<span class="src">${c.source}</span></p>
+        </div>
+        <div class="claim-block">
+          <span class="block-label">The claim</span>
+          <p class="claim-text">${c.claim}</p>
+        </div>
+        <span class="block-label">Is this claim calibrated to the evidence?</span>
+        <div class="answers" id="answers">
+          ${ORDER.map(v => `<button class="answer-btn" data-v="${v}" type="button">${ANSWERS[v].label}</button>`).join("")}
+        </div>
+        <div class="gauge-wrap" id="gauge" hidden>
+          <div class="gauge">
+            ${ORDER.map(v => `<div class="gauge-seg" data-v="${v}"></div>`).join("")}
+          </div>
+          <div class="gauge-labels">
+            ${ORDER.map(v => `<span class="gauge-label" data-v="${v}">${ANSWERS[v].short}</span>`).join("")}
+          </div>
+        </div>
+        <div id="feedback" hidden></div>
+      </div>
+      <div class="cal-nav">
+        <button class="nav-btn" id="prev-btn" ${idx === 0 ? "disabled" : ""}>Previous</button>
+        <button class="nav-btn primary" id="next-btn" hidden>Next &rarr;</button>
+      </div>
+    `;
+
+    document.getElementById("answers").addEventListener("click", e => {
+      const btn = e.target.closest(".answer-btn");
+      if (!btn || answered) return;
+      answered = true;
+      handleAnswer(btn.dataset.v, c);
+    });
+    document.getElementById("prev-btn").addEventListener("click", () => {
+      if (idx > 0) { idx--; results.pop(); answered = false; render(); }
+    });
+  }
+
+  function handleAnswer(chosen, c) {
+    const isCorrect = chosen === c.answer;
+    results.push(isCorrect);
+
+    const btns = document.querySelectorAll(".answer-btn");
+    btns.forEach(b => {
+      b.disabled = true;
+      if (b.dataset.v === c.answer) b.classList.add("correct");
+      if (b.dataset.v === chosen && !isCorrect) b.classList.add("wrong");
+    });
+
+    const gauge = document.getElementById("gauge");
+    gauge.hidden = false;
+    gauge.querySelectorAll(".gauge-seg").forEach(s => { if (s.dataset.v === c.answer) s.classList.add("active"); });
+    gauge.querySelectorAll(".gauge-label").forEach(l => { if (l.dataset.v === c.answer) l.classList.add("active"); });
+
+    const fb = document.getElementById("feedback");
+    const a = ANSWERS[c.answer];
+    fb.hidden = false;
+    fb.className = "feedback " + a.cls;
+    fb.innerHTML = `
+      <p class="fb-verdict">${isCorrect ? "Correct." : "Not quite."} This claim is <span class="v-${a.cls}">${a.label.toLowerCase()}</span>.</p>
+      <p class="fb-explain">${c.explanation}</p>
+      <p class="fb-pattern">Pattern: ${c.pattern}</p>
+    `;
+
+    const next = document.getElementById("next-btn");
+    next.hidden = false;
+    next.addEventListener("click", () => { idx++; answered = false; render(); });
+
+    fb.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  function renderSummary() {
+    const correct = results.filter(r => r).length;
+    const total = results.length;
+    const pct = Math.round((correct / total) * 100);
+    let msg;
+    if (pct >= 85) msg = "Strong calibration. You read evidence carefully and match your claims to it. Keep that reflex—it is rarer than it should be.";
+    else if (pct >= 65) msg = "Good instincts with room to sharpen. Review the cases you missed and look for the pattern—most errors cluster around one or two failure modes.";
+    else msg = "This is exactly what practice is for. Read through the Failure Modes tab, then try again. The patterns become visible quickly once you know what to look for.";
+
+    const byCat = {};
+    cases.forEach((c, i) => {
+      const cat = c.answer;
+      if (!byCat[cat]) byCat[cat] = { total: 0, correct: 0 };
+      byCat[cat].total++;
+      if (results[i]) byCat[cat].correct++;
+    });
+
+    wrap.innerHTML = `
+      <div class="summary">
+        <h2>Results</h2>
+        <div class="summary-score"><span class="num">${correct}</span> / ${total}</div>
+        <p class="summary-msg">${msg}</p>
+        <div class="summary-detail">
+          ${ORDER.filter(v => byCat[v]).map(v => {
+            const b = byCat[v];
+            return `<div class="sd-row"><span><span class="dot" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--${ANSWERS[v].cls === "cal" ? "cal" : ANSWERS[v].cls === "under" ? "under" : ANSWERS[v].cls === "over" ? "over" : "severe"});vertical-align:middle;margin-right:0.5rem;"></span>${ANSWERS[v].label} cases</span><span>${b.correct}/${b.total}</span></div>`;
+          }).join("")}
+        </div>
+        <div class="dots" aria-label="Results">${results.map(r => `<span class="dot-item ${r ? "correct" : "wrong"}"></span>`).join("")}</div>
+        <button class="nav-btn primary" id="restart-btn">Try again (reshuffled)</button>
+      </div>
+    `;
+    document.getElementById("restart-btn").addEventListener("click", start);
+  }
+
+  return { start };
+})();
+
+/* Tabs */
+const tabs = Array.from(document.querySelectorAll("[role=tab]"));
+function selectTab(key, opts) {
+  opts = opts || {};
+  const keys = tabs.map(t => t.dataset.tab);
+  if (keys.indexOf(key) < 0) key = "cal";
+  tabs.forEach(t => {
+    const on = t.dataset.tab === key;
+    t.setAttribute("aria-selected", on ? "true" : "false");
+    t.tabIndex = on ? 0 : -1;
+    document.getElementById("p-" + t.dataset.tab).hidden = !on;
+    if (on && opts.focus) t.focus();
+    if (on) t.scrollIntoView({ block: "nearest", inline: "nearest" });
+  });
+  if (opts.push) {
+    try { history.replaceState(null, "", key === "cal" ? location.pathname + location.search : "#" + key); } catch(e) {}
+  }
+  if (opts.scroll) {
+    const bar = document.querySelector(".tabs-bar");
+    const top = bar.getBoundingClientRect().top + window.scrollY;
+    if (window.scrollY > top) window.scrollTo({ top, behavior: "auto" });
+  }
+}
+tabs.forEach((t, i) => {
+  t.addEventListener("click", () => selectTab(t.dataset.tab, { push: true, scroll: true }));
+  t.addEventListener("keydown", e => {
+    let j = null;
+    if (e.key === "ArrowRight") j = (i + 1) % tabs.length;
+    else if (e.key === "ArrowLeft") j = (i - 1 + tabs.length) % tabs.length;
+    else if (e.key === "Home") j = 0;
+    else if (e.key === "End") j = tabs.length - 1;
+    if (j !== null) { e.preventDefault(); selectTab(tabs[j].dataset.tab, { focus: true, push: true }); }
+  });
+});
+document.querySelectorAll("[data-goto]").forEach(a => a.addEventListener("click", e => {
+  e.preventDefault();
+  selectTab(a.dataset.goto, { push: true, scroll: true });
+}));
+window.addEventListener("hashchange", () => selectTab(location.hash.slice(1), { scroll: true }));
+selectTab(location.hash.slice(1) || "cal");
+
+App.start();
+</script>
+</body>
+</html>
