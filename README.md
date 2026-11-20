@@ -23,4 +23,4 @@ npx serve .
 
 ## License
 
-Educational use.
+Educational use, except the Energetics Atlas, which is MIT-licensed: see [`reference/energetics-atlas/LICENSE`](reference/energetics-atlas/LICENSE).
