@@ -11,6 +11,7 @@ Built with [Claude](https://claude.ai). Hosted on [GitHub Pages](https://johncou
 - **Pathfinding the Historical Texts** — Read pre-Flexner American herbal medicine with the conventions it leaves unsaid: why the texts matter, who wrote what, a toolkit for ratios, units and archaic terms, and practice decoding entries. → [Open](https://johncourie.github.io/pedagogy-tools/research/historical-texts/)
 - **Link Self-Defense** — Read what a link carries, strip the tracking, cite it correctly in APA 7, and share it without leaking information about yourself. Runs entirely in the browser. → [Open](https://johncourie.github.io/pedagogy-tools/research/link-self-defense/)
 - **Who Keeps the Score** — Chronic pain after a crushed wrist, for herbal practitioners: pain narratives, the receptors herbal claims target, posology, and a case triage. → [Open](https://johncourie.github.io/pedagogy-tools/reference/who-keeps-the-score/)
+- **Energetics Atlas** — Six energetic systems drawn as maps (four qualities, tissue states, five phases, eight principles, doshas, somatotypes). Put one at the center, lay the others onto it, and see what each can and cannot read. Every quality is cited to its source. → [Open](https://johncourie.github.io/pedagogy-tools/reference/energetics-atlas/)
 
 ## Development
 

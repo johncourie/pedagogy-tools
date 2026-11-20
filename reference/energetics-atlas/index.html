@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Energetics Atlas</title>
+<meta name="description" content="Six energetic systems drawn as maps: the four qualities, the tissue states, the five phases, the eight principles, the doshas and the somatotypes. Put one at the center, lay the others onto it, and see what each one can and cannot read.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%23172220'/%3E%3Ccircle cx='8' cy='8' r='5' fill='none' stroke='%23cdbd6a' stroke-width='1.2'/%3E%3Cpath d='M8 3v10M3 8h10' stroke='%2373b6d0' stroke-width='1'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,500;0,700;1,500&family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&family=Alegreya+Sans+SC:wght@500;700&display=swap">
+<style>
+/* Layout: an atlas plate. One centered map with others laid onto it, its key beside it, then lineage, readings and data. */
+:root {
+  --at-paper: #f4f7f4; --at-sheet: #ffffff; --at-ink: #1b2925; --at-muted: #5a6964; --at-rule: #cdd7d2;
+  --at-qual: #73651a; --at-tissue: #1f5f78; --at-cn: #5a4a9c; --at-ay: #a35408; --at-soma: #4a5568;
+  --at-person: #8b2c52; --at-fit: #2c7547; --at-veto: #a5382a; --at-over: #8a5d06; --at-flat: #5f6a66; --at-focus: #1f5f78;
+  --at-f-display: "Alegreya", "Iowan Old Style", Georgia, serif;
+  --at-f-body: "Alegreya Sans", "Gill Sans", "Segoe UI", system-ui, sans-serif;
+  --at-f-label: "Alegreya Sans SC", "Alegreya Sans", "Gill Sans", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --at-paper: #111917; --at-sheet: #172220; --at-ink: #e2ebe7; --at-muted: #9caca6; --at-rule: #2e3d39;
+    --at-qual: #cdbd6a; --at-tissue: #73b6d0; --at-cn: #ada0ea; --at-ay: #f0a556; --at-soma: #a9b4c6;
+    --at-person: #e58aaa; --at-fit: #74c793; --at-veto: #ec8371; --at-over: #e3b552; --at-flat: #8f9c97; --at-focus: #73b6d0;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --at-paper: #111917; --at-sheet: #172220; --at-ink: #e2ebe7; --at-muted: #9caca6; --at-rule: #2e3d39;
+  --at-qual: #cdbd6a; --at-tissue: #73b6d0; --at-cn: #ada0ea; --at-ay: #f0a556; --at-soma: #a9b4c6;
+  --at-person: #e58aaa; --at-fit: #74c793; --at-veto: #ec8371; --at-over: #e3b552; --at-flat: #8f9c97; --at-focus: #73b6d0;
+  color-scheme: dark;
+}
+html, body { background: var(--at-paper); color: var(--at-ink); }
+body { margin: 0; font: 400 1.0625rem/1.55 var(--at-f-body); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 56px; }
+.wrap { max-width: 1140px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px; }
+header.top { display: flex; flex-direction: column; gap: 14px; }
+header.top h1 { margin: 0; font: 700 clamp(2rem, 4.6vw, 3rem)/1.05 var(--at-f-display); text-wrap: balance; }
+.kicker { font: 700 0.8rem/1.2 var(--at-f-label); letter-spacing: 0.06em; text-transform: uppercase; color: var(--at-muted); }
+.lede { margin: 0; max-width: 64ch; }
+.epigraph { max-width: 62ch; margin: 0; padding-left: 14px; border-left: 2px solid var(--at-rule); font: italic 500 1.05rem/1.5 var(--at-f-display); color: var(--at-muted); }
+.crumb { margin: 0; font: 700 0.8rem/1.4 var(--at-f-label); letter-spacing: 0.06em; text-transform: uppercase; color: var(--at-muted); }
+.crumb a { color: inherit; text-decoration: none; }
+.crumb a:hover { text-decoration: underline; }
+.crumb a:focus-visible, .foot a:focus-visible { outline: 3px solid var(--at-focus); outline-offset: 2px; }
+footer { margin-top: 48px; border-top: 1px solid var(--at-rule); }
+.foot { max-width: 1140px; margin: 0 auto; padding-top: 20px; display: flex; flex-direction: column; gap: 6px; font-size: 0.9rem; color: var(--at-muted); }
+.foot p { margin: 0; }
+.epigraph cite { display: block; margin-top: 4px; font: 500 0.82rem/1.3 var(--at-f-label); font-style: normal; letter-spacing: 0.05em; }
+/* -- Energetics Atlas. The host page defines the --at-* tokens. -- */
+.at-root { display: flex; flex-direction: column; gap: 28px; color: var(--at-ink); font-family: var(--at-f-body); }
+.at-root [hidden] { display: none !important; }
+.at-root p { margin: 0; }
+.at-root .at-h { margin: 0; font-family: var(--at-f-display); font-weight: 700; color: var(--at-ink); line-height: 1.25; text-wrap: balance; }
+.at-root h3.at-h { font-size: 1.3rem; }
+.at-root h4.at-h { font-size: 1.1rem; }
+.at-plate { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; }
+.at-mapbox { flex: 3 1 520px; min-width: 0; overflow-x: auto; background: var(--at-sheet); border: 1px solid var(--at-rule); border-radius: 6px; padding: 10px; }
+.at-map { display: block; width: 100%; min-width: 480px; height: auto; }
+.at-key { flex: 1 1 300px; max-width: 100%; min-width: 0; display: flex; flex-direction: column; gap: 18px; }
+@media (min-width: 900px) { .at-key { max-width: 380px; } }
+.at-panel { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.at-key > .at-panel + .at-panel { border-top: 1px solid var(--at-rule); padding-top: 16px; }
+.at-label { font: 700 0.8rem/1.2 var(--at-f-label); letter-spacing: 0.06em; text-transform: uppercase; color: var(--at-muted); }
+.at-seg { display: flex; flex-wrap: wrap; gap: 6px; }
+.at-seg button, .at-chip { font: 500 0.93rem/1 var(--at-f-body); color: var(--at-ink); background: var(--at-sheet); border: 1px solid var(--at-rule); border-radius: 999px; padding: 9px 13px; cursor: pointer; min-height: 40px; }
+.at-seg button[aria-pressed="true"], .at-chip[aria-pressed="true"] { background: var(--at-ink); color: var(--at-sheet); border-color: var(--at-ink); }
+.at-seg button:hover, .at-chip:hover { border-color: var(--at-muted); }
+.at-root button:focus-visible, .at-root input:focus-visible, .at-root summary:focus-visible { outline: 3px solid var(--at-focus); outline-offset: 2px; }
+.at-map [tabindex]:focus-visible { outline: none; }
+.at-map [tabindex]:focus-visible .at-hit { stroke: var(--at-focus); stroke-width: 3.5; }
+.at-note { font-size: 0.97rem; line-height: 1.5; }
+.at-small { font-size: 0.9rem; line-height: 1.45; color: var(--at-muted); }
+.at-readout { font-size: 0.98rem; font-weight: 500; line-height: 1.45; }
+.at-toggle { display: flex; gap: 8px; align-items: center; font-size: 0.95rem; cursor: pointer; }
+.at-toggle input { width: 18px; height: 18px; margin: 0; accent-color: var(--at-ink); flex: 0 0 auto; }
+.at-picks { display: flex; flex-direction: column; gap: 8px; }
+.at-dotkey { width: 10px; height: 10px; border-radius: 50%; flex: 0 0 auto; background: var(--k); }
+.at-ovnotes { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 8px; font-size: 0.93rem; line-height: 1.45; }
+.at-herbs { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.at-herbs li { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 8px; align-items: center; font-size: 0.92rem; }
+.at-swatch { width: 22px; height: 0; border-top: 3px solid var(--at-fit); }
+.at-sw-veto { border-top-color: var(--at-veto); } .at-sw-over { border-top-color: var(--at-over); } .at-sw-flat { border-top-color: var(--at-flat); }
+.at-dash { border-top-style: dashed; }
+.at-what { color: var(--at-muted); }
+.at-out { font: 700 0.74rem/1 var(--at-f-label); letter-spacing: 0.05em; text-transform: uppercase; padding: 4px 7px; border-radius: 4px; border: 1px solid currentColor; white-space: nowrap; }
+.at-out.at-o-best, .at-out.at-o-tie, .at-out.at-o-better { color: var(--at-fit); } .at-out.at-o-veto { color: var(--at-veto); } .at-out.at-o-over { color: var(--at-over); } .at-out.at-o-flat { color: var(--at-flat); }
+.at-legend { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 6px 10px; align-items: center; font-size: 0.9rem; margin-top: 10px; }
+.at-card { background: var(--at-sheet); border: 1px solid var(--at-rule); border-radius: 6px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
+.at-card ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; font-size: 0.93rem; line-height: 1.45; }
+.at-ink { color: var(--k); }
+.at-lineage { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 18px; }
+.at-lin { display: flex; flex-direction: column; gap: 6px; padding-top: 12px; border-top: 3px solid var(--k); }
+.at-lin p { font-size: 0.95rem; line-height: 1.5; }
+.at-reading { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 18px; }
+.at-quote { display: flex; flex-direction: column; gap: 6px; padding-top: 12px; border-top: 2px solid var(--at-rule); }
+.at-quote q { font: italic 500 1.05rem/1.45 var(--at-f-display); }
+.at-src { font-size: 0.86rem; color: var(--at-muted); }
+.at-data { background: var(--at-sheet); border: 1px solid var(--at-rule); border-radius: 6px; padding: 12px 16px; }
+.at-data summary { cursor: pointer; font-weight: 700; }
+.at-tablewrap { overflow-x: auto; margin-top: 12px; }
+.at-tablewrap table { border-collapse: collapse; width: 100%; font-size: 0.92rem; }
+.at-tablewrap th, .at-tablewrap td { text-align: left; vertical-align: top; padding: 7px 10px; border-bottom: 1px solid var(--at-rule); }
+.at-tablewrap th { font: 700 0.8rem/1.25 var(--at-f-label); letter-spacing: 0.04em; color: var(--at-muted); }
+.at-tablewrap caption { text-align: left; font: 700 1rem/1.3 var(--at-f-display); padding: 12px 0 6px; color: var(--at-ink); }
+.at-yes { font-weight: 700; } .at-no { color: var(--at-muted); }
+.at-refs { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; font-size: 0.93rem; line-height: 1.45; }
+
+/* each system draws in its own ink */
+.at-k-qual { --k: var(--at-qual); } .at-k-tissue { --k: var(--at-tissue); } .at-k-cn { --k: var(--at-cn); } .at-k-ay { --k: var(--at-ay); } .at-k-soma { --k: var(--at-soma); }
+.at-axis { stroke: var(--at-muted); stroke-width: 1.2; }
+.at-ring { fill: none; stroke: var(--at-rule); stroke-width: 1; stroke-dasharray: 2 5; }
+.at-tick { stroke: var(--at-muted); stroke-width: 1; }
+.at-ttick { font: 500 11px var(--at-f-label); fill: var(--at-muted); letter-spacing: 0.04em; }
+.at-frame { fill: none; stroke: var(--at-rule); stroke-width: 1.2; }
+.at-node { cursor: pointer; }
+.at-node .at-hit { fill: var(--at-sheet); stroke: var(--k); stroke-width: 2; }
+.at-node.at-soft .at-hit { stroke-dasharray: 3 3; stroke-width: 1.4; }
+.at-node.at-guest .at-hit { stroke-width: 1.6; stroke-dasharray: 4 3; }
+.at-node text { fill: var(--k); }
+.at-name { font: 700 14px var(--at-f-label); letter-spacing: 0.04em; }
+.at-big { font: 700 16px var(--at-f-label); letter-spacing: 0.05em; }
+.at-node .at-sub { font: 500 11.5px var(--at-f-body); fill: var(--at-muted); }
+.at-node.at-sel .at-hit { fill: var(--k); }
+.at-node.at-sel text, .at-node.at-sel .at-sub { fill: var(--at-sheet); }
+.at-node.at-chronic .at-hit { stroke-width: 4.5; }
+.at-edge { fill: none; stroke: var(--k); }
+.at-e-opp { stroke-width: 1.4; stroke-opacity: 0.55; }
+.at-e-shares { stroke-width: 1.2; stroke-opacity: 0.45; }
+.at-e-gen { stroke-width: 2; }
+.at-e-ctrl { stroke-width: 1.3; stroke-dasharray: 5 5; stroke-opacity: 0.8; }
+.at-e-made { stroke-width: 1.2; stroke-opacity: 0.6; }
+.at-e-carries { stroke-width: 2; }
+.at-e-land { stroke-width: 1.4; stroke-dasharray: 5 4; stroke-opacity: 0.85; }
+.at-e-element { stroke-width: 1.5; stroke-dasharray: 10 4 2 4; }
+.at-e-name { stroke-width: 1.3; stroke-dasharray: 1 5; stroke-linecap: round; }
+.at-mk { fill: var(--k); }
+.at-mk-fit { fill: var(--at-fit); } .at-mk-veto { fill: var(--at-veto); } .at-mk-over { fill: var(--at-over); } .at-mk-flat { fill: var(--at-flat); }
+.at-const { fill: var(--at-tissue); fill-opacity: 0.14; stroke: var(--at-tissue); stroke-width: 1.5; stroke-linejoin: round; }
+.at-xnote { font: italic 500 12.5px var(--at-f-body); fill: var(--at-muted); }
+.at-tray { fill: none; stroke: var(--at-muted); stroke-opacity: 0.5; stroke-dasharray: 2 4; }
+.at-halo { fill: var(--at-person); fill-opacity: 0.16; stroke: var(--at-person); stroke-opacity: 0.35; }
+.at-dot { fill: var(--at-person); stroke: var(--at-sheet); stroke-width: 2; cursor: grab; touch-action: none; }
+.at-dot:focus-visible { outline: none; }
+.at-dotring { fill: none; stroke: var(--at-focus); stroke-width: 3; opacity: 0; pointer-events: none; }
+.at-dot:focus-visible + .at-dotring { opacity: 1; }
+.at-plabel { font: 700 13px var(--at-f-label); fill: var(--at-person); letter-spacing: 0.05em; }
+.at-arrow { fill: none; stroke-width: 2.4; stroke-linecap: round; }
+.at-arrow.at-o-best, .at-arrow.at-o-better, .at-arrow.at-o-tie { stroke: var(--at-fit); } .at-arrow.at-o-better { stroke-opacity: 0.55; }
+.at-arrow.at-o-veto { stroke: var(--at-veto); stroke-dasharray: 6 5; } .at-arrow.at-o-over { stroke: var(--at-over); stroke-dasharray: 10 4 2 4; } .at-arrow.at-o-flat { stroke: var(--at-flat); stroke-dasharray: 2 4; }
+.at-alabel { font: 700 12px var(--at-f-label); }
+.at-alabel.at-o-best, .at-alabel.at-o-better, .at-alabel.at-o-tie { fill: var(--at-fit); } .at-alabel.at-o-veto { fill: var(--at-veto); } .at-alabel.at-o-over { fill: var(--at-over); } .at-alabel.at-o-flat { fill: var(--at-flat); }
+.at-fade { transition: opacity 500ms ease; }
+.at-mv { transition: transform 900ms cubic-bezier(.4, 0, .2, 1), opacity 500ms ease; }
+.at-off { opacity: 0; pointer-events: none; }
+@media (prefers-reduced-motion: reduce) { .at-fade, .at-mv { transition: none; } }
+
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <nav class="crumb" aria-label="Breadcrumb"><a href="../../">Pedagogy Tools</a> &middot; <a href="../">Reference</a></nav>
+    <span class="kicker">Energetic systems as maps</span>
+    <h1>Energetics Atlas</h1>
+    <p class="lede">Six ways of reading a body, each drawn on its own terms. Put one at the center and lay the others onto it. A point lands where the center reads the same qualities it does, and anything the center cannot read waits below the map.</p>
+    <blockquote class="epigraph">The modern mind looks for ultimate particles and thinks that it has isolated something more true and useful than a mere pattern.<cite>Wood, 2004, chapter 2</cite></blockquote>
+  </header>
+  <main id="atlas"></main>
+</div>
+
+<footer>
+  <div class="foot">
+    <p>John Courie &middot; 2026 &middot; Built with Claude</p>
+    <p>Every quality a point carries is cited in that point&rsquo;s text, to the books listed under Sources. The six herbs are invented. Educational material, not clinical advice.</p>
+  </div>
+</footer>
+
+<script>
+
+/* Energetics Atlas core. One function, mounted by a host page that defines the --at-* tokens.
+   Atlas(root, opts): builds everything inside root. opts.idp: id prefix. opts.state: an object kept between mounts.
+   opts.herbsLocked(): true while the person and herbs should stay closed. opts.lockedText: what to say then.
+   Every quality a point carries is cited in that point's text. Nothing is placed by hand: a point lands on the
+   center's points that read the same quality, and anything that shares none is "not assessed" by that center. */
+function Atlas(root, opts) {
+  'use strict';
+  opts = opts || {};
+  var NS = 'http://www.w3.org/2000/svg';
+  var C = 320, U = 78, idp = opts.idp || 'at';
+  function XY(p) { return [C + p[0] * U, C + p[1] * U]; }
+  function A(deg, r) { var a = deg * Math.PI / 180; return [r * Math.cos(a), r * Math.sin(a)]; }
+  function el(tag, attrs, parent, text) {
+    var e = document.createElementNS(NS, tag);
+    for (var k in attrs) if (attrs[k] !== undefined && attrs[k] !== null) e.setAttribute(k, attrs[k]);
+    if (text !== undefined) e.textContent = text;
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function hel(tag, cls, text, parent) { var e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined && text !== null) e.textContent = text; if (parent) parent.appendChild(e); return e; }
+  function q(sel) { return root.querySelector(sel); }
+
+  /* ---------------- qualities a point can carry ---------------- */
+  var FEATS = {
+    hc: { name: 'hot or cold', pos: 'hot', neg: 'cold' },
+    md: { name: 'moist or dry', pos: 'moist', neg: 'dry' },
+    tone: { name: 'tense or lax', pos: 'tense', neg: 'lax' },
+    wind: { name: 'wind' },
+    wt: { name: 'heavy or light', pos: 'heavy', neg: 'light' },
+    mob: { name: 'mobile or fixed', pos: 'mobile', neg: 'fixed' },
+    build: { name: 'body build' },
+    yy: { name: 'yin or yang', pos: 'yang', neg: 'yin' }, ie: { name: 'interior or exterior', pos: 'exterior', neg: 'interior' }, xs: { name: 'empty or full', pos: 'full', neg: 'empty' }
+  };
+  function fword(k, v) { var F = FEATS[k]; if (typeof v === 'string') return v; if (F.pos) return v > 0 ? F.pos : F.neg; return F.name; }
+
+  /* ---------------- six maps ---------------- */
+  var SYS = [
+    { id: 'qual', label: 'Four qualities', ink: 'qual',
+      note: 'A base of four: hot and cold, dry and damp, with the four elements where two qualities meet, as Wood (2004) presents them after Aristotle. Heat and cold are active powers. Damp and dry are passive capacities (Wood, 2004).',
+      lineage: 'Greek medicine: Aristotle\'s four qualities and the elements built from them, graded in four degrees after Culpeper, as Wood (2004) presents them.' },
+    { id: 'tissue', label: 'Tissue states', ink: 'tissue',
+      note: 'A base of six in three opposed pairs: Thurston\'s tissue states as Wood (2004) presents them. Most people show a mix, usually two and sometimes three (Wood, 2004). Select two or three states.',
+      lineage: 'The six tissue states defined by Thurston (1900) for the Physiomedicalists, as Wood (2004) presents them, with Wood\'s class of remedy for each.' },
+    { id: 'phases', label: 'Five phases', ink: 'cn',
+      note: 'A base of five. Around the edge, each phase generates the next: when an organ is deficient, tonify its mother (Yang, 2010). Across the middle, each controls another, which Maciocia (2008, p. 280) traces through the emotions. Each phase has its climate, taste, organ and place in yin and yang (Maciocia, 2015, p. 26). Wood (2004) counts the Chinese climates as analogous to the four qualities.',
+      lineage: 'From the Shen Nong Ben Cao Jing, "the locus classicus of so-called Chinese herbal medicine" (Flaws, 1998, in the publisher\'s foreword to Yang\'s translation), to Maciocia\'s Foundations (2015) and Practice (2008). Medicinals have five flavors and four qi: cold, hot, warm and cool (Yang, 1998).' },
+    { id: 'eight', label: 'Eight principles', ink: 'cn',
+      note: 'A base of eight: Interior and Exterior, Hot and Cold, Full and Empty, Yin and Yang, "the summarization of all other modes of identification" (Maciocia, 2015, p. 444). The same four opposed pairs form the basic matrix of Chinese medical diagnosis (Phan, 2017, after Scheid, 2002).',
+      lineage: 'In its present form the method was formulated by Cheng Zhong Ling in the early Qing dynasty (Maciocia, 2015, p. 444). Maciocia\'s Foundations is one of the two primary texts behind the US national board exams (Phan, 2017).' },
+    { id: 'dosha', label: 'Doshas', ink: 'ay',
+      note: 'A base of three. From ether and air comes Vata, from fire and an aspect of water comes Pitta, from water and earth comes Kapha, and Vata carries the other two (Frawley & Lad, 2001). Caraka reads twenty physical qualities in ten pairs (Valiathan, 2003, p. 76 and Table 1.1, p. 77). This page uses four of the pairs.',
+      lineage: 'Ayurveda, the science of life: from the Caraka samhita (Sharma & Dash, trans., 1995), read here through Valiathan (2003), who works from P. V. Sharma\'s translation, through modern materia medicas such as Frawley and Lad (2001), to the national pharmacopoeia of India, whose monographs still give each drug\'s rasa, guna, virya and vipaka (Department of AYUSH, n.d.).' },
+    { id: 'soma', label: 'Somatotypes', ink: 'soma',
+      note: 'A base of three components of physique, rated together: fatness, musculoskeletal development and linearity. Every person carries all three, and most sit near the middle of each scale (Heath & Carter, 1967).',
+      lineage: 'Sheldon\'s somatotypes, as the Heath and Carter (1967) method rates them. Wood (2004) reads Sheldon\'s three types as thin, medium and thick, and notes that Western students of constitution matched them to vata, pitta and kapha. Valiathan (2003, p. 55) cautions that Caraka\'s constitution has more to do with the digestive fires than with the doshas.' }
+  ];
+  function sysById(id) { return SYS.filter(function (s) { return s.id === id; })[0]; }
+
+  var N = [];
+  function add(n) { n.rel = n.rel || []; N.push(n); return n; }
+  [['hot', 'Hot', [3.15, 0], { hc: 1 }, 'The active power that takes away what is foreign, so that the residue is more rarefied or porous (Wood, 2004, after Schmidt).'],
+   ['cold', 'Cold', [-3.15, 0], { hc: -1 }, 'The active power that aggregates, condenses, or packs things more closely together (Wood, 2004, after Schmidt).'],
+   ['dry', 'Dry', [0, -3.15], { md: -1 }, 'The passive capacity that is not pliable but incoercible. It sets boundaries and limitations (Wood, 2004, after Schmidt).'],
+   ['damp', 'Damp', [0, 3.15], { md: 1 }, 'The passive capacity for pliancy, bendability, and coercibility. It spreads until it meets a boundary, where it collects (Wood, 2004, after Schmidt).']
+  ].forEach(function (d) { add({ id: 'q:' + d[0], sys: 'qual', shape: 'pole', name: d[1], sub: '', pos: d[2], f: d[3], desc: d[4] }); });
+  [['fire', 'Fire', [2.5, -2.5], { hc: 1, md: -1 }, 'hot and dry'], ['air', 'Air', [2.5, 2.5], { hc: 1, md: 1 }, 'hot and moist'], ['water', 'Water', [-2.5, 2.5], { hc: -1, md: 1 }, 'moist and cold'], ['earth', 'Earth', [-2.5, -2.5], { hc: -1, md: -1 }, 'dry and cold']].forEach(function (d) {
+    add({ id: 'q:' + d[0], sys: 'qual', shape: 'el', soft: true, name: d[1], sub: d[4], pos: d[2], f: d[3], desc: d[1] + ' is ' + d[4] + ' (Wood, 2004, after Aristotle).' });
+  });
+  [['heat', 'Heat · excitation', 'sedatives', 0, { hc: 1 }, 'Red, hot, swollen, sensitive tissue. Restless. A rapid or bounding pulse (Wood, 2004).'],
+   ['dryS', 'Dry · atrophy', 'nutritive tonics', -60, { md: -1 }, 'A dry tongue, dry rough skin, thin or withered tissue. Exhausted by stimulation (Wood, 2004).'],
+   ['wind', 'Wind · constriction', 'relaxants', -120, { tone: 1, wind: 1 }, 'Tension and spasm. Symptoms that come and go, or alternate. A wiry, tense pulse (Wood, 2004). Wood equates the wind and chill of Chinese herbalism with constriction (Wood, 2004, ch. 9).'],
+   ['coldS', 'Cold · depression', 'stimulants', 180, { hc: -1 }, 'Under-active tissue, slow to respond. Cold hands and feet. Low vitality (Wood, 2004).'],
+   ['stag', 'Damp · stagnation', 'alteratives', 120, { md: 1, mob: -1 }, 'Swollen, flabby, dull tissue. Fluid collects instead of running out. Thick, heavy discharges (Wood, 2004). Greek medicine divided dampness into damp that flowed and damp that stayed stuck in the body (Wood, 2004, ch. 1).'],
+   ['relax', 'Damp · relaxation', 'astringents', 60, { md: 1, tone: -1 }, 'Lax, flaccid tissue lacking tone. Fluid runs out: thin, clear, copious discharges (Wood, 2004).']
+  ].forEach(function (d) { add({ id: 't:' + d[0], sys: 'tissue', shape: 'box', name: d[1], sub: d[2], cls: d[2], pos: A(d[3], 3.0), f: d[4], desc: d[5] }); });
+  [['wood', 'Wood', 'Liver', 'sour', 'anger', 'wind', 'Lesser Yang', { wind: 1, yy: 1 }, 198], ['fire', 'Fire', 'Heart', 'bitter', 'joy', 'heat', 'Utmost Yang', { hc: 1, yy: 1 }, -90], ['earth', 'Earth', 'Spleen', 'sweet', 'pensiveness', 'dampness', 'the Centre', { md: 1 }, -18],
+   ['metal', 'Metal', 'Lungs', 'pungent', 'worry and sadness', 'dryness', 'Lesser Yin', { md: -1, yy: -1 }, 54], ['water', 'Water', 'Kidneys', 'salty', 'fear', 'cold', 'Utmost Yin', { hc: -1, yy: -1 }, 126]].forEach(function (d) {
+    add({ id: 'p:' + d[0], sys: 'phases', shape: 'disc', name: d[1], sub: d[2] + ' · ' + d[3], pos: A(d[8], 2.7), f: d[7],
+      desc: 'One of the five phases. Its climate is ' + d[5] + ', its taste ' + d[3] + ', its organ the ' + d[2] + ', and in yin and yang it is ' + d[6] + ' (Maciocia, 2015, p. 26). Its emotion is ' + d[4] + ' (Maciocia, 2008, p. 280).' });
+  });
+  [['re', 'Hot · re', [2.7, 0], { hc: 1 }], ['han', 'Cold · han', [-2.7, 0], { hc: -1 }], ['yang', 'Yang', [0, -2.7], { yy: 1 }], ['yin', 'Yin', [0, 2.7], { yy: -1 }],
+   ['biao', 'Exterior · biao', [1.9, -1.9], { ie: 1 }], ['li', 'Interior · li', [-1.9, 1.9], { ie: -1 }], ['xu', 'Empty · xu', [-1.9, -1.9], { xs: -1 }], ['shi', 'Full · shi', [1.9, 1.9], { xs: 1 }]].forEach(function (d) {
+    add({ id: 'e:' + d[0], sys: 'eight', shape: 'pill', name: d[1], sub: '', pos: d[2], f: d[3], desc: 'One of the Eight Principles, which Maciocia (2015, p. 444) calls the summarization of all other modes of identification. Phan (2017, after Scheid, 2002) gives the same four pairs as the basic matrix of Chinese medical diagnosis.' });
+  });
+  [['vata', 'Vata', 'ether and air', -90, { hc: -1, md: -1, wt: -1, mob: 1, wind: 1, build: 'thin' }, 'Vata is dry, cold, light, subtle and mobile (Valiathan, 2003, p. 53). Wood (2004, ch. 1) sets it beside air and wind, and beside the tissue states atrophy and constriction.'],
+   ['pitta', 'Pitta', 'fire and water', 30, { hc: 1, md: 1, wt: -1, build: 'medium' }, 'Pitta is hot, sharp, light and slightly oily (Valiathan, 2003, p. 53). Wood (2004, ch. 1) sets its water beside relaxation, water flowing, and finds the pitta skin warm and moist (ch. 7).'],
+   ['kapha', 'Kapha', 'water and earth', 150, { hc: -1, md: 1, wt: 1, mob: -1, build: 'thick' }, 'Kapha is cold, heavy, firm, slimy and soft (Valiathan, 2003, p. 53), wet and static (Frawley & Lad, 2001). Wood (2004, ch. 1) sets it beside torpor, water stagnant, and depression.']
+  ].forEach(function (d) {
+    add({ id: 'd:' + d[0], sys: 'dosha', shape: 'disc', name: d[1], sub: d[2], pos: A(d[3], 2.3), f: d[4],
+      desc: d[5] + ' Western students of constitution read it as ' + d[4].build + ' (Wood, 2004, ch. 7).' });
+  });
+  [['ether', 'Ether', -115], ['air', 'Air', -65], ['fire', 'Fire', 10], ['water', 'Water', 90], ['earth', 'Earth', 170]].forEach(function (d) {
+    add({ id: 'a:' + d[0], sys: 'dosha', inner: true, shape: 'small', soft: true, name: d[1], sub: '', pos: A(d[2], 3.3), f: {}, desc: 'One of the five elements of Ayurveda (Frawley & Lad, 2001). Wood (2004, ch. 7) counts them the same earth, air, fire and water as the Greek system, plus ether.' });
+  });
+  [['meso', 'Mesomorphy', 'musculoskeletal', -90, 'medium', 'relative musculoskeletal development'], ['ecto', 'Ectomorphy', 'linearity', 30, 'thin', 'relative linearity'], ['endo', 'Endomorphy', 'fatness', 150, 'thick', 'relative fatness']].forEach(function (d) {
+    add({ id: 's:' + d[0], sys: 'soma', shape: 'box', name: d[1], sub: d[2], pos: A(d[3], 2.4), f: { build: d[4] },
+      desc: d[1] + ' refers to ' + d[5] + ' (Heath & Carter, 1967). Wood (2004) reads this type as ' + d[4] + '.' });
+  });
+  function byId(id) { return N.filter(function (n) { return n.id === id; })[0]; }
+
+  var E = [];
+  function edge(kind, a, b, ra, rb) { E.push({ kind: kind, a: a, b: b, sys: byId(a).sys }); if (ra) byId(a).rel.push(ra); if (rb) byId(b).rel.push(rb); }
+  [['q:fire', 'q:air', 'hot'], ['q:air', 'q:water', 'moist'], ['q:water', 'q:earth', 'cold'], ['q:earth', 'q:fire', 'dry']].forEach(function (d) { edge('shares', d[0], d[1], 'Shares ' + d[2] + ' with ' + byId(d[1]).name.toLowerCase() + '.', 'Shares ' + d[2] + ' with ' + byId(d[0]).name.toLowerCase() + '.'); });
+  [['q:hot', 'q:cold'], ['q:dry', 'q:damp']].forEach(function (d) { byId(d[0]).rel.push('Opposes ' + byId(d[1]).name.toLowerCase() + '.'); byId(d[1]).rel.push('Opposes ' + byId(d[0]).name.toLowerCase() + '.'); });
+  [['t:heat', 't:coldS'], ['t:dryS', 't:stag'], ['t:wind', 't:relax']].forEach(function (d) { edge('opp', d[0], d[1], 'Opposes ' + byId(d[1]).name.toLowerCase() + ' (Wood, 2004).', 'Opposes ' + byId(d[0]).name.toLowerCase() + ' (Wood, 2004).'); });
+  [['e:re', 'e:han'], ['e:yang', 'e:yin'], ['e:biao', 'e:li'], ['e:xu', 'e:shi']].forEach(function (d) { edge('opp', d[0], d[1], 'Paired with ' + byId(d[1]).name.toLowerCase() + ' (Maciocia, 2015).', 'Paired with ' + byId(d[0]).name.toLowerCase() + ' (Maciocia, 2015).'); });
+  ['wood', 'fire', 'earth', 'metal', 'water'].forEach(function (p, i, a) { var nx = a[(i + 1) % 5]; edge('gen', 'p:' + p, 'p:' + nx, 'Generates ' + nx + ': when an organ is deficient, tonify its mother (Yang, 2010).', 'Generated by ' + p + ' (Yang, 2010).'); });
+  [['metal', 'wood', 'sadness counteracts anger'], ['water', 'fire', 'fear counteracts joy'], ['wood', 'earth', 'anger counteracts pensiveness'], ['fire', 'metal', 'joy counteracts worry'], ['earth', 'water', 'pensiveness counteracts fear']].forEach(function (d) {
+    edge('ctrl', 'p:' + d[0], 'p:' + d[1], 'Controls ' + d[1] + ': ' + d[2] + ' (Maciocia, 2008, p. 280).', 'Controlled by ' + d[0] + ': ' + d[2] + ' (Maciocia, 2008, p. 280).');
+  });
+  [['ether', 'vata'], ['air', 'vata'], ['fire', 'pitta'], ['water', 'pitta'], ['water', 'kapha'], ['earth', 'kapha']].forEach(function (d) { edge('made', 'a:' + d[0], 'd:' + d[1], 'Goes into ' + byId('d:' + d[1]).name + ' (Frawley & Lad, 2001).', null); });
+  edge('carries', 'd:vata', 'd:pitta', 'Carries Pitta and Kapha (Frawley & Lad, 2001).', 'Carried by Vata (Frawley & Lad, 2001).');
+  edge('carries', 'd:vata', 'd:kapha', null, 'Carried by Vata (Frawley & Lad, 2001).');
+  var NAMES = [['p:fire', 'q:fire', 'name'], ['p:earth', 'q:earth', 'name'], ['p:water', 'q:water', 'name'], ['d:vata', 'q:air', 'element'], ['d:pitta', 'q:fire', 'element'], ['d:pitta', 'q:water', 'element'], ['d:kapha', 'q:water', 'element'], ['d:kapha', 'q:earth', 'element']];
+  var CHRONIC = ['t:dryS', 't:stag', 't:coldS'];
+
+  function shared(x, b) { return Object.keys(x.f).filter(function (k) { return b.f[k] !== undefined && b.f[k] === x.f[k]; }); }
+  function reads(sysId) { var s = {}; N.forEach(function (n) { if (n.sys === sysId && !n.inner) Object.keys(n.f).forEach(function (k) { s[k] = true; }); }); return Object.keys(FEATS).filter(function (k) { return s[k]; }); }
+  function land(x, center) {
+    var best = 0, hits = [];
+    N.forEach(function (b) { if (b.sys !== center || b.inner) return; var s = shared(x, b).length; if (s > best) { best = s; hits = [b]; } else if (s === best && s > 0) hits.push(b); });
+    return best ? hits : [];
+  }
+  function shortName(n) { var parts = n.name.split(' · '); return (n.sys === 'tissue' ? parts[1] : parts[0]).toLowerCase(); }
+  function valList(n, keys) { return keys.map(function (k) { return fword(k, n.f[k]); }).join(' and '); }
+  function landText(n, hits) { return hits.map(function (b) { return shortName(b) + ', by ' + valList(n, shared(n, b)); }).join(', and on '); }
+  function featList(keys) { return keys.map(function (k) { return FEATS[k].name; }).join(', '); }
+
+  /* six invented herbs and the matching rule (a host page may pass its own lexicon as opts.herbs) */
+  var HERBS = opts.herbs || [{ id: 'P', t: 2, m: -1, n: 0 }, { id: 'Q', t: 1, m: 0, n: 1 }, { id: 'R', t: -1, m: 0, n: 1 }, { id: 'S', t: 0, m: -2, n: 0 }, { id: 'T', t: 1, m: 1, n: 0 }, { id: 'U', t: 1, m: -1, n: 2 }];
+  var AXES = [{ k: 't', name: 'temperature', hp: 'warming', hn: 'cooling' }, { k: 'm', name: 'moisture', hp: 'moistening', hn: 'drying' }, { k: 'n', name: 'tone', hp: 'toning', hn: 'relaxing' }];
+  function sgn(x) { return x > 0 ? 1 : x < 0 ? -1 : 0; }
+  function evalHerb(c, hb) { var veto = false, base = 0, score = 0, flip = false; AXES.forEach(function (a) { var cv = c[a.k]; if (cv === null) return; var left = cv + hb[a.k]; base += Math.abs(cv); score += Math.abs(left); if (cv !== 0 && sgn(hb[a.k]) === sgn(cv)) veto = true; if (cv !== 0 && sgn(left) === -sgn(cv)) flip = true; }); return { kind: veto ? 'veto' : score < base ? 'improves' : flip ? 'over' : 'flat', score: score }; }
+  function evalAll(c) { var r = {}; HERBS.forEach(function (hb) { r[hb.id] = evalHerb(c, hb); }); var imp = HERBS.filter(function (hb) { return r[hb.id].kind === 'improves'; }); var min = Math.min.apply(null, imp.map(function (hb) { return r[hb.id].score; })); var best = imp.filter(function (hb) { return r[hb.id].score === min; }); HERBS.forEach(function (hb) { var x = r[hb.id]; x.o = x.kind !== 'improves' ? x.kind : best.indexOf(hb) >= 0 ? (best.length > 1 ? 'tie' : 'best') : 'better'; }); return r; }
+  var OUT = { best: 'Closest fit', tie: 'Ties', better: 'Balances', veto: 'Adds to it', over: 'Crosses over', flat: 'No closer' };
+  function hq(a, v) { if (v === 0) return 'neutral in ' + a.name; return (v > 0 ? a.hp : a.hn) + ' ' + Math.abs(v); }
+  function oc(o) { return o === 'veto' ? 'veto' : o === 'over' ? 'over' : o === 'flat' ? 'flat' : 'fit'; }
+
+  /* state: opens on the four qualities alone */
+  var S = opts.state || {};
+  if (!S.init) { S.init = true; S.center = 'qual'; S.ov = {}; S.person = false; S.herbs = false; S.pt = -1.55; S.pm = 1.35; S.tone = -1; S.sel = ['t:heat', 't:wind']; S.chronic = false; S.focus = null; }
+  function reading() { var r = function (x) { return Math.max(-3, Math.min(3, Math.round(x))); }; return { t: r(S.pt), m: r(S.pm), n: S.tone }; }
+  function locked() { return opts.herbsLocked ? !!opts.herbsLocked() : false; }
+
+  /* ---------------- markup ---------------- */
+  root.textContent = '';
+  root.classList.add('at-root');
+  var plate = hel('div', 'at-plate', null, root);
+  var mapbox = hel('div', 'at-mapbox', null, plate);
+  var svg = el('svg', { viewBox: '0 0 640 660', role: 'group', 'aria-labelledby': idp + '-mt', 'aria-describedby': idp + '-md', 'class': 'at-map' }, mapbox);
+  var mTitle = el('title', { id: idp + '-mt' }, svg, 'Map'), mDesc = el('desc', { id: idp + '-md' }, svg, '');
+  var key = hel('div', 'at-key', null, plate);
+  var p1 = hel('div', 'at-panel', null, key);
+  hel('span', 'at-label', 'At the center', p1);
+  var seg = hel('div', 'at-seg', null, p1); seg.setAttribute('role', 'group'); seg.setAttribute('aria-label', 'Choose the map at the center');
+  var centerNote = hel('p', 'at-note', null, p1);
+  var chronicWrap = hel('label', 'at-toggle', null, p1); var chronicIn = hel('input', null, null, chronicWrap); chronicIn.type = 'checkbox'; chronicWrap.appendChild(document.createTextNode(' Show where chronic cases settle'));
+  var p2 = hel('div', 'at-panel', null, key);
+  hel('span', 'at-label', 'Lay onto it', p2);
+  var ovPick = hel('div', 'at-picks', null, p2);
+  var ovNotes = hel('ul', 'at-ovnotes', null, p2);
+  var p3 = hel('div', 'at-panel', null, key);
+  hel('span', 'at-label', 'A person and six herbs', p3);
+  var lockP = hel('p', 'at-small', opts.lockedText || '', p3);
+  var personWrap = hel('label', 'at-toggle', null, p3); var personIn = hel('input', null, null, personWrap); personIn.type = 'checkbox'; personWrap.appendChild(document.createTextNode(' Place a person on the four qualities'));
+  var personOff = hel('p', 'at-small', 'The person sits on the four qualities. Put the four qualities at the center to see them.', p3);
+  var personBits = hel('div', 'at-panel at-inner', null, p3);
+  hel('p', 'at-small', 'The person is read on the three axes of a herb lexicon: temperature and moisture on the plane, tone below. The four qualities have no tone of their own. Drag the point to where you read this person, or focus it and use the arrow keys. A reading is a region, so the point carries a halo.', personBits);
+  var toneSeg = hel('div', 'at-seg', null, personBits); toneSeg.setAttribute('role', 'group'); toneSeg.setAttribute('aria-label', 'Tone of the tissue');
+  [['1', 'Tense'], ['0', 'Tone in range'], ['-1', 'Lax'], ['null', 'Tone not read']].forEach(function (t) { var b = hel('button', 'at-chip', t[1], toneSeg); b.type = 'button'; b.setAttribute('data-tone', t[0]); });
+  var readout = hel('p', 'at-readout', null, personBits); readout.setAttribute('aria-live', 'polite');
+  var herbWrap = hel('label', 'at-toggle', null, personBits); var herbIn = hel('input', null, null, herbWrap); herbIn.type = 'checkbox'; herbWrap.appendChild(document.createTextNode(' Show where six invented herbs would move them'));
+  var herbBits = hel('div', null, null, personBits);
+  var herbList = hel('ul', 'at-herbs', null, herbBits);
+  var legend = hel('div', 'at-legend', null, herbBits);
+  [['best', 'Moves toward balance'], ['over', 'Crosses over to the other side'], ['veto', 'Adds to what is already too much'], ['flat', 'Leaves them no closer']].forEach(function (d) {
+    var s = el('svg', { 'aria-hidden': 'true', viewBox: '0 0 34 10', width: 34, height: 10 }, legend); el('line', { x1: 2, y1: 5, x2: 32, y2: 5, 'class': 'at-arrow at-o-' + d[0] }, s); hel('span', null, d[1], legend);
+  });
+  var card = hel('div', 'at-card', null, key); card.setAttribute('aria-live', 'polite');
+  hel('span', 'at-label', 'Select a point on the map', card); hel('p', 'at-small', 'Each point lists its relations within its own map, and where it lands on the map at the center.', card);
+
+  var linSec = hel('section', 'at-panel at-section', null, root); hel('h3', 'at-h', 'Where each map comes from', linSec);
+  var lineage = hel('div', 'at-lineage', null, linSec);
+  var readSec = hel('section', 'at-panel at-section', null, root); hel('h3', 'at-h', 'Reading the maps', readSec);
+  var readGrid = hel('div', 'at-reading', null, readSec);
+  [['Lacking a thermometer, they had no way of actually measuring hot or cold. Therefore, they did not define temperature as we would today. Under the circumstances, it was more objective to define the four qualities by their effects.', 'Wood, 2004, chapter 2'],
+   ['The modern mind looks for ultimate particles and thinks that it has isolated something more true and useful than a mere pattern.', 'Wood, 2004, chapter 2'],
+   ['In practice, most people will exhibit a mix of tissue states\u2014usually two, and sometimes three.', 'Wood, 2004, chapter 3'],
+   ['The doṣa constitution has more to do with the status of digestive fires and less with doṣas.', 'Valiathan, 2003, p. 55, on Caraka'],
+   ['A somatotype is a description of present morphological conformation.', 'Heath and Carter, 1967, p. 70']].filter(function (d, i) { return !(opts.epigraphShown && i === 1); }).forEach(function (d) { var b = hel('div', 'at-quote', null, readGrid); hel('q', null, d[0], b); hel('span', 'at-src', d[1], b); });
+  var dataDet = hel('details', 'at-data', null, root); hel('summary', null, 'The maps as tables, and what each one reads', dataDet);
+  var tables = hel('div', 'at-tablewrap', null, dataDet);
+  var srcSec = hel('section', 'at-panel at-section', null, root); hel('h3', 'at-h', 'Sources for the maps', srcSec);
+  var refs = hel('ol', 'at-refs', null, srcSec);
+  [['Department of AYUSH, Ministry of Health and Family Welfare, Government of India. (n.d.). ', 'The Ayurvedic pharmacopoeia of India', ' (Part I, Vol. IV).'],
+   ['Frawley, D., & Lad, V. (2001). ', 'The yoga of herbs: An Ayurvedic guide to herbal medicine', ' (2nd rev. ed.). Lotus Press. (First published 1986.)'],
+   ['Heath, B. H., & Carter, J. E. L. (1967). A modified somatotype method. ', 'American Journal of Physical Anthropology, 27', ', 57 to 74.'],
+   ['Maciocia, G. (2008). ', 'The practice of Chinese medicine: The treatment of diseases with acupuncture and Chinese herbs', ' (2nd ed.). Churchill Livingstone.'],
+   ['Maciocia, G. (2015). ', 'The foundations of Chinese medicine: A comprehensive text', ' (3rd ed.). Elsevier.'],
+   ['Phan, T. (2017). ', 'American Chinese medicine', ' [Doctoral thesis, University College London]. Cites Scheid, V. (2002) for the eight rubrics.'],
+   ['Sharma, R. K., & Dash, B. (Trans.). (1995). ', 'Agnivesa\'s Caraka samhita', ' (4th ed., Vol. 1). Chowkhamba Sanskrit Series Office.'],
+   ['Thurston, J. M. (1900). ', 'The philosophy of physiomedicalism', '. As presented by Wood (2004).'],
+   ['Valiathan, M. S. (2003). ', 'The legacy of Caraka', '. Orient Blackswan.'],
+   ['Wood, M. (2004). ', 'The practice of traditional Western herbalism: Basic doctrine, energetics, and classification', '. North Atlantic Books.'],
+   ['Yang, S.-Z. (Trans.). (1998). ', 'The divine farmer\'s materia medica: A translation of the Shen Nong Ben Cao Jing', '. Blue Poppy Press. Publisher\'s foreword by B. Flaws.'],
+   ['Yang, Y. (2010). ', 'Chinese herbal medicines: Comparisons and characteristics', ' (2nd ed.). Elsevier.'],
+   ['The six herbs are invented, so the movement can be shown without teaching a wrong attribution.', null, '']].forEach(function (r) { var li = hel('li', null, null, refs); li.appendChild(document.createTextNode(r[0])); if (r[1]) hel('i', null, r[1], li); li.appendChild(document.createTextNode(r[2])); });
+
+  /* ---------------- the drawing ---------------- */
+  var gFrame = el('g', { 'class': 'at-fade' }, svg), gPlane = el('g', { 'class': 'at-fade' }, svg), gTray = el('g', { 'class': 'at-fade' }, svg), gEdges = el('g', { 'class': 'at-fade' }, svg);
+  var gConst = el('g', {}, svg), gNodes = el('g', {}, svg), gArrows = el('g', { 'class': 'at-fade' }, svg), gPerson = el('g', { 'class': 'at-fade' }, svg);
+  [1, 2, 3].forEach(function (d) { el('circle', { cx: C, cy: C, r: d * U, 'class': 'at-ring' }, gPlane); });
+  el('line', { x1: C - 3.6 * U, y1: C, x2: C + 3.6 * U, y2: C, 'class': 'at-axis' }, gPlane);
+  el('line', { x1: C, y1: C - 3.6 * U, x2: C, y2: C + 3.6 * U, 'class': 'at-axis' }, gPlane);
+  ['first', 'second', 'third'].forEach(function (w, i) {
+    var x = C + (i + 1) * U;
+    [[x, C - 5, x, C + 5], [C - (i + 1) * U, C - 5, C - (i + 1) * U, C + 5], [C - 5, C + (i + 1) * U, C + 5, C + (i + 1) * U], [C - 5, C - (i + 1) * U, C + 5, C - (i + 1) * U]].forEach(function (l) { el('line', { x1: l[0], y1: l[1], x2: l[2], y2: l[3], 'class': 'at-tick' }, gPlane); });
+    el('text', { x: x, y: C + 40, 'text-anchor': 'middle', 'class': 'at-ttick' }, gPlane, w);
+  });
+  el('text', { x: C + 8, y: C - 8, 'class': 'at-ttick' }, gPlane, 'balance');
+  var trayRect = el('rect', { x: 8, y: 668, width: 624, height: 60, rx: 8, 'class': 'at-tray' }, gTray);
+  var trayLabel = el('text', { x: 20, y: 662, 'class': 'at-xnote' }, gTray, '');
+  var defs = el('defs', {}, svg);
+  ['gen', 'carries'].forEach(function (k) { var m = el('marker', { id: idp + '-mk-' + k, viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 6, markerHeight: 6, orient: 'auto-start-reverse' }, defs); el('path', { d: 'M0 0 L10 5 L0 10 z', 'class': 'at-mk at-k-' + (k === 'gen' ? 'cn' : 'ay') }, m); });
+  ['best', 'better', 'tie', 'veto', 'over', 'flat'].forEach(function (o) { var m = el('marker', { id: idp + '-ah-' + o, viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 7, markerHeight: 7, orient: 'auto-start-reverse' }, defs); el('path', { d: 'M0 0 L10 5 L0 10 z', 'class': 'at-mk at-mk-' + oc(o) }, m); });
+
+  var G = {};
+  N.forEach(function (n) {
+    var ink = sysById(n.sys).ink;
+    var g = el('g', { 'class': 'at-node at-mv at-k-' + ink + (n.soft ? ' at-soft' : ''), tabindex: 0, role: 'button', 'aria-label': n.name.replace(' · ', ', ') + (n.sub ? ', ' + n.sub : ''), 'data-id': n.id }, gNodes);
+    if (n.shape === 'pole') { el('circle', { r: 21, 'class': 'at-hit' }, g); el('text', { y: 5, 'text-anchor': 'middle', 'class': 'at-big' }, g, n.name); }
+    else if (n.shape === 'el') { el('rect', { x: -44, y: -22, width: 88, height: 44, rx: 22, 'class': 'at-hit' }, g); el('text', { y: -1, 'text-anchor': 'middle', 'class': 'at-big' }, g, n.name); el('text', { y: 14, 'text-anchor': 'middle', 'class': 'at-sub' }, g, n.sub); }
+    else if (n.shape === 'box') { el('rect', { x: -70, y: -24, width: 140, height: 48, rx: 8, 'class': 'at-hit' }, g); el('text', { y: -4, 'text-anchor': 'middle', 'class': 'at-name' }, g, n.name); el('text', { y: 13, 'text-anchor': 'middle', 'class': 'at-sub' }, g, n.sub); }
+    else if (n.shape === 'pill') { el('rect', { x: -64, y: -19, width: 128, height: 38, rx: 19, 'class': 'at-hit' }, g); el('text', { y: 5, 'text-anchor': 'middle', 'class': 'at-name' }, g, n.name); }
+    else if (n.shape === 'disc') { el('circle', { r: 40, 'class': 'at-hit' }, g); el('text', { y: n.sub ? -2 : 5, 'text-anchor': 'middle', 'class': 'at-big' }, g, n.name); if (n.sub) el('text', { y: 14, 'text-anchor': 'middle', 'class': 'at-sub' }, g, n.sub); }
+    else { el('rect', { x: -38, y: -15, width: 76, height: 30, rx: 15, 'class': 'at-hit' }, g); el('text', { y: 5, 'text-anchor': 'middle', 'class': 'at-name' }, g, n.name); }
+    g.addEventListener('click', function () { pick(n.id); });
+    g.addEventListener('keydown', function (ev) { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); pick(n.id); } });
+    G[n.id] = g;
+  });
+  var halo = el('circle', { r: U * 0.5, 'class': 'at-halo' }, gPerson);
+  var dot = el('circle', { r: 10, 'class': 'at-dot', tabindex: 0, role: 'slider', 'aria-label': 'The person. Left and right move temperature, up and down move moisture.', 'aria-valuemin': -3, 'aria-valuemax': 3 }, gPerson);
+  el('circle', { r: 17, 'class': 'at-dotring' }, gPerson);
+  var ring = gPerson.querySelector('.at-dotring');
+  var plab = el('text', { 'class': 'at-plabel' }, gPerson, 'person');
+  var arrows = {}, alabels = {};
+  HERBS.forEach(function (hb) { arrows[hb.id] = el('line', { 'class': 'at-arrow' }, gArrows); alabels[hb.id] = el('text', { 'class': 'at-alabel', 'text-anchor': 'middle' }, gArrows, hb.id); });
+  function toMap(ev) { var pt = svg.createSVGPoint(); pt.x = ev.clientX; pt.y = ev.clientY; var p = pt.matrixTransform(svg.getScreenCTM().inverse()); return [(p.x - C) / U, (p.y - C) / U]; }
+  function clamp(v) { return Math.max(-3.2, Math.min(3.2, v)); }
+  var dragging = false;
+  dot.addEventListener('pointerdown', function (ev) { dragging = true; dot.setPointerCapture(ev.pointerId); ev.preventDefault(); });
+  dot.addEventListener('pointermove', function (ev) { if (!dragging) return; var m = toMap(ev); S.pt = clamp(m[0]); S.pm = clamp(m[1]); renderPerson(); });
+  dot.addEventListener('pointerup', function () { dragging = false; });
+  dot.addEventListener('keydown', function (ev) { var d = ev.shiftKey ? 1 : 0.25, k = ev.key; if (k === 'ArrowLeft') S.pt = clamp(S.pt - d); else if (k === 'ArrowRight') S.pt = clamp(S.pt + d); else if (k === 'ArrowUp') S.pm = clamp(S.pm - d); else if (k === 'ArrowDown') S.pm = clamp(S.pm + d); else return; ev.preventDefault(); renderPerson(); });
+
+  /* ---------------- layout for the current center ---------------- */
+  var L = {};
+  function layout() {
+    L = {}; var c = S.center, placed = [], tray = [];
+    N.forEach(function (n) { if (n.sys === c) { var p = XY(n.pos); L[n.id] = { xy: p, scale: 1, home: true }; placed.push(p); } });
+    SYS.forEach(function (s) {
+      if (s.id === c || !S.ov[s.id]) return;
+      N.forEach(function (n) {
+        if (n.sys !== s.id || n.inner) return;
+        var hits = land(n, c);
+        if (!hits.length) { tray.push(n); return; }
+        var cx = 0, cy = 0; hits.forEach(function (b) { cx += b.pos[0]; cy += b.pos[1]; }); cx /= hits.length; cy /= hits.length;
+        var r = Math.sqrt(cx * cx + cy * cy) || 1, k = Math.max(0.35, (r - 0.95) / r), base = XY([cx * k, cy * k]), p = base, tries = 0;
+        while (tries < 80 && placed.some(function (qq) { return Math.abs(qq[0] - p[0]) < 94 && Math.abs(qq[1] - p[1]) < 40; })) { tries++; var ang = tries * 0.7, rad = 22 + tries * 3.2; p = [base[0] + rad * Math.cos(ang), base[1] + rad * Math.sin(ang)]; }
+        p = [Math.max(40, Math.min(600, p[0])), Math.max(24, Math.min(636, p[1]))];
+        placed.push(p);
+        L[n.id] = { xy: p, scale: 0.8, lands: hits.map(function (b) { return b.id; }) };
+      });
+    });
+    var rows = Math.ceil(tray.length / 6);
+    tray.forEach(function (n, i) { L[n.id] = { xy: [72 + (i % 6) * 99, 700 + Math.floor(i / 6) * 50], scale: 0.68, tray: true }; });
+    return { rows: rows };
+  }
+  var edgeTimer = null;
+  function drawEdges() {
+    gEdges.textContent = ''; var c = S.center;
+    function pt(id) { return L[id] ? L[id].xy : null; }
+    E.forEach(function (e) {
+      if (e.sys !== c) return; var a = pt(e.a), b = pt(e.b); if (!a || !b) return;
+      var attrs = { 'class': 'at-edge at-e-' + e.kind + ' at-k-' + sysById(e.sys).ink };
+      if (e.kind === 'shares') { var mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2; attrs.d = 'M' + a[0] + ' ' + a[1] + ' Q' + (mx + (mx - C) * 0.28) + ' ' + (my + (my - C) * 0.28) + ' ' + b[0] + ' ' + b[1]; el('path', attrs, gEdges); return; }
+      var x1 = a[0], y1 = a[1], x2 = b[0], y2 = b[1];
+      if (e.kind === 'gen' || e.kind === 'carries') { var dx = x2 - x1, dy = y2 - y1, Ln = Math.sqrt(dx * dx + dy * dy) || 1; x1 += dx / Ln * 44; y1 += dy / Ln * 44; x2 -= dx / Ln * 44; y2 -= dy / Ln * 44; attrs['marker-end'] = 'url(#' + idp + '-mk-' + e.kind + ')'; }
+      if (e.kind === 'gen') { var m2 = (x1 + x2) / 2, n2 = (y1 + y2) / 2; attrs.d = 'M' + x1 + ' ' + y1 + ' Q' + (m2 + (m2 - C) * 0.18) + ' ' + (n2 + (n2 - C) * 0.18) + ' ' + x2 + ' ' + y2; el('path', attrs, gEdges); return; }
+      attrs.x1 = x1; attrs.y1 = y1; attrs.x2 = x2; attrs.y2 = y2; el('line', attrs, gEdges);
+    });
+    Object.keys(L).forEach(function (id) {
+      var l = L[id]; if (!l.lands) return; var n = byId(id);
+      l.lands.forEach(function (bid) { var b = L[bid].xy; var ln = el('line', { x1: l.xy[0], y1: l.xy[1], x2: b[0], y2: b[1], 'class': 'at-edge at-e-land at-k-' + sysById(n.sys).ink }, gEdges); el('title', {}, ln, 'Shared: ' + valList(n, shared(n, byId(bid)))); });
+    });
+    NAMES.forEach(function (d) { var a = pt(d[0]), b = pt(d[1]); if (!a || !b) return; var ln = el('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1], 'class': 'at-edge at-e-' + d[2] + ' at-k-' + sysById(byId(d[0]).sys).ink }, gEdges); el('title', {}, ln, d[2] === 'name' ? 'The same name only' : 'Made from the element of this name (Frawley & Lad, 2001, and Wood, 2004, ch. 7)'); });
+    gEdges.style.opacity = '0'; clearTimeout(edgeTimer); edgeTimer = setTimeout(function () { gEdges.style.opacity = '1'; }, 450);
+  }
+  function words(r) {
+    function cap(x) { return x.charAt(0).toUpperCase() + x.slice(1); }
+    function one(v, pos, neg, axis) { if (v === 0) return axis + ' near balance'; return ['', 'a little ', '', 'very '][Math.abs(v)] + (v > 0 ? pos : neg); }
+    var tone = r.n === null ? 'tone not read' : r.n > 0 ? 'tense' : r.n < 0 ? 'lax' : 'tone in range';
+    return [one(r.t, 'hot', 'cold', 'temperature'), one(r.m, 'damp', 'dry', 'moisture'), tone].map(cap).join('. ') + '.';
+  }
+  function renderPerson() {
+    var lock = locked(), plane = S.center === 'qual', on = S.person && !lock, showP = plane && on, showH = showP && S.herbs;
+    lockP.hidden = !lock; personWrap.hidden = lock; personIn.checked = !!S.person;
+    personOff.hidden = !(on && !plane); personBits.hidden = !(on && plane); herbBits.hidden = !(on && plane && S.herbs); herbIn.checked = !!S.herbs;
+    gPerson.classList.toggle('at-off', !showP); gArrows.classList.toggle('at-off', !showH);
+    dot.setAttribute('tabindex', showP ? '0' : '-1');
+    var r = reading(), p = [C + S.pt * U, C + S.pm * U], hp = [C + r.t * U, C + r.m * U];
+    halo.setAttribute('cx', hp[0]); halo.setAttribute('cy', hp[1]); dot.setAttribute('cx', p[0]); dot.setAttribute('cy', p[1]);
+    plab.setAttribute('x', p[0] + 20); plab.setAttribute('y', p[1] - 14); ring.setAttribute('cx', p[0]); ring.setAttribute('cy', p[1]);
+    readout.textContent = 'Read as: ' + words(r); dot.setAttribute('aria-valuetext', words(r)); dot.setAttribute('aria-valuenow', r.t);
+    Array.prototype.forEach.call(toneSeg.querySelectorAll('[data-tone]'), function (b) { var v = b.getAttribute('data-tone'); b.setAttribute('aria-pressed', String(v === 'null' ? S.tone === null : Number(v) === S.tone)); });
+    var ev = evalAll(r); herbList.textContent = '';
+    HERBS.forEach(function (hb, i) {
+      var o = ev[hb.id].o, a = arrows[hb.id], lab = alabels[hb.id];
+      var end = [C + (r.t + hb.t) * U, C + (r.m + hb.m) * U], dx = end[0] - hp[0], dy = end[1] - hp[1], len = Math.sqrt(dx * dx + dy * dy) || 1;
+      var off = (i - 2.5) * 3.2, ox = -dy / len * off, oy = dx / len * off;
+      a.setAttribute('x1', hp[0] + ox); a.setAttribute('y1', hp[1] + oy); a.setAttribute('x2', end[0] + ox); a.setAttribute('y2', end[1] + oy);
+      a.setAttribute('class', 'at-arrow at-o-' + o); a.setAttribute('marker-end', 'url(#' + idp + '-ah-' + o + ')');
+      lab.setAttribute('x', Math.max(10, Math.min(630, end[0] + ox * 4 + dx / len * 14))); lab.setAttribute('y', Math.max(14, Math.min(640, end[1] + oy * 4 + dy / len * 14 + 4))); lab.setAttribute('class', 'at-alabel at-o-' + o);
+      var li = hel('li', null, null, herbList), sw = hel('span', 'at-swatch at-sw-' + oc(o) + (o === 'veto' || o === 'flat' ? ' at-dash' : ''), null, li), tx = hel('span', null, null, li);
+      hel('b', null, 'Herb ' + hb.id + ' ', tx); hel('span', 'at-what', AXES.map(function (x) { return hq(x, hb[x.k]); }).join(', '), tx);
+      hel('span', 'at-out at-o-' + o, OUT[o], li);
+    });
+  }
+  function ovSummary(sid) {
+    var c = S.center, nodes = N.filter(function (n) { return n.sys === sid && !n.inner; });
+    var landed = nodes.filter(function (n) { return L[n.id] && L[n.id].lands; }), off = nodes.filter(function (n) { return L[n.id] && L[n.id].tray; });
+    var cr = reads(c), orr = reads(sid), blind = orr.filter(function (k) { return cr.indexOf(k) < 0; }), mute = cr.filter(function (k) { return orr.indexOf(k) < 0; });
+    var t = sysById(sid).label + ': ' + landed.length + ' of ' + nodes.length + ' land.';
+    if (off.length) t += ' Not assessed here: ' + off.map(shortName).join(', ') + '.';
+    if (blind.length) t += ' No point of the ' + sysById(c).label.toLowerCase() + ' carries its ' + featList(blind) + '.';
+    if (mute.length) t += ' None of its points carries the center\'s ' + featList(mute) + '.';
+    return t;
+  }
+  function render() {
+    var c = S.center, cs = sysById(c);
+    Array.prototype.forEach.call(seg.querySelectorAll('[data-center]'), function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-center') === c)); });
+    Array.prototype.forEach.call(ovPick.querySelectorAll('[data-ov]'), function (b) { var id = b.getAttribute('data-ov'); b.parentNode.hidden = id === c; b.checked = !!S.ov[id]; });
+    centerNote.textContent = cs.note; chronicWrap.hidden = c !== 'tissue'; chronicIn.checked = !!S.chronic;
+    var lay = layout();
+    gPlane.classList.toggle('at-off', c !== 'qual');
+    gFrame.textContent = '';
+    if (c === 'soma' || c === 'dosha') el('polygon', { points: N.filter(function (n) { return n.sys === c && !n.inner; }).map(function (n) { return XY(n.pos).join(','); }).join(' '), 'class': 'at-frame' }, gFrame);
+    svg.setAttribute('viewBox', '0 0 640 ' + (lay.rows ? 700 + lay.rows * 50 : 660));
+    gTray.classList.toggle('at-off', !lay.rows); trayRect.setAttribute('height', lay.rows * 50 + 14); trayLabel.textContent = 'Not assessed by the ' + cs.label.toLowerCase();
+    N.forEach(function (n) {
+      var g = G[n.id], l = L[n.id], show = !!l, xy = l ? l.xy : XY(n.pos);
+      g.style.transform = 'translate(' + xy[0] + 'px,' + xy[1] + 'px) scale(' + (l ? l.scale : 0.6) + ')';
+      g.classList.toggle('at-off', !show); g.classList.toggle('at-guest', !!(l && !l.home));
+      g.setAttribute('tabindex', show ? '0' : '-1'); if (show) g.removeAttribute('aria-hidden'); else g.setAttribute('aria-hidden', 'true');
+      g.classList.toggle('at-sel', c === 'tissue' && S.sel.indexOf(n.id) >= 0);
+      g.classList.toggle('at-chronic', c === 'tissue' && S.chronic && CHRONIC.indexOf(n.id) >= 0);
+    });
+    gConst.textContent = '';
+    if (c === 'tissue' && S.sel.length >= 2) el('polygon', { points: S.sel.map(function (id) { return XY(byId(id).pos).join(','); }).join(' '), 'class': 'at-const' }, gConst);
+    drawEdges();
+    ovNotes.textContent = '';
+    SYS.forEach(function (s) { if (s.id === c || !S.ov[s.id]) return; hel('li', null, ovSummary(s.id), ovNotes); });
+    mTitle.textContent = cs.label + ' at the center';
+    mDesc.textContent = cs.note + ' ' + Array.prototype.map.call(ovNotes.children, function (li) { return li.textContent; }).join(' ');
+    renderPerson(); renderCard();
+  }
+  function pick(id) {
+    S.focus = id;
+    if (S.center === 'tissue' && id.indexOf('t:') === 0) { var i = S.sel.indexOf(id); if (i >= 0) S.sel.splice(i, 1); else { S.sel.push(id); if (S.sel.length > 3) S.sel.shift(); } }
+    render();
+  }
+  function renderCard() {
+    var n = S.focus && byId(S.focus); if (!n) return; var s = sysById(n.sys);
+    card.textContent = '';
+    var lb = hel('span', 'at-label at-k-' + s.ink + ' at-ink', n.inner ? 'Elements of Ayurveda' : s.label, card);
+    hel('h4', 'at-h', n.name.replace(' · ', ', or '), card); hel('p', 'at-note', n.desc, card);
+    var rel = n.rel.slice(); if (n.cls) rel.push('Wood\'s class of remedy: ' + n.cls + ' (Wood, 2004).');
+    if (n.sys === 'tissue' && CHRONIC.indexOf(n.id) >= 0) rel.push('One of the three states chronic cases settle into (Wood, 2004).');
+    if (n.sys !== S.center && !n.inner) {
+      var hits = land(n, S.center), cl = sysById(S.center).label.toLowerCase();
+      rel.push(hits.length ? 'With the ' + cl + ' at the center, it lands on ' + landText(n, hits) + '.' : 'With the ' + cl + ' at the center, it is not assessed: they share no quality.');
+    }
+    if (rel.length) { var ul = hel('ul', null, null, card); rel.forEach(function (r) { hel('li', null, r, ul); }); }
+  }
+
+  /* ---------------- controls ---------------- */
+  SYS.forEach(function (s) {
+    var b = hel('button', null, s.label, seg); b.type = 'button'; b.setAttribute('data-center', s.id);
+    b.addEventListener('click', function () { S.center = s.id; render(); });
+    var lab = hel('label', 'at-toggle', null, ovPick); var inp = hel('input', null, null, lab); inp.type = 'checkbox'; inp.setAttribute('data-ov', s.id);
+    hel('span', 'at-dotkey at-k-' + s.ink, null, lab); lab.appendChild(document.createTextNode(' ' + s.label));
+    inp.addEventListener('change', function () { S.ov[s.id] = inp.checked; render(); });
+  });
+  Array.prototype.forEach.call(toneSeg.querySelectorAll('[data-tone]'), function (b) { b.addEventListener('click', function () { var v = b.getAttribute('data-tone'); S.tone = v === 'null' ? null : Number(v); renderPerson(); }); });
+  personIn.addEventListener('change', function () { S.person = personIn.checked; renderPerson(); });
+  herbIn.addEventListener('change', function () { S.herbs = herbIn.checked; renderPerson(); });
+  chronicIn.addEventListener('change', function () { S.chronic = chronicIn.checked; render(); });
+
+  /* lineage and tables */
+  SYS.forEach(function (s) { if (s.id === 'eight') return; var d = hel('div', 'at-k-' + s.ink + ' at-lin', null, lineage); hel('span', 'at-label', s.id === 'phases' ? 'Chinese medicine' : s.id === 'dosha' ? 'Ayurveda' : s.label, d); hel('p', null, s.lineage + (s.id === 'phases' ? ' ' + sysById('eight').lineage : ''), d); });
+  function table(cap, heads, rows, marks) {
+    var tb = hel('table', null, null, tables); hel('caption', null, cap, tb);
+    var tr = hel('tr', null, null, hel('thead', null, null, tb)); heads.forEach(function (x) { var e = hel('th', null, x, tr); e.scope = 'col'; });
+    var bd = hel('tbody', null, null, tb); rows.forEach(function (r) { var tr2 = hel('tr', null, null, bd); r.forEach(function (x, i) { var e = hel(i === 0 ? 'th' : 'td', i === 0 ? null : (marks ? (x === 'reads' ? 'at-yes' : 'at-no') : null), x, tr2); if (i === 0) e.scope = 'row'; }); });
+  }
+  table('What each map reads: a map reads a quality when one of its points carries it, as this page assigns it from the sources', ['Quality'].concat(SYS.map(function (s) { return s.label; })), Object.keys(FEATS).map(function (k) { return [FEATS[k].name].concat(SYS.map(function (s) { return reads(s.id).indexOf(k) >= 0 ? 'reads' : 'no'; })); }), true);
+  SYS.forEach(function (s) {
+    table(s.label, ['Point', 'What it is', 'Qualities it carries', 'Relations'], N.filter(function (n) { return n.sys === s.id; }).map(function (n) { return [n.name.replace(' · ', ', '), n.desc, Object.keys(n.f).map(function (k) { return fword(k, n.f[k]); }).join(', ') || 'none shared with the other maps', n.rel.join(' ')]; }));
+  });
+
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) Array.prototype.forEach.call(svg.querySelectorAll('.at-mv'), function (g) { g.style.transition = 'none'; });
+  render();
+  return { render: render, state: S, land: land, reads: reads, byId: byId, nodes: N, evalAll: evalAll };
+}
+
+Atlas(document.getElementById('atlas'), { idp: 'atlas', epigraphShown: true });
+</script>
+</body>
+</html>
