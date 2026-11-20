@@ -1,4 +1,5 @@
 <!doctype html>
+<!-- Public domain: John Courie has dedicated this page to the public domain under CC0 1.0 Universal (https://creativecommons.org/publicdomain/zero/1.0/). No rights reserved and no attribution required. Quotations from cited works remain with their owners. Full text: LICENSE in https://github.com/johncourie/pedagogy-tools -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -48,9 +49,7 @@ header.top h1 { margin: 0; font: 700 clamp(2rem, 4.6vw, 3rem)/1.05 var(--at-f-di
 footer { margin-top: 48px; border-top: 1px solid var(--at-rule); }
 .foot { max-width: 1140px; margin: 0 auto; padding-top: 20px; display: flex; flex-direction: column; gap: 6px; font-size: 0.9rem; color: var(--at-muted); }
 .foot p { margin: 0; }
-.lic summary { cursor: pointer; }
-.lic summary:focus-visible { outline: 3px solid var(--at-focus); outline-offset: 2px; }
-.lic p { margin-top: 8px; font-size: 0.82rem; }
+.foot a { color: inherit; }
 .epigraph cite { display: block; margin-top: 4px; font: 500 0.82rem/1.3 var(--at-f-label); font-style: normal; letter-spacing: 0.05em; }
 /* -- Energetics Atlas. The host page defines the --at-* tokens. -- */
 .at-root { display: flex; flex-direction: column; gap: 28px; color: var(--at-ink); font-family: var(--at-f-body); }
@@ -179,19 +178,12 @@ footer { margin-top: 48px; border-top: 1px solid var(--at-rule); }
   <div class="foot">
     <p>John Courie &middot; 2026 &middot; Built with Claude</p>
     <p>Every quality a point carries is cited in that point&rsquo;s text, to the books listed under Sources. The six herbs are invented. Educational material, not clinical advice.</p>
-    <details class="lic">
-      <summary>Free to use, copy and adapt under the MIT License</summary>
-      <p>Copyright (c) 2026 John Courie</p>
-      <p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the &ldquo;Software&rdquo;), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
-      <p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
-      <p>THE SOFTWARE IS PROVIDED &ldquo;AS IS&rdquo;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
-      <p>This covers the page&rsquo;s code, design and the text written for it. Short quotations and close paraphrases of the cited books remain the work of their authors and publishers and are not covered.</p>
-    </details>
+    <p class="lic">Public domain: no rights reserved. John Courie has dedicated this page to the public domain under <a href="https://creativecommons.org/publicdomain/zero/1.0/" rel="license">CC0 1.0 Universal</a>. Copy it, change it, share it and use it for any purpose, in any course or institution, without asking and without attribution. Short quotations and close paraphrases of the cited books remain the work of their authors and publishers and are not covered.</p>
   </div>
 </footer>
 
 <script>
-/* Energetics Atlas. Copyright (c) 2026 John Courie. MIT License: see LICENSE in this folder, or the license text in the page footer. */
+/* Energetics Atlas. Dedicated to the public domain under CC0 1.0 Universal: https://creativecommons.org/publicdomain/zero/1.0/ . No attribution required. */
 
 /* Energetics Atlas core. One function, mounted by a host page that defines the --at-* tokens.
    Atlas(root, opts): builds everything inside root. opts.idp: id prefix. opts.state: an object kept between mounts.

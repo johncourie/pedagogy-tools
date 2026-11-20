@@ -23,4 +23,6 @@ npx serve .
 
 ## License
 
-Educational use, except the Energetics Atlas, which is MIT-licensed: see [`reference/energetics-atlas/LICENSE`](reference/energetics-atlas/LICENSE).
+Public domain, under [CC0 1.0 Universal](LICENSE). John Courie has dedicated every tool in this repository to the public domain. Copy, adapt, share and use any of them for any purpose, in any course or institution, with no permission and no attribution needed.
+
+Not covered: quotations from and close paraphrases of the works the tools cite, and the names and marks of others. Those remain with their owners.
